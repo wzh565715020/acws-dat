@@ -1,0 +1,4 @@
+adaptive=com.tyyd.framework.dat.remoting.serialize.AdaptiveSerializable
+fastjson=com.tyyd.framework.dat.remoting.serialize.FastJsonSerializable
+hessian2=com.tyyd.framework.dat.remoting.serialize.Hessian2Serializable
+java=com.tyyd.framework.dat.remoting.serialize.JavaSerializable

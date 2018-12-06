@@ -1,0 +1,3 @@
+mysql=com.tyyd.framework.dat.biz.logger.mysql.MysqlJobLoggerFactory
+mongo=com.tyyd.framework.dat.biz.logger.mongo.MongoJobLoggerFactory
+console=com.tyyd.framework.dat.biz.logger.console.ConsoleJobLoggerFactory

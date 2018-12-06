@@ -1,0 +1,3 @@
+netty=com.tyyd.framework.dat.remoting.netty.NettyRemotingTransporter
+mina=com.tyyd.framework.dat.remoting.mina.MinaRemotingTransporter
+lts=com.tyyd.framework.dat.remoting.lts.LtsRemotingTransporter

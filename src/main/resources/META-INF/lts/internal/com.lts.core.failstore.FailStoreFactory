@@ -1,0 +1,5 @@
+leveldb=com.tyyd.framework.dat.core.failstore.leveldb.LeveldbFailStoreFactory
+berkeleydb=com.tyyd.framework.dat.core.failstore.berkeleydb.BerkeleydbFailStoreFactory
+rocksdb=com.tyyd.framework.dat.core.failstore.rocksdb.RocksdbFailStoreFactory
+mapdb=com.tyyd.framework.dat.core.failstore.mapdb.MapdbFailStoreFactory
+ltsdb=com.tyyd.framework.dat.core.failstore.ltsdb.LtsdbFailStoreFactory

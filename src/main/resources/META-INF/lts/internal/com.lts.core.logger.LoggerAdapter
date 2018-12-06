@@ -1,0 +1,4 @@
+slf4j=com.tyyd.framework.dat.core.logger.slf4j.Slf4jLoggerAdapter
+jcl=com.tyyd.framework.dat.core.logger.jcl.JclLoggerAdapter
+log4j=com.tyyd.framework.dat.core.logger.log4j.Log4jLoggerAdapter
+jdk=com.tyyd.framework.dat.core.logger.jdk.JdkLoggerAdapter
