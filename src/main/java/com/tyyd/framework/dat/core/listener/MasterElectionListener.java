@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/23/14.
  *         用来监听 自己类型 节点的变化,用来选举master
  */
 public class MasterElectionListener implements NodeChangeListener {

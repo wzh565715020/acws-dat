@@ -4,10 +4,10 @@ import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.core.commons.utils.NetUtils;
 import com.tyyd.framework.dat.core.exception.LtsRuntimeException;
+import com.tyyd.framework.dat.core.support.IpPortUtil;
 import com.tyyd.framework.dat.core.support.SystemClock;
 
 /**
- * @author Robert HG (254963746@qq.com) on 7/25/14.
  *         节点工厂类
  */
 public class NodeFactory {
@@ -16,11 +16,18 @@ public class NodeFactory {
         try {
             T node = clazz.newInstance();
             node.setCreateTime(SystemClock.now());
-            node.setIp(config.getIp());
+            node.setIp(IpPortUtil.getLocalIP());
             node.setHostName(NetUtils.getLocalHostName());
             node.setGroup(config.getNodeGroup());
             node.setThreads(config.getWorkThreads());
-            node.setPort(config.getListenPort());
+            int listenPort = config.getListenPort();
+            try {
+            	String port = IpPortUtil.getLocalPort();
+            	listenPort = Integer.valueOf(port);
+			} catch (Exception e) {
+				
+			}
+            node.setPort(listenPort);
             node.setIdentity(config.getIdentity());
             node.setClusterName(config.getClusterName());
             return node;
