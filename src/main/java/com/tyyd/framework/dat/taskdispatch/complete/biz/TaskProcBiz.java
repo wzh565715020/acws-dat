@@ -36,8 +36,8 @@ public class TaskProcBiz implements TaskCompletedBiz {
         this.retryHandler = new TaskRetryHandler(appContext);
         this.jobFinishHandler = new TaskFinishHandler(appContext);
 
-        this.globalMaxRetryTimes = appContext.getConfig().getParameter(Constants.JOB_MAX_RETRY_TIMES,
-                Constants.DEFAULT_JOB_MAX_RETRY_TIMES);
+        this.globalMaxRetryTimes = appContext.getConfig().getParameter(Constants.TASK_MAX_RETRY_TIMES,
+                Constants.DEFAULT_TASK_MAX_RETRY_TIMES);
 
         this.clientNotifier = new ClientNotifier(appContext, new ClientNotifyHandler<JobRunResult>() {
             @Override

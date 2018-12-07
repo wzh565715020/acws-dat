@@ -16,9 +16,6 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 import java.nio.ByteBuffer;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/5/15.
- */
 public class NettyCodecFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemotingHelper.RemotingLogName);

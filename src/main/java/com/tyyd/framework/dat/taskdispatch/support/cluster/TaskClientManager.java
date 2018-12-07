@@ -65,7 +65,7 @@ public class TaskClientManager {
 
         // create feedback queue
         appContext.getJobFeedbackQueue().createQueue(node.getGroup());
-        appContext.getNodeGroupStore().addNodeGroup(NodeType.JOB_CLIENT, node.getGroup());
+        appContext.getNodeGroupStore().addNodeGroup(NodeType.TASK_CLIENT, node.getGroup());
     }
 
     /**
@@ -101,7 +101,7 @@ public class TaskClientManager {
             TaskClientNode jobClientNode = loadBalance.select(list, null);
 
             if (jobClientNode != null && (jobClientNode.getChannel() == null || jobClientNode.getChannel().isClosed())) {
-                ChannelWrapper channel = appContext.getChannelManager().getChannel(jobClientNode.getNodeGroup(), NodeType.JOB_CLIENT, jobClientNode.getIdentity());
+                ChannelWrapper channel = appContext.getChannelManager().getChannel(jobClientNode.getNodeGroup(), NodeType.TASK_CLIENT, jobClientNode.getIdentity());
                 if (channel != null) {
                     // 更新channel
                     jobClientNode.setChannel(channel);

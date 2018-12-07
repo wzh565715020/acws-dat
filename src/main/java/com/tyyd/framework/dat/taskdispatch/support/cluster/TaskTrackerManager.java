@@ -60,7 +60,7 @@ public class TaskTrackerManager {
 
         // create executable queue
         appContext.getExecutableJobQueue().createQueue(node.getGroup());
-        appContext.getNodeGroupStore().addNodeGroup(NodeType.TASK_TRACKER, node.getGroup());
+        appContext.getNodeGroupStore().addNodeGroup(NodeType.TASK_EXECUTER, node.getGroup());
     }
 
     /**
@@ -89,7 +89,7 @@ public class TaskTrackerManager {
                 if (taskTrackerNode.getChannel() == null || taskTrackerNode.getChannel().isClosed()) {
                     // 如果 channel 已经关闭, 更新channel, 如果没有channel, 略过
                     ChannelWrapper channel = appContext.getChannelManager().getChannel(
-                            taskTrackerNode.getNodeGroup(), NodeType.TASK_TRACKER, taskTrackerNode.getIdentity());
+                            taskTrackerNode.getNodeGroup(), NodeType.TASK_EXECUTER, taskTrackerNode.getIdentity());
                     if (channel != null) {
                         // 更新channel
                         taskTrackerNode.setChannel(channel);

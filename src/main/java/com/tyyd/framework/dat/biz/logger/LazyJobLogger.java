@@ -42,10 +42,10 @@ public class LazyJobLogger implements JobLogger {
         this.delegate = delegate;
 
         Config config = appContext.getConfig();
-        maxMemoryLogSize = config.getParameter(Constants.LAZY_JOB_LOGGER_MEM_SIZE, 1000);
-        int flushPeriod = config.getParameter(Constants.LAZY_JOB_LOGGER_CHECK_PERIOD, 3);
-        batchFlushSize = config.getParameter(Constants.LAZY_JOB_LOGGER_BATCH_FLUSH_SIZE, 100);
-        overflowSize = config.getParameter(Constants.LAZY_JOB_LOGGER_OVERFLOW_SIZE, 10000);
+        maxMemoryLogSize = config.getParameter(Constants.LAZY_TASK_LOGGER_MEM_SIZE, 1000);
+        int flushPeriod = config.getParameter(Constants.LAZY_TASK_LOGGER_CHECK_PERIOD, 3);
+        batchFlushSize = config.getParameter(Constants.LAZY_TASK_LOGGER_BATCH_FLUSH_SIZE, 100);
+        overflowSize = config.getParameter(Constants.LAZY_TASK_LOGGER_OVERFLOW_SIZE, 10000);
 
         final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(
                 new NamedThreadFactory("LazyJobLogger", true));

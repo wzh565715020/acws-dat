@@ -73,6 +73,6 @@ public class TaskDispatcherMStatReporter extends AbstractMStatReporter {
 
     @Override
     protected NodeType getNodeType() {
-        return NodeType.JOB_TRACKER;
+        return NodeType.TASK_DISPATCH;
     }
 }

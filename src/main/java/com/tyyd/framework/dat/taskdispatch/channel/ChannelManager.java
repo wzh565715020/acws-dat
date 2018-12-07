@@ -29,7 +29,7 @@ public class ChannelManager {
     private final ScheduledExecutorService channelCheckExecutorService = Executors.newScheduledThreadPool(1, new NamedThreadFactory("LTS-Channel-Checker", true));
     private ScheduledFuture<?> scheduledFuture;
     // 存储离线一定时间内的节点信息
-    private final ConcurrentHashMap<String/*identity*/, Long> offlineTaskTrackerMap = new ConcurrentHashMap<String, Long>();
+    private final ConcurrentHashMap<String/*identity*/, Long> offlineTaskExecuterMap = new ConcurrentHashMap<String, Long>();
     // 用来清理离线时间很长的信息
     private final ScheduledExecutorService offlineTaskTrackerCheckExecutorService = Executors.newScheduledThreadPool(1, new NamedThreadFactory("LTS-offline-TaskTracker-Checker", true));
     private ScheduledFuture<?> offlineTaskTrackerScheduledFuture;
@@ -43,11 +43,11 @@ public class ChannelManager {
                     @Override
                     public void run() {
                         try {
-                            checkCloseChannel(NodeType.JOB_CLIENT, clientChannelMap);
+                            checkCloseChannel(NodeType.TASK_CLIENT, clientChannelMap);
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("JobClient Channel Pool " + clientChannelMap);
                             }
-                            checkCloseChannel(NodeType.TASK_TRACKER, taskTrackerChannelMap);
+                            checkCloseChannel(NodeType.TASK_EXECUTER, taskTrackerChannelMap);
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("TaskTracker Channel Pool " + taskTrackerChannelMap);
                             }
@@ -61,11 +61,11 @@ public class ChannelManager {
                     @Override
                     public void run() {
                         try {
-                            if (offlineTaskTrackerMap.size() > 0) {
-                                for (Map.Entry<String, Long> entry : offlineTaskTrackerMap.entrySet()) {
+                            if (offlineTaskExecuterMap.size() > 0) {
+                                for (Map.Entry<String, Long> entry : offlineTaskExecuterMap.entrySet()) {
                                     // 清除离线超过一定时间的信息
-                                    if (SystemClock.now() - entry.getValue() > 2 * Constants.DEFAULT_TASK_TRACKER_OFFLINE_LIMIT_MILLIS) {
-                                        offlineTaskTrackerMap.remove(entry.getKey());
+                                    if (SystemClock.now() - entry.getValue() > 2 * Constants.DEFAULT_TASK_EXECUTER_OFFLINE_LIMIT_MILLIS) {
+                                        offlineTaskExecuterMap.remove(entry.getKey());
                                     }
                                 }
                             }
@@ -111,18 +111,18 @@ public class ChannelManager {
             }
             channels.removeAll(removeList);
             // 加入到离线列表中
-            if (nodeType == NodeType.TASK_TRACKER) {
+            if (nodeType == NodeType.TASK_EXECUTER) {
                 for (ChannelWrapper channelWrapper : removeList) {
-                    offlineTaskTrackerMap.put(channelWrapper.getIdentity(), SystemClock.now());
+                    offlineTaskExecuterMap.put(channelWrapper.getIdentity(), SystemClock.now());
                 }
             }
         }
     }
 
     public List<ChannelWrapper> getChannels(String nodeGroup, NodeType nodeType) {
-        if (nodeType == NodeType.JOB_CLIENT) {
+        if (nodeType == NodeType.TASK_CLIENT) {
             return clientChannelMap.get(nodeGroup);
-        } else if (nodeType == NodeType.TASK_TRACKER) {
+        } else if (nodeType == NodeType.TASK_EXECUTER) {
             return taskTrackerChannelMap.get(nodeGroup);
         }
         return null;
@@ -152,13 +152,13 @@ public class ChannelManager {
         List<ChannelWrapper> channels = getChannels(nodeGroup, nodeType);
         if (channels == null) {
             channels = new ArrayList<ChannelWrapper>();
-            if (nodeType == NodeType.JOB_CLIENT) {
+            if (nodeType == NodeType.TASK_CLIENT) {
                 clientChannelMap.put(nodeGroup, channels);
-            } else if (nodeType == NodeType.TASK_TRACKER) {
+            } else if (nodeType == NodeType.TASK_EXECUTER) {
                 taskTrackerChannelMap.put(nodeGroup, channels);
                 // 如果在离线列表中，那么移除
-                if (offlineTaskTrackerMap.containsKey(channel.getIdentity())) {
-                    offlineTaskTrackerMap.remove(channel.getIdentity());
+                if (offlineTaskExecuterMap.containsKey(channel.getIdentity())) {
+                    offlineTaskExecuterMap.remove(channel.getIdentity());
                 }
             }
             channels.add(channel);
@@ -172,7 +172,7 @@ public class ChannelManager {
     }
 
     public Long getOfflineTimestamp(String identity) {
-        return offlineTaskTrackerMap.get(identity);
+        return offlineTaskExecuterMap.get(identity);
     }
 
     public void removeChannel(ChannelWrapper channel) {

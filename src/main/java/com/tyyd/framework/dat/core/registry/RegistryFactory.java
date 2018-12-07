@@ -5,9 +5,6 @@ import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.registry.redis.RedisRegistry;
 import com.tyyd.framework.dat.core.registry.zookeeper.ZookeeperRegistry;
 
-/**
- * @author Robert HG (254963746@qq.com) on 5/17/15.
- */
 public class RegistryFactory {
 
     public static Registry getRegistry(AppContext appContext) {

@@ -172,13 +172,13 @@ public abstract class AbstractJobNode<T extends Node, Context extends AppContext
         }
 
         // 设置json
-        String ltsJson = config.getParameter(SpiExtensionKey.LTS_JSON);
+        String ltsJson = config.getParameter(SpiExtensionKey.DAT_JSON);
         if (StringUtils.isNotEmpty(ltsJson)) {
             JSONFactory.setJSONAdapter(ltsJson);
         }
 
         // 设置logger
-        String logger = config.getParameter(SpiExtensionKey.LTS_LOGGER);
+        String logger = config.getParameter(SpiExtensionKey.DAT_LOGGER);
         if (StringUtils.isNotEmpty(logger)) {
             LoggerFactory.setLoggerAdapter(logger);
         }

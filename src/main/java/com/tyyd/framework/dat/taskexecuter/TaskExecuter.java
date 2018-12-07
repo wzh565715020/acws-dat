@@ -39,7 +39,7 @@ public class TaskExecuter extends AbstractClientNode<TaskExecuterNode, TaskExecu
 
     @Override
     protected void afterStart() {
-        if (config.getParameter(Constants.TASK_TRACKER_STOP_WORKING_ENABLE, false)) {
+        if (config.getParameter(Constants.TASK_EXECUTER_STOP_WORKING_ENABLE, false)) {
             appContext.getStopWorkingMonitor().start();
         }
     }

@@ -19,7 +19,7 @@ public interface Constants {
 
     String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    int JOB_TRACKER_DEFAULT_LISTEN_PORT = 35001;
+    int TASK_DISPATCHER_DEFAULT_LISTEN_PORT = 35001;
 
     // 默认集群名字
     String DEFAULT_CLUSTER_NAME = "defaultCluster";
@@ -63,45 +63,45 @@ public interface Constants {
     int DEFAULT_REGISTRY_RECONNECT_PERIOD = 3 * 1000;
 
     // 客户端提交并发请求size
-    String JOB_SUBMIT_MAX_QPS = "job.submit.maxQPS";
-    int DEFAULT_JOB_SUBMIT_MAX_QPS = 500;
+    String TASK_SUBMIT_MAX_QPS = "task.submit.maxQPS";
+    int DEFAULT_TASK_SUBMIT_MAX_QPS = 500;
 
-    String PROCESSOR_THREAD = "job.processor.thread";
+    String PROCESSOR_THREAD = "task.processor.thread";
     int DEFAULT_PROCESSOR_THREAD = 32 + AVAILABLE_PROCESSOR * 5;
 
     int LATCH_TIMEOUT_MILLIS = 10 * 60 * 1000;      // 10分钟
 
     // 任务最多重试次数
-    String JOB_MAX_RETRY_TIMES = "job.max.retry.times";
-    int DEFAULT_JOB_MAX_RETRY_TIMES = 10;
+    String TASK_MAX_RETRY_TIMES = "task.max.retry.times";
+    int DEFAULT_TASK_MAX_RETRY_TIMES = 10;
 
     Charset UTF_8 = Charset.forName("UTF-8");
 
-    String JOB_PULL_FREQUENCY = "job.pull.frequency";
-    int DEFAULT_JOB_PULL_FREQUENCY = 1;
+    String TASK_PULL_FREQUENCY = "task.pull.frequency";
+    int DEFAULT_TASK_PULL_FREQUENCY = 1;
 
     // TaskTracker 离线(网络隔离)时间 10s，超过10s，自动停止当前执行任务
-    long DEFAULT_TASK_TRACKER_OFFLINE_LIMIT_MILLIS = 10 * 1000;
+    long DEFAULT_TASK_EXECUTER_OFFLINE_LIMIT_MILLIS = 10 * 1000;
     // 当TaskTracker离线超过了这个时间,那么就会进入自杀流程,停止当前所有线程
 //    String TASK_TRACKER_OFFLINE_LIMIT_MILLIS = "tasktracker.offline.limit.millis";
     // TaskTracker超过一定时间断线JobTracker，自动停止当前的所有任务
-    String TASK_TRACKER_STOP_WORKING_ENABLE = "tasktracker.stop.working.enable";
+    String TASK_EXECUTER_STOP_WORKING_ENABLE = "taskdispatcher.stop.working.enable";
 
-    String ADMIN_ID_PREFIX = "LTS_admin_";
+    String ADMIN_ID_PREFIX = "DAT_admin_";
 
     // 是否延迟批量刷盘日志, 如果启用，采用队列的方式批量将日志刷盘(在应用关闭的时候，可能会造成日志丢失)
-    String LAZY_JOB_LOGGER = "lazy.job.logger";
+    String LAZY_TASK_LOGGER = "lazy.task.logger";
     // 延迟批量刷盘日志 内存中的最大日志量阀值
-    String LAZY_JOB_LOGGER_MEM_SIZE = "lazy.job.logger.mem.size";
+    String LAZY_TASK_LOGGER_MEM_SIZE = "lazy.task.logger.mem.size";
     // 延迟批量刷盘日志 检查频率
-    String LAZY_JOB_LOGGER_CHECK_PERIOD = "lazy.job.logger.check.period";
+    String LAZY_TASK_LOGGER_CHECK_PERIOD = "lazy.task.logger.check.period";
 
-    String LAZY_JOB_LOGGER_BATCH_FLUSH_SIZE = "lazy.job.logger.batch.flush.size";
-    String LAZY_JOB_LOGGER_OVERFLOW_SIZE = "lazy.job.logger.overflow.size";
+    String LAZY_TASK_LOGGER_BATCH_FLUSH_SIZE = "lazy.task.logger.batch.flush.size";
+    String LAZY_TASK_LOGGER_OVERFLOW_SIZE = "lazy.task.logger.overflow.size";
 
     String ADAPTIVE = "adaptive";
 
-    String MACHINE_RES_ENOUGH = "__LTS.INNER.MACHINE.RES.ENOUGH";
+    String MACHINE_RES_ENOUGH = "__DAT.INNER.MACHINE.RES.ENOUGH";
 
     String LB_MEMORY_USED_RATE_MAX = "lb.memoryUsedRate.max";
 
@@ -109,5 +109,5 @@ public interface Constants {
 
     String LB_MACHINE_RES_CHECK_ENABLE = "lb.machine.res.check.enable";
 
-    String QUARTZ_FIRST_FIRE_TIME = "__LTS_Quartz_First_Fire_Time";
+    String QUARTZ_FIRST_FIRE_TIME = "__DAT_Quartz_First_Fire_Time";
 }

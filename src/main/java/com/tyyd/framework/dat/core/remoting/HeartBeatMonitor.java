@@ -59,7 +59,7 @@ public class HeartBeatMonitor {
             @Override
             public void onObserved(EventInfo eventInfo) {
                 Node node = (Node) eventInfo.getParam("node");
-                if (node == null || NodeType.JOB_TRACKER != node.getNodeType()) {
+                if (node == null || NodeType.TASK_DISPATCH != node.getNodeType()) {
                     return;
                 }
                 try {
@@ -170,7 +170,7 @@ public class HeartBeatMonitor {
     }
 
     private void check() {
-        List<Node> jobTrackers = appContext.getSubscribedNodeManager().getNodeList(NodeType.JOB_TRACKER);
+        List<Node> jobTrackers = appContext.getSubscribedNodeManager().getNodeList(NodeType.TASK_DISPATCH);
         if (CollectionUtils.isEmpty(jobTrackers)) {
             return;
         }

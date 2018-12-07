@@ -19,9 +19,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 
-/**
- * @author Robert HG (254963746@qq.com) on 8/1/14.
- */
 public class RemotingClientDelegate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemotingClientDelegate.class);

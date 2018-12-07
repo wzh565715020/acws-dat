@@ -49,7 +49,7 @@ public class TaskPullMachine {
 
     public TaskPullMachine(final TaskExecuterAppContext appContext) {
         this.appContext = appContext;
-        this.jobPullFrequency = appContext.getConfig().getParameter(Constants.JOB_PULL_FREQUENCY, Constants.DEFAULT_JOB_PULL_FREQUENCY);
+        this.jobPullFrequency = appContext.getConfig().getParameter(Constants.TASK_PULL_FREQUENCY, Constants.DEFAULT_TASK_PULL_FREQUENCY);
 
         this.machineResCheckEnable = appContext.getConfig().getParameter(Constants.LB_MACHINE_RES_CHECK_ENABLE, true);
 

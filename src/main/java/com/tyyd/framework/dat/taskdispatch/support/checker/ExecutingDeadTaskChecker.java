@@ -124,11 +124,11 @@ public class ExecutingDeadTaskChecker {
                 String taskTrackerNodeGroup = entry.getValue().get(0).getTaskTrackerNodeGroup();
                 String taskTrackerIdentity = entry.getKey();
                 // 去查看这个TaskTrackerIdentity是否存活
-                ChannelWrapper channelWrapper = appContext.getChannelManager().getChannel(taskTrackerNodeGroup, NodeType.TASK_TRACKER, taskTrackerIdentity);
+                ChannelWrapper channelWrapper = appContext.getChannelManager().getChannel(taskTrackerNodeGroup, NodeType.TASK_EXECUTER, taskTrackerIdentity);
                 if (channelWrapper == null && taskTrackerIdentity != null) {
                     Long offlineTimestamp = appContext.getChannelManager().getOfflineTimestamp(taskTrackerIdentity);
                     // 已经离线太久，直接修复
-                    if (offlineTimestamp == null || SystemClock.now() - offlineTimestamp > Constants.DEFAULT_TASK_TRACKER_OFFLINE_LIMIT_MILLIS) {
+                    if (offlineTimestamp == null || SystemClock.now() - offlineTimestamp > Constants.DEFAULT_TASK_EXECUTER_OFFLINE_LIMIT_MILLIS) {
                         // fixDeadJob
                         fixDeadJob(entry.getValue());
                     }

@@ -14,7 +14,6 @@ import com.tyyd.framework.dat.remoting.RemotingTransporter;
 import java.util.concurrent.Executors;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/18/14.
  *         抽象客户端
  */
 public abstract class AbstractClientNode<T extends Node, Context extends AppContext> extends AbstractJobNode<T, Context> {

@@ -24,8 +24,9 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * 
  * LTS 自带实现的zkclient
- * @author Robert HG (254963746@qq.com) on 2/18/16.
+ * 
  */
 public class LtsZkClient extends AbstractZkClient<ChildListener, DataListener> implements Watcher {
 

@@ -2,17 +2,14 @@ package com.tyyd.framework.dat.core.cluster;
 
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 
-/**
- * @author Robert HG (254963746@qq.com) on 6/22/14.
- */
 public enum NodeType {
 
-    // job tracker
-    JOB_TRACKER,
-    // task tracker
-    TASK_TRACKER,
+    // TASK_DISPATCH
+    TASK_DISPATCH,
+    // TASK_EXECUTER
+    TASK_EXECUTER,
     // client
-    JOB_CLIENT,
+    TASK_CLIENT,
     // monitor
     MONITOR,
 

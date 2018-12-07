@@ -9,10 +9,10 @@ import com.tyyd.framework.dat.core.cluster.NodeType;
 public class TaskExecuterNode extends Node {
 
     public TaskExecuterNode() {
-        this.setNodeType(NodeType.TASK_TRACKER);
+        this.setNodeType(NodeType.TASK_EXECUTER);
         // 关注 JobTracker
-        this.addListenNodeType(NodeType.JOB_TRACKER);
-        this.addListenNodeType(NodeType.TASK_TRACKER);
+        this.addListenNodeType(NodeType.TASK_DISPATCH);
+        this.addListenNodeType(NodeType.TASK_EXECUTER);
         this.addListenNodeType(NodeType.MONITOR);
     }
 

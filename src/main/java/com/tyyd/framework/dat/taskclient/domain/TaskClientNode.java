@@ -9,9 +9,9 @@ import com.tyyd.framework.dat.core.cluster.NodeType;
 public class TaskClientNode extends Node {
 
     public TaskClientNode() {
-        this.setNodeType(NodeType.JOB_CLIENT);
-        this.addListenNodeType(NodeType.JOB_TRACKER);
-        this.addListenNodeType(NodeType.JOB_CLIENT);
+        this.setNodeType(NodeType.TASK_CLIENT);
+        this.addListenNodeType(NodeType.TASK_DISPATCH);
+        this.addListenNodeType(NodeType.TASK_CLIENT);
         this.addListenNodeType(NodeType.MONITOR);
     }
 

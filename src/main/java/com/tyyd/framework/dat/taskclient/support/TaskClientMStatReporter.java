@@ -59,6 +59,6 @@ public class TaskClientMStatReporter extends AbstractMStatReporter {
 
     @Override
     protected NodeType getNodeType() {
-        return NodeType.JOB_CLIENT;
+        return NodeType.TASK_CLIENT;
     }
 }

@@ -26,9 +26,9 @@ public class TaskNodeChangeListener implements NodeChangeListener {
             return;
         }
         for (Node node : nodes) {
-            if (node.getNodeType().equals(NodeType.TASK_TRACKER)) {
+            if (node.getNodeType().equals(NodeType.TASK_EXECUTER)) {
                 appContext.getTaskTrackerManager().addNode(node);
-            } else if (node.getNodeType().equals(NodeType.JOB_CLIENT)) {
+            } else if (node.getNodeType().equals(NodeType.TASK_CLIENT)) {
                 appContext.getJobClientManager().addNode(node);
             }
         }
@@ -40,9 +40,9 @@ public class TaskNodeChangeListener implements NodeChangeListener {
             return;
         }
         for (Node node : nodes) {
-            if (node.getNodeType().equals(NodeType.TASK_TRACKER)) {
+            if (node.getNodeType().equals(NodeType.TASK_EXECUTER)) {
                 appContext.getTaskTrackerManager().removeNode(node);
-            } else if (node.getNodeType().equals(NodeType.JOB_CLIENT)) {
+            } else if (node.getNodeType().equals(NodeType.TASK_CLIENT)) {
                 appContext.getJobClientManager().removeNode(node);
             }
         }

@@ -25,14 +25,14 @@ public class TaskSubmitProtector {
 
     public TaskSubmitProtector(TaskClientAppContext appContext) {
 
-        this.maxQPS = appContext.getConfig().getParameter(Constants.JOB_SUBMIT_MAX_QPS,
-                Constants.DEFAULT_JOB_SUBMIT_MAX_QPS);
+        this.maxQPS = appContext.getConfig().getParameter(Constants.TASK_SUBMIT_MAX_QPS,
+                Constants.DEFAULT_TASK_SUBMIT_MAX_QPS);
         if (this.maxQPS < 10) {
-            this.maxQPS = Constants.DEFAULT_JOB_SUBMIT_MAX_QPS;
+            this.maxQPS = Constants.DEFAULT_TASK_SUBMIT_MAX_QPS;
         }
 
         this.errorMsg = "the maxQPS is " + maxQPS +
-                " , submit too fast , use " + Constants.JOB_SUBMIT_MAX_QPS +
+                " , submit too fast , use " + Constants.TASK_SUBMIT_MAX_QPS +
                 " can change the concurrent size .";
         this.acquireTimeout = appContext.getConfig().getParameter("job.submit.lock.acquire.timeout", 100);
 

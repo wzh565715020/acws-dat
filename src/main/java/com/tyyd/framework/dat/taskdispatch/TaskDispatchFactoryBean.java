@@ -18,7 +18,7 @@ import java.util.Properties;
 public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
         InitializingBean, DisposableBean {
 
-    private TaskDispatcher jobTracker;
+    private TaskDispatcher taskDispatcher;
     private boolean started;
     /**
      * 集群名称
@@ -47,7 +47,7 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
 
     @Override
     public TaskDispatcher getObject() throws Exception {
-        return jobTracker;
+        return taskDispatcher;
     }
 
     @Override
@@ -70,45 +70,45 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
 
         checkProperties();
 
-        jobTracker = new TaskDispatcher();
+        taskDispatcher = new TaskDispatcher();
 
-        jobTracker.setClusterName(clusterName);
-        jobTracker.setRegistryAddress(registryAddress);
+        taskDispatcher.setClusterName(clusterName);
+        taskDispatcher.setRegistryAddress(registryAddress);
 
         if (listenPort != null) {
-            jobTracker.setListenPort(listenPort);
+            taskDispatcher.setListenPort(listenPort);
         }
         if (oldDataHandler == null) {
-            jobTracker.setOldDataHandler(new OldDataDeletePolicy());
+            taskDispatcher.setOldDataHandler(new OldDataDeletePolicy());
         } else {
-            jobTracker.setOldDataHandler(oldDataHandler);
+            taskDispatcher.setOldDataHandler(oldDataHandler);
         }
 
         // 设置config
         for (Map.Entry<Object, Object> entry : configs.entrySet()) {
-            jobTracker.addConfig(entry.getKey().toString(), entry.getValue().toString());
+            taskDispatcher.addConfig(entry.getKey().toString(), entry.getValue().toString());
         }
 
         if (masterChangeListeners != null) {
             for (MasterChangeListener masterChangeListener : masterChangeListeners) {
-                jobTracker.addMasterChangeListener(masterChangeListener);
+                taskDispatcher.addMasterChangeListener(masterChangeListener);
             }
         }
     }
 
     /**
-     * 可以自己得到JobTracker对象后调用，也可以直接使用spring配置中的init属性指定该方法
+     * 可以自己得到taskDispatcher对象后调用，也可以直接使用spring配置中的init属性指定该方法
      */
     public void start() {
         if (!started) {
-            jobTracker.start();
+            taskDispatcher.start();
             started = true;
         }
     }
 
     @Override
     public void destroy() throws Exception {
-        jobTracker.stop();
+        taskDispatcher.stop();
     }
 
     public void setClusterName(String clusterName) {

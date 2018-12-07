@@ -67,7 +67,7 @@ public class TaskExecuterMStatReporter extends AbstractMStatReporter {
 
     @Override
     protected NodeType getNodeType() {
-        return NodeType.TASK_TRACKER;
+        return NodeType.TASK_EXECUTER;
     }
 
 }

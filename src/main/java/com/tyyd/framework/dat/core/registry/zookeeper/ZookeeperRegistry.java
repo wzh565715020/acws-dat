@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * @author Robert HG (254963746@qq.com) on 6/22/14.
  *         节点注册器，并监听自己关注的节点
  */
 public class ZookeeperRegistry extends FailbackRegistry {

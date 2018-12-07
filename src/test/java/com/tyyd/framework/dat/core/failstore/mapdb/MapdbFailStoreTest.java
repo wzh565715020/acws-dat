@@ -28,7 +28,7 @@ public class MapdbFailStoreTest {
         config.setIdentity("testIdentity");
         config.setDataPath(Constants.USER_HOME);
         config.setNodeGroup("test");
-        config.setNodeType(NodeType.JOB_CLIENT);
+        config.setNodeType(NodeType.TASK_CLIENT);
         failStore = new MapdbFailStoreFactory().getFailStore(config, config.getFailStorePath());
         failStore.open();
     }
