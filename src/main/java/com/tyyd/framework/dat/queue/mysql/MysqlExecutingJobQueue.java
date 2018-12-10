@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.admin.request.JobQueueReq;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
 import com.tyyd.framework.dat.queue.ExecutingJobQueue;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
 import com.tyyd.framework.dat.store.jdbc.builder.DeleteSql;
 import com.tyyd.framework.dat.store.jdbc.builder.SelectSql;
@@ -28,7 +28,7 @@ public class MysqlExecutingJobQueue extends AbstractMysqlJobQueue implements Exe
     }
 
     @Override
-    public boolean add(JobPo jobPo) {
+    public boolean add(TaskPo jobPo) {
         return super.add(getTableName(), jobPo);
     }
 
@@ -43,7 +43,7 @@ public class MysqlExecutingJobQueue extends AbstractMysqlJobQueue implements Exe
     }
 
     @Override
-    public List<JobPo> getJobs(String taskTrackerIdentity) {
+    public List<TaskPo> getJobs(String taskTrackerIdentity) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
@@ -54,7 +54,7 @@ public class MysqlExecutingJobQueue extends AbstractMysqlJobQueue implements Exe
     }
 
     @Override
-    public List<JobPo> getDeadJobs(long deadline) {
+    public List<TaskPo> getDeadJobs(long deadline) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
@@ -65,7 +65,7 @@ public class MysqlExecutingJobQueue extends AbstractMysqlJobQueue implements Exe
     }
 
     @Override
-    public JobPo getJob(String taskTrackerNodeGroup, String taskId) {
+    public TaskPo getJob(String taskTrackerNodeGroup, String taskId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
@@ -77,7 +77,7 @@ public class MysqlExecutingJobQueue extends AbstractMysqlJobQueue implements Exe
     }
 
     @Override
-    public JobPo getJob(String jobId) {
+    public TaskPo getJob(String jobId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()

@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.taskdispatch;
 
 import com.tyyd.framework.dat.biz.logger.SmartJobLogger;
-import com.tyyd.framework.dat.core.cluster.AbstractServerNode;
+import com.tyyd.framework.dat.core.cluster.AbstractClientNode;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.queue.JobQueueFactory;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
@@ -13,24 +13,22 @@ import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherNode;
 import com.tyyd.framework.dat.taskdispatch.monitor.TaskDispatcherMStatReporter;
 import com.tyyd.framework.dat.taskdispatch.processor.RemotingDispatcher;
 import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
-import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
 import com.tyyd.framework.dat.taskdispatch.support.OldDataHandler;
-import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskClientManager;
-import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskTrackerManager;
+import com.tyyd.framework.dat.taskdispatch.support.TaskPushMachine;
+import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
 import com.tyyd.framework.dat.taskdispatch.support.listener.TaskNodeChangeListener;
 import com.tyyd.framework.dat.taskdispatch.support.listener.TaskDispatcherMasterChangeListener;
 
-public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskDispatcherAppContext> {
+public class TaskDispatcher extends AbstractClientNode<TaskDispatcherNode, TaskDispatcherAppContext> {
 
     public TaskDispatcher() {
         // 监控中心
         appContext.setMStatReporter(new TaskDispatcherMStatReporter(appContext));
         // channel 管理者
         appContext.setChannelManager(new ChannelManager());
-        // JobClient 管理者
-        appContext.setJobClientManager(new TaskClientManager(appContext));
-        // TaskTracker 管理者
-        appContext.setTaskTrackerManager(new TaskTrackerManager(appContext));
+        appContext.setTaskPushMachine(new TaskPushMachine(appContext));
+        // TaskExecuter 管理者
+        appContext.setTaskExecuterManager(new TaskExecuterManager(appContext));
         // 添加节点变化监听器
         addNodeChangeListener(new TaskNodeChangeListener(appContext));
         // 添加master节点变化监听器
@@ -40,7 +38,7 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
     @Override
     protected void beforeStart() {
         // injectRemotingServer
-        appContext.setRemotingServer(remotingServer);
+        appContext.setRemotingServer(remotingClient);
         appContext.setJobLogger(new SmartJobLogger(appContext));
 
         JobQueueFactory factory = ServiceLoader.load(JobQueueFactory.class, config);
@@ -53,7 +51,6 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
         appContext.setJobFeedbackQueue(factory.getJobFeedbackQueue(config));
         appContext.setNodeGroupStore(factory.getNodeGroupStore(config));
         appContext.setPreLoader(factory.getPreLoader(appContext));
-        appContext.setJobReceiver(new TaskReceiver(appContext));
         appContext.setJobSender(new TaskSender(appContext));
 
         appContext.getHttpCmdServer().registerCommands(
@@ -93,5 +90,6 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
     public void setOldDataHandler(OldDataHandler oldDataHandler) {
         appContext.setOldDataHandler(oldDataHandler);
     }
+
 
 }

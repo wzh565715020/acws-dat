@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.queue;
 
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 
 /**
@@ -15,12 +15,12 @@ public interface CronJobQueue extends JobQueue{
      *
      * @throws DupEntryException
      */
-    boolean add(JobPo jobPo);
+    boolean add(TaskPo jobPo);
 
     /**
      * 完成某一次执行，返回队列中的这条记录
      */
-    JobPo getJob(String jobId);
+    TaskPo getJob(String jobId);
 
     /**
      * 移除Cron Job
@@ -30,6 +30,6 @@ public interface CronJobQueue extends JobQueue{
     /**
      * 得到JobPo
      */
-    JobPo getJob(String taskTrackerNodeGroup, String taskId);
+    TaskPo getJob(String taskTrackerNodeGroup, String taskId);
 
 }

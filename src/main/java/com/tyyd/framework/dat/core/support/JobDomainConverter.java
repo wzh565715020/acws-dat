@@ -8,7 +8,7 @@ import com.tyyd.framework.dat.core.domain.Job;
 import com.tyyd.framework.dat.core.domain.JobMeta;
 import com.tyyd.framework.dat.core.domain.JobRunResult;
 import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 
 import java.util.Map;
 import java.util.Set;
@@ -21,8 +21,8 @@ public class JobDomainConverter {
     private JobDomainConverter() {
     }
 
-    public static JobPo convert(Job job) {
-        JobPo jobPo = new JobPo();
+    public static TaskPo convert(Job job) {
+        TaskPo jobPo = new TaskPo();
         jobPo.setPriority(job.getPriority());
         jobPo.setTaskId(job.getTaskId());
         jobPo.setGmtCreated(SystemClock.now());
@@ -70,7 +70,7 @@ public class JobDomainConverter {
     /**
      * JobPo 转 Job
      */
-    public static JobMeta convert(JobPo jobPo) {
+    public static JobMeta convert(TaskPo jobPo) {
         Job job = new Job();
         job.setPriority(jobPo.getPriority());
         job.setExtParams(jobPo.getExtParams());
@@ -115,7 +115,7 @@ public class JobDomainConverter {
         return jobLogPo;
     }
 
-    public static JobLogPo convertJobLog(JobPo jobPo) {
+    public static JobLogPo convertJobLog(TaskPo jobPo) {
         JobLogPo jobLogPo = new JobLogPo();
         jobLogPo.setGmtCreated(SystemClock.now());
         jobLogPo.setPriority(jobPo.getPriority());

@@ -10,7 +10,7 @@ import com.tyyd.framework.dat.core.protocol.JobProtos;
 import com.tyyd.framework.dat.core.protocol.command.JobCancelRequest;
 import com.tyyd.framework.dat.core.support.JobDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
@@ -31,7 +31,7 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
 
         String taskId = jobCancelRequest.getTaskId();
         String taskTrackerNodeGroup = jobCancelRequest.getTaskTrackerNodeGroup();
-        JobPo job = appContext.getCronJobQueue().getJob(taskTrackerNodeGroup, taskId);
+        TaskPo job = appContext.getCronJobQueue().getJob(taskTrackerNodeGroup, taskId);
         if (job == null) {
             job = appContext.getExecutableJobQueue().getJob(taskTrackerNodeGroup, taskId);
         }
@@ -51,10 +51,10 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
 
             LOGGER.info("Cancel Job success , jobId={}, taskId={}, taskTrackerNodeGroup={}", job.getJobId(), taskId, taskTrackerNodeGroup);
             return RemotingCommand.createResponseCommand(JobProtos
-                    .ResponseCode.JOB_CANCEL_SUCCESS.code());
+                    .ResponseCode.TASK_CANCEL_SUCCESS.code());
         }
 
         return RemotingCommand.createResponseCommand(JobProtos
-                .ResponseCode.JOB_CANCEL_FAILED.code(), "Job maybe running");
+                .ResponseCode.TASK_CANCEL_FAILED.code(), "Job maybe running");
     }
 }

@@ -12,10 +12,10 @@ public interface EcTopic {
     // 节点禁用
     String NODE_DISABLE = "NODE_DISABLE";
 
-    // 没有可用的JobTracker了
-    String NO_JOB_TRACKER_AVAILABLE = "NO_JOB_TRACKER_AVAILABLE";
-    // 有可用的JobTracker了
-    String JOB_TRACKER_AVAILABLE = "JOB_TRACKER_AVAILABLE";
+    // 没有可用的TASK_EXECUTER了
+    String NO_TASK_EXECUTER_AVAILABLE = "NO_TASK_EXECUTER_AVAILABLE";
+    // 有可用的TASK_EXECUTER了
+    String TASK_EXECUTER_AVAILABLE = "TASK_EXECUTER_AVAILABLE";
     // master 节点改变了
     String MASTER_CHANGED = "MASTER_CHANGED";
 

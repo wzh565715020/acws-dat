@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.queue;
 
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public interface ExecutableJobQueue extends JobQueue{
     /**
      * 入队列
      */
-    boolean add(JobPo jobPo);
+    boolean add(TaskPo jobPo);
 
     /**
      * 出队列
@@ -34,15 +34,15 @@ public interface ExecutableJobQueue extends JobQueue{
     /**
      * reset , runnable
      */
-    void resume(JobPo jobPo);
+    void resume(TaskPo jobPo);
 
     /**
      * 得到死任务
      */
-    List<JobPo> getDeadJob(String taskTrackerNodeGroup, long deadline);
+    List<TaskPo> getDeadJob(String taskTrackerNodeGroup, long deadline);
 
     /**
      * 得到JobPo
      */
-    JobPo getJob(String taskTrackerNodeGroup, String taskId);
+    TaskPo getJob(String taskTrackerNodeGroup, String taskId);
 }

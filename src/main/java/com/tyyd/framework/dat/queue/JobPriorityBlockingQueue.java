@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.queue;
 
 import com.tyyd.framework.dat.core.commons.concurrent.ConcurrentHashSet;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 
 import java.util.Comparator;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,12 +14,12 @@ public class JobPriorityBlockingQueue {
 
     private final ReentrantLock lock;
 
-    private transient Comparator<JobPo> comparator;
+    private transient Comparator<TaskPo> comparator;
 
     private int capacity;
 
     private volatile int size;
-    private JobPo[] queue;
+    private TaskPo[] queue;
     private ConcurrentHashSet<String/*jobId*/> JOB_ID_SET = new ConcurrentHashSet<String>();
 
     public JobPriorityBlockingQueue(int capacity) {
@@ -28,9 +28,9 @@ public class JobPriorityBlockingQueue {
         }
         this.capacity = capacity;
         this.lock = new ReentrantLock();
-        this.comparator = new Comparator<JobPo>() {
+        this.comparator = new Comparator<TaskPo>() {
             @Override
-            public int compare(JobPo left, JobPo right) {
+            public int compare(TaskPo left, TaskPo right) {
                 if (left.getJobId().equals(right.getJobId())) {
                     return 0;
                 }
@@ -49,14 +49,14 @@ public class JobPriorityBlockingQueue {
                 return -1;
             }
         };
-        this.queue = new JobPo[this.capacity];
+        this.queue = new TaskPo[this.capacity];
     }
 
     public int size() {
         return size;
     }
 
-    public boolean offer(JobPo e) {
+    public boolean offer(TaskPo e) {
         if (e == null)
             throw new NullPointerException();
         if (size >= capacity) {
@@ -81,7 +81,7 @@ public class JobPriorityBlockingQueue {
         return true;
     }
 
-    public JobPo poll() {
+    public TaskPo poll() {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
@@ -89,9 +89,9 @@ public class JobPriorityBlockingQueue {
             if (n < 0)
                 return null;
             else {
-                JobPo[] array = queue;
-                JobPo result = array[0];
-                JobPo x = array[n];
+                TaskPo[] array = queue;
+                TaskPo result = array[0];
+                TaskPo x = array[n];
                 array[n] = null;
                 siftDownUsingComparator(0, x, array, n, comparator);
                 size = n;
@@ -138,7 +138,7 @@ public class JobPriorityBlockingQueue {
         array[k] = x;
     }
 
-    private boolean replace(JobPo o) {
+    private boolean replace(TaskPo o) {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
@@ -153,9 +153,9 @@ public class JobPriorityBlockingQueue {
         return false;
     }
 
-    private int indexOf(JobPo o) {
+    private int indexOf(TaskPo o) {
         if (o != null) {
-            JobPo[] array = queue;
+            TaskPo[] array = queue;
             int n = size;
             for (int i = 0; i < n; i++)
                 if (o.getJobId().equals(array[i].getJobId()))

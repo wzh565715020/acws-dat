@@ -89,7 +89,7 @@ public class TaskPushProcessor extends AbstractProcessor {
 
         // 任务推送成功
         return RemotingCommand.createResponseCommand(JobProtos
-                .ResponseCode.JOB_PUSH_SUCCESS.code(), "job push success!");
+                .ResponseCode.TASK_PUSH_SUCCESS.code(), "job push success!");
     }
 
     /**
@@ -108,7 +108,7 @@ public class TaskPushProcessor extends AbstractProcessor {
             requestBody.addJobResult(jobRunResult);
             requestBody.setReceiveNewJob(response.isReceiveNewJob());     // 设置可以接受新任务
 
-            int requestCode = JobProtos.RequestCode.JOB_COMPLETED.code();
+            int requestCode = JobProtos.RequestCode.TASK_COMPLETED.code();
 
             RemotingCommand request = RemotingCommand.createRequestCommand(requestCode, requestBody);
 
@@ -173,7 +173,7 @@ public class TaskPushProcessor extends AbstractProcessor {
         requestBody.setJobRunResults(results);
         requestBody.setReSend(true);
 
-        int requestCode = JobProtos.RequestCode.JOB_COMPLETED.code();
+        int requestCode = JobProtos.RequestCode.TASK_COMPLETED.code();
         RemotingCommand request = RemotingCommand.createRequestCommand(requestCode, requestBody);
 
         try {

@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.taskdispatch.processor;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.protocol.JobProtos;
-import com.tyyd.framework.dat.core.protocol.command.JobPullRequest;
+import com.tyyd.framework.dat.core.protocol.command.TaskPullRequest;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
@@ -28,13 +28,13 @@ public class TaskPullProcessor extends AbstractRemotingProcessor {
     @Override
     public RemotingCommand processRequest(final Channel ctx, final RemotingCommand request) throws RemotingCommandException {
 
-        JobPullRequest requestBody = request.getBody();
+        TaskPullRequest requestBody = request.getBody();
 
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("taskTrackerNodeGroup:{}, taskTrackerIdentity:{} , availableThreads:{}", requestBody.getNodeGroup(), requestBody.getIdentity(), requestBody.getAvailableThreads());
         }
         jobPusher.concurrentPush(requestBody);
 
-        return RemotingCommand.createResponseCommand(JobProtos.ResponseCode.JOB_PULL_SUCCESS.code(), "");
+        return RemotingCommand.createResponseCommand(JobProtos.ResponseCode.TASK_PULL_SUCCESS.code(), "");
     }
 }

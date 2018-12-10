@@ -13,7 +13,6 @@ import com.tyyd.framework.dat.core.factory.JobNodeConfigFactory;
 import com.tyyd.framework.dat.core.factory.NodeFactory;
 import com.tyyd.framework.dat.core.json.JSONFactory;
 import com.tyyd.framework.dat.core.listener.MasterChangeListener;
-import com.tyyd.framework.dat.core.listener.MasterElectionListener;
 import com.tyyd.framework.dat.core.listener.NodeChangeListener;
 import com.tyyd.framework.dat.core.listener.SelfChangeListener;
 import com.tyyd.framework.dat.core.logger.Logger;

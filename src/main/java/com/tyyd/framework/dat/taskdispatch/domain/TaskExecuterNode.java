@@ -4,12 +4,13 @@ package com.tyyd.framework.dat.taskdispatch.domain;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.taskdispatch.channel.ChannelWrapper;
 
 /**
  * TaskExecuterNode状态对象
  */
-public class TaskExecuterNode {
+public class TaskExecuterNode{
     // 节点组名称
     public String nodeGroup;
     // 可用线程数
@@ -20,7 +21,11 @@ public class TaskExecuterNode {
     public ChannelWrapper channel;
 
     public Long timestamp = null;
-
+    
+    private String ip;
+    
+    private Integer port = 0;
+    
     public TaskExecuterNode(String nodeGroup, int availableThread, String identity, ChannelWrapper channel) {
         this.nodeGroup = nodeGroup;
         this.availableThread = new AtomicInteger(availableThread);
@@ -36,6 +41,25 @@ public class TaskExecuterNode {
         this.nodeGroup = nodeGroup;
         this.identity = identity;
     }
+    public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public Integer getPort() {
+		return port;
+	}
+
+	public void setPort(Integer port) {
+		this.port = port;
+	}
+
+	
+
+
 
     public String getNodeGroup() {
         return nodeGroup;

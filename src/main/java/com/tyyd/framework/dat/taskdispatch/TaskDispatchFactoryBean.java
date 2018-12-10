@@ -37,10 +37,6 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
      */
     private Properties configs = new Properties();
     /**
-     * 监听端口
-     */
-    private Integer listenPort;
-    /**
      * 老数据处理接口
      */
     private OldDataHandler oldDataHandler;
@@ -75,9 +71,6 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
         taskDispatcher.setClusterName(clusterName);
         taskDispatcher.setRegistryAddress(registryAddress);
 
-        if (listenPort != null) {
-            taskDispatcher.setListenPort(listenPort);
-        }
         if (oldDataHandler == null) {
             taskDispatcher.setOldDataHandler(new OldDataDeletePolicy());
         } else {
@@ -129,9 +122,5 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
 
     public void setOldDataHandler(OldDataHandler oldDataHandler) {
         this.oldDataHandler = oldDataHandler;
-    }
-
-    public void setListenPort(Integer listenPort) {
-        this.listenPort = listenPort;
     }
 }

@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.taskdispatch.complete.biz;
 import com.tyyd.framework.dat.core.protocol.command.JobCompletedRequest;
 import com.tyyd.framework.dat.core.protocol.command.JobPushRequest;
 import com.tyyd.framework.dat.core.support.JobDomainConverter;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.remoting.protocol.RemotingProtos;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
@@ -43,7 +43,7 @@ public class PushNewJobBiz implements TaskCompletedBiz {
 
         TaskSender.SendResult sendResult = appContext.getJobSender().send(taskTrackerNodeGroup, taskTrackerIdentity, new TaskSender.SendInvoker() {
             @Override
-            public TaskSender.SendResult invoke(JobPo jobPo) {
+            public TaskSender.SendResult invoke(TaskPo jobPo) {
 
                 JobPushRequest jobPushRequest = appContext.getCommandBodyWrapper().wrapper(new JobPushRequest());
                 jobPushRequest.setJobMeta(JobDomainConverter.convert(jobPo));

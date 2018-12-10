@@ -21,8 +21,8 @@ public class RemotingDispatcher extends AbstractProcessor {
 
     public RemotingDispatcher(TaskExecuterAppContext appContext) {
         super(appContext);
-        processors.put(JobProtos.RequestCode.PUSH_JOB, new TaskPushProcessor(appContext));
-        processors.put(JobProtos.RequestCode.JOB_ASK, new TaskAskProcessor(appContext));
+        processors.put(JobProtos.RequestCode.PUSH_TASK, new TaskPushProcessor(appContext));
+        processors.put(JobProtos.RequestCode.TASK_ASK, new TaskAskProcessor(appContext));
     }
 
     @Override

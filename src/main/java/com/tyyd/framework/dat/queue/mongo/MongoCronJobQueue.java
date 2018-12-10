@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
 import com.tyyd.framework.dat.queue.CronJobQueue;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -40,7 +40,7 @@ public class MongoCronJobQueue extends AbstractMongoJobQueue implements CronJobQ
     }
 
     @Override
-    public boolean add(JobPo jobPo) {
+    public boolean add(TaskPo jobPo) {
         try {
             template.save(jobPo);
         } catch (DuplicateKeyException e) {
@@ -51,23 +51,23 @@ public class MongoCronJobQueue extends AbstractMongoJobQueue implements CronJobQ
     }
 
     @Override
-    public JobPo getJob(String jobId) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+    public TaskPo getJob(String jobId) {
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.field("jobId").equal(jobId);
         return query.get();
     }
 
     @Override
     public boolean remove(String jobId) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.field("jobId").equal(jobId);
         WriteResult wr = template.delete(query);
         return wr.getN() == 1;
     }
 
     @Override
-    public JobPo getJob(String taskTrackerNodeGroup, String taskId) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+    public TaskPo getJob(String taskTrackerNodeGroup, String taskId) {
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.field("taskId").equal(taskId).
                 field("taskTrackerNodeGroup").equal(taskTrackerNodeGroup);
         return query.get();

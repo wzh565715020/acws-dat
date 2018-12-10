@@ -20,7 +20,7 @@ import com.tyyd.framework.dat.management.cluster.BackendAppContext;
 import com.tyyd.framework.dat.management.web.AbstractMVC;
 import com.tyyd.framework.dat.management.web.support.Builder;
 import com.tyyd.framework.dat.management.web.vo.RestfulResponse;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 
 import java.text.ParseException;
@@ -34,7 +34,7 @@ public class SuspendJobQueueApi extends AbstractMVC {
 
     @RequestMapping("/job-queue/suspend-job-get")
     public RestfulResponse suspendJobGet(JobQueueReq request) {
-        PaginationRsp<JobPo> paginationRsp = appContext.getSuspendJobQueue().pageSelect(request);
+        PaginationRsp<TaskPo> paginationRsp = appContext.getSuspendJobQueue().pageSelect(request);
         RestfulResponse response = new RestfulResponse();
         response.setSuccess(true);
         response.setResults(paginationRsp.getResults());
@@ -53,7 +53,7 @@ public class SuspendJobQueueApi extends AbstractMVC {
         }
         try {
 
-            JobPo jobPo = appContext.getSuspendJobQueue().getJob(request.getJobId());
+            TaskPo jobPo = appContext.getSuspendJobQueue().getJob(request.getJobId());
 
             if ("CRON".equals(jobType)) {
                 // 检查参数
@@ -115,7 +115,7 @@ public class SuspendJobQueueApi extends AbstractMVC {
             return Builder.build(false, "JobId 必须传!");
         }
 
-        JobPo jobPo = appContext.getSuspendJobQueue().getJob(request.getJobId());
+        TaskPo jobPo = appContext.getSuspendJobQueue().getJob(request.getJobId());
         if (jobPo == null) {
             return Builder.build(false, "任务不存在，或者已经删除");
         }
@@ -162,7 +162,7 @@ public class SuspendJobQueueApi extends AbstractMVC {
 
                 try {
                     // 2. add to executable queue
-                    JobPo repeatJob = appContext.getRepeatJobQueue().getJob(request.getJobId());
+                    TaskPo repeatJob = appContext.getRepeatJobQueue().getJob(request.getJobId());
                     long nextTriggerTime = JobUtils.getRepeatNextTriggerTime(repeatJob);
                     jobPo.setTriggerTime(nextTriggerTime);
                     appContext.getExecutableJobQueue().add(jobPo);

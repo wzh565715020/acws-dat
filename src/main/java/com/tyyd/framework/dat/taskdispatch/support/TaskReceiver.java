@@ -19,7 +19,7 @@ import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.core.support.CronExpressionUtils;
 import com.tyyd.framework.dat.core.support.JobDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 import com.tyyd.framework.dat.taskdispatch.id.IdGenerator;
@@ -68,9 +68,9 @@ public class TaskReceiver {
         }
     }
 
-    private JobPo addToQueue(Job job, JobSubmitRequest request) {
+    private TaskPo addToQueue(Job job, JobSubmitRequest request) {
 
-        JobPo jobPo = null;
+        TaskPo jobPo = null;
         boolean success = false;
         BizLogCode code = null;
         try {
@@ -116,7 +116,7 @@ public class TaskReceiver {
     /**
      * 添加任务
      */
-    private void addJob(Job job, JobPo jobPo) throws DupEntryException {
+    private void addJob(Job job, TaskPo jobPo) throws DupEntryException {
         if (job.isCron()) {
             addCronJob(jobPo);
         } else if (job.isRepeatable()) {
@@ -139,10 +139,10 @@ public class TaskReceiver {
     /**
      * 更新任务
      **/
-    private boolean replaceOnExist(Job job, JobPo jobPo) {
+    private boolean replaceOnExist(Job job, TaskPo jobPo) {
 
         // 得到老的jobId
-        JobPo oldJobPo;
+        TaskPo oldJobPo;
         if (job.isCron()) {
             oldJobPo = appContext.getCronJobQueue().getJob(job.getTaskTrackerNodeGroup(), job.getTaskId());
         } else if (job.isRepeatable()) {
@@ -176,7 +176,7 @@ public class TaskReceiver {
     /**
      * 添加Cron 任务
      */
-    private void addCronJob(JobPo jobPo) throws DupEntryException {
+    private void addCronJob(TaskPo jobPo) throws DupEntryException {
         Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(jobPo.getCronExpression());
         if (nextTriggerTime != null) {
             // 1.add to cron job queue
@@ -194,7 +194,7 @@ public class TaskReceiver {
     /**
      * 添加Repeat 任务
      */
-    private void addRepeatJob(JobPo jobPo) throws DupEntryException {
+    private void addRepeatJob(TaskPo jobPo) throws DupEntryException {
         // 1.add to repeat job queue
         appContext.getRepeatJobQueue().add(jobPo);
 
@@ -208,7 +208,7 @@ public class TaskReceiver {
     /**
      * 记录任务日志
      */
-    private void jobBizLog(JobPo jobPo, BizLogCode code) {
+    private void jobBizLog(TaskPo jobPo, BizLogCode code) {
         if (jobPo == null) {
             return;
         }

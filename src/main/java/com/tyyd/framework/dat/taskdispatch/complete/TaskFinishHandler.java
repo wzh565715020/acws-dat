@@ -16,7 +16,7 @@ import com.tyyd.framework.dat.core.support.CronExpressionUtils;
 import com.tyyd.framework.dat.core.support.JobDomainConverter;
 import com.tyyd.framework.dat.core.support.JobUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
@@ -56,7 +56,7 @@ public class TaskFinishHandler {
 
     private void finishCronJob(String jobId) {
 
-        JobPo jobPo = appContext.getCronJobQueue().getJob(jobId);
+        TaskPo jobPo = appContext.getCronJobQueue().getJob(jobId);
         if (jobPo == null) {
             // 可能任务队列中改条记录被删除了
             return;
@@ -80,7 +80,7 @@ public class TaskFinishHandler {
     }
 
     private void finishRepeatJob(String jobId, boolean isRetryForThisTime) {
-        JobPo jobPo = appContext.getRepeatJobQueue().getJob(jobId);
+        TaskPo jobPo = appContext.getRepeatJobQueue().getJob(jobId);
         if (jobPo == null) {
             // 可能任务队列中改条记录被删除了
             return;
@@ -115,7 +115,7 @@ public class TaskFinishHandler {
         }
     }
 
-    private void repeatJobRemoveLog(JobPo jobPo) {
+    private void repeatJobRemoveLog(TaskPo jobPo) {
         JobLogPo jobLogPo = JobDomainConverter.convertJobLog(jobPo);
         jobLogPo.setSuccess(true);
         jobLogPo.setLogType(LogType.DEL);

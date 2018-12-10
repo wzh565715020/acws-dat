@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.queue.mysql;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
 import com.tyyd.framework.dat.queue.CronJobQueue;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
 import com.tyyd.framework.dat.store.jdbc.builder.DeleteSql;
 import com.tyyd.framework.dat.store.jdbc.builder.SelectSql;
@@ -25,12 +25,12 @@ public class MysqlCronJobQueue extends AbstractMysqlJobQueue implements CronJobQ
     }
 
     @Override
-    public boolean add(JobPo jobPo) {
+    public boolean add(TaskPo jobPo) {
         return super.add(getTableName(), jobPo);
     }
 
     @Override
-    public JobPo getJob(String jobId) {
+    public TaskPo getJob(String jobId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
@@ -51,7 +51,7 @@ public class MysqlCronJobQueue extends AbstractMysqlJobQueue implements CronJobQ
     }
 
     @Override
-    public JobPo getJob(String taskTrackerNodeGroup, String taskId) {
+    public TaskPo getJob(String taskTrackerNodeGroup, String taskId) {
 
         return new SelectSql(getSqlTemplate())
                 .select()

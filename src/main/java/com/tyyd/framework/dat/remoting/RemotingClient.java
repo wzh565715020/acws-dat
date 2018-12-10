@@ -46,4 +46,10 @@ public interface RemotingClient {
     void registerDefaultProcessor(final RemotingProcessor processor, final ExecutorService executor);
 
     void shutdown();
+
+	Channel getAndCreateChannel(String addr) throws InterruptedException;
+
+	void invokeAsync(Channel channel, RemotingCommand request, long timeoutMillis, AsyncCallback asyncCallback)
+			throws InterruptedException, RemotingConnectException, RemotingTooMuchRequestException,
+			RemotingTimeoutException, RemotingSendRequestException;
 }

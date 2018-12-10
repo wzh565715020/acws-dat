@@ -77,8 +77,8 @@ public interface Constants {
 
     Charset UTF_8 = Charset.forName("UTF-8");
 
-    String TASK_PULL_FREQUENCY = "task.pull.frequency";
-    int DEFAULT_TASK_PULL_FREQUENCY = 1;
+    String TASK_PUSH_FREQUENCY = "task.pull.frequency";
+    int DEFAULT_TASK_PUSH_FREQUENCY = 1;
 
     // TaskTracker 离线(网络隔离)时间 10s，超过10s，自动停止当前执行任务
     long DEFAULT_TASK_EXECUTER_OFFLINE_LIMIT_MILLIS = 10 * 1000;

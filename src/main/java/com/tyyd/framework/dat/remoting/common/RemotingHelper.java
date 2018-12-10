@@ -6,6 +6,14 @@ import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.ChannelHandlerListener;
 import com.tyyd.framework.dat.remoting.Future;
 
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
@@ -56,5 +64,25 @@ public class RemotingHelper {
             }
         });
     }
+/*    public static io.netty.channel.Channel getChannel(String host,int port) {
+    	EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+    	Bootstrap bootstrap = new Bootstrap();
+    	bootstrap.channel(NioSocketChannel.class);
+    	bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+    	bootstrap.option(ChannelOption.TCP_NODELAY, true);
+    	bootstrap.group(eventLoopGroup);
+    	bootstrap.remoteAddress(host, port);
+    	bootstrap.handler(new ChannelInitializer<SocketChannel>() {
+    		@Override
+    		protected void initChannel(SocketChannel socketChannel) throws Exception {
+    			socketChannel.pipeline().addLast(new MessageDecoder(), new MessageEncoder(), new NettyClientHandler());
+    		}
+    	});
+    	ChannelFuture future = bootstrap.connect(host, port).sync();
+    	if (future.isSuccess()) {
+    		return future.channel();
+    	}
+    	return null;
+	}*/
 
 }

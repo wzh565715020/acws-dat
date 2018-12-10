@@ -15,19 +15,19 @@ public class JobProtos {
         // 提交任务
         SUBMIT_JOB(11),
         // 询问 任务执行的情况
-        ASK_JOB_PROGRESS(12),
+        ASK_TASK_PROGRESS(12),
         // 分发任务
-        PUSH_JOB(13),
+        PUSH_TASK(13),
         // 任务执行完成
-        JOB_COMPLETED(14),
+        TASK_COMPLETED(14),
         // 询问任务
-        JOB_ASK(15),
+        TASK_ASK(15),
         // 请求推送任务
-        JOB_PULL(16),
+        TASK_PULL(16),
         // TaskTracker的业务日志
         BIZ_LOG_SEND(17),
         // 取消(删除)任务
-        CANCEL_JOB(18),;
+        CANCEL_TASK(18),;
 
         private int code;
 
@@ -51,13 +51,13 @@ public class JobProtos {
 
     public enum ResponseCode {
         // 任务执行中
-        JOB_IN_PROGRESS(10),
+        TASK_IN_PROGRESS(10),
         // 接受任务成功
-        JOB_RECEIVE_SUCCESS(11),
+        TASK_RECEIVE_SUCCESS(11),
         // 接收任务失败
-        JOB_RECEIVE_FAILED(12),
+        TASK_RECEIVE_FAILED(12),
         // 任务执行失败
-        JOB_RUN_FAILURE(13),
+        TASK_RUN_FAILURE(13),
         // 没有任务节点执行
         NO_TASK_TRACKER(15),
         // 心跳成功
@@ -67,19 +67,19 @@ public class JobProtos {
         // 没有可用的 任务执行
         NO_AVAILABLE_JOB_RUNNER(18),
         // 任务推送成功
-        JOB_PUSH_SUCCESS(19),
+        TASK_PUSH_SUCCESS(19),
         // 任务处理成功
-        JOB_NOTIFY_SUCCESS(20),
+        TASK_NOTIFY_SUCCESS(20),
         // 任务推送
-        JOB_PULL_SUCCESS(21),
+        TASK_PULL_SUCCESS(21),
         // 业务日志发送成功
         BIZ_LOG_SEND_SUCCESS(22),
         // 任务删除成功
-        JOB_CANCEL_SUCCESS(23),
+        TASK_CANCEL_SUCCESS(23),
         // 任务删除失败
-        JOB_CANCEL_FAILED(24),
+        TASK_CANCEL_FAILED(24),
         // 任务执行错误
-        JOB_RUN_ERROR(25),;
+        TASK_RUN_ERROR(25),;
 
 
         private int code;

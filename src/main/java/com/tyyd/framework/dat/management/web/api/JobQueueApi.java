@@ -28,7 +28,7 @@ import com.tyyd.framework.dat.management.support.I18nManager;
 import com.tyyd.framework.dat.management.web.AbstractMVC;
 import com.tyyd.framework.dat.management.web.support.Builder;
 import com.tyyd.framework.dat.management.web.vo.RestfulResponse;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -44,7 +44,7 @@ public class JobQueueApi extends AbstractMVC {
 
     @RequestMapping("/job-queue/executable-job-get")
     public RestfulResponse executableJobGet(JobQueueReq request) {
-        PaginationRsp<JobPo> paginationRsp = appContext.getExecutableJobQueue().pageSelect(request);
+        PaginationRsp<TaskPo> paginationRsp = appContext.getExecutableJobQueue().pageSelect(request);
 
         boolean needClear = Boolean.valueOf(AppConfigurer.getProperty("lts.admin.remove.running.job.on.executable.search", "false"));
         if (needClear) {
@@ -60,13 +60,13 @@ public class JobQueueApi extends AbstractMVC {
     /**
      * 比较恶心的逻辑,当等待执行队列的任务同时也在执行中队列, 则不展示
      */
-    private PaginationRsp<JobPo> clearRunningJob(PaginationRsp<JobPo> paginationRsp) {
+    private PaginationRsp<TaskPo> clearRunningJob(PaginationRsp<TaskPo> paginationRsp) {
         if (paginationRsp == null || paginationRsp.getResults() == 0) {
             return paginationRsp;
         }
-        PaginationRsp<JobPo> rsp = new PaginationRsp<JobPo>();
-        List<JobPo> rows = new ArrayList<JobPo>();
-        for (JobPo jobPo : paginationRsp.getRows()) {
+        PaginationRsp<TaskPo> rsp = new PaginationRsp<TaskPo>();
+        List<TaskPo> rows = new ArrayList<TaskPo>();
+        for (TaskPo jobPo : paginationRsp.getRows()) {
             if (appContext.getExecutingJobQueue().getJob(jobPo.getTaskTrackerNodeGroup(), jobPo.getTaskId()) == null) {
                 // 没有正在执行, 则显示在等待执行列表中
                 rows.add(jobPo);
@@ -79,7 +79,7 @@ public class JobQueueApi extends AbstractMVC {
 
     @RequestMapping("/job-queue/executing-job-get")
     public RestfulResponse executingJobGet(JobQueueReq request) {
-        PaginationRsp<JobPo> paginationRsp = appContext.getExecutingJobQueue().pageSelect(request);
+        PaginationRsp<TaskPo> paginationRsp = appContext.getExecutingJobQueue().pageSelect(request);
         RestfulResponse response = new RestfulResponse();
         response.setSuccess(true);
         response.setResults(paginationRsp.getResults());
@@ -300,7 +300,7 @@ public class JobQueueApi extends AbstractMVC {
     @RequestMapping("/job-queue/executing-job-terminate")
     public RestfulResponse jobTerminate(String jobId) {
 
-        JobPo jobPo = appContext.getExecutingJobQueue().getJob(jobId);
+        TaskPo jobPo = appContext.getExecutingJobQueue().getJob(jobId);
         if (jobPo == null) {
             return Builder.build(false, "该任务已经执行完成或者被删除");
         }

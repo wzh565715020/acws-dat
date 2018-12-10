@@ -2,7 +2,7 @@ package com.tyyd.framework.dat.taskdispatch.domain;
 
 import com.tyyd.framework.dat.biz.logger.JobLogger;
 import com.tyyd.framework.dat.core.AppContext;
-import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
+import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.queue.CronJobQueue;
 import com.tyyd.framework.dat.queue.ExecutableJobQueue;
 import com.tyyd.framework.dat.queue.ExecutingJobQueue;
@@ -16,23 +16,24 @@ import com.tyyd.framework.dat.taskdispatch.id.IdGenerator;
 import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
 import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
 import com.tyyd.framework.dat.taskdispatch.support.OldDataHandler;
+import com.tyyd.framework.dat.taskdispatch.support.TaskPushMachine;
 import com.tyyd.framework.dat.taskdispatch.support.checker.ExecutingDeadTaskChecker;
 import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskClientManager;
-import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskTrackerManager;
+import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
+import com.tyyd.framework.dat.taskexecuter.support.TaskPullMachine;
 
 /**
  * JobTracker Application
- *
  */
 public class TaskDispatcherAppContext extends AppContext {
 
-    private RemotingServerDelegate remotingServer;
+    private RemotingClientDelegate remotingClientDelegate;
     // channel manager
     private ChannelManager channelManager;
     // JobClient manager for job tracker
-    private TaskClientManager jobClientManager;
+    private TaskClientManager taskClientManager;
     // TaskTracker manager for job tracker
-    private TaskTrackerManager taskTrackerManager;
+    private TaskExecuterManager taskExecuterManager;
     // dead job checker
     private ExecutingDeadTaskChecker executingDeadJobChecker;
     // old data handler, dirty data
@@ -59,6 +60,8 @@ public class TaskDispatcherAppContext extends AppContext {
     private TaskReceiver jobReceiver;
     private TaskSender jobSender;
 
+    // Pull Job Machine
+    private TaskPushMachine taskPushMachine;
     public TaskSender getJobSender() {
         return jobSender;
     }
@@ -99,12 +102,12 @@ public class TaskDispatcherAppContext extends AppContext {
         this.jobFeedbackQueue = jobFeedbackQueue;
     }
 
-    public RemotingServerDelegate getRemotingServer() {
-        return remotingServer;
+    public RemotingClientDelegate getRemotingServer() {
+        return remotingClientDelegate;
     }
 
-    public void setRemotingServer(RemotingServerDelegate remotingServer) {
-        this.remotingServer = remotingServer;
+    public void setRemotingServer(RemotingClientDelegate remotingClientDelegate) {
+        this.remotingClientDelegate = remotingClientDelegate;
     }
 
     public ChannelManager getChannelManager() {
@@ -116,19 +119,19 @@ public class TaskDispatcherAppContext extends AppContext {
     }
 
     public TaskClientManager getJobClientManager() {
-        return jobClientManager;
+        return taskClientManager;
     }
 
-    public void setJobClientManager(TaskClientManager jobClientManager) {
-        this.jobClientManager = jobClientManager;
+    public void setTaskClientManager(TaskClientManager jobClientManager) {
+        this.taskClientManager = jobClientManager;
     }
 
-    public TaskTrackerManager getTaskTrackerManager() {
-        return taskTrackerManager;
+    public TaskExecuterManager getTaskExecuterManager() {
+        return taskExecuterManager;
     }
 
-    public void setTaskTrackerManager(TaskTrackerManager taskTrackerManager) {
-        this.taskTrackerManager = taskTrackerManager;
+    public void setTaskExecuterManager(TaskExecuterManager taskExecuterManager) {
+        this.taskExecuterManager = taskExecuterManager;
     }
 
     public ExecutingDeadTaskChecker getExecutingDeadJobChecker() {
@@ -202,4 +205,12 @@ public class TaskDispatcherAppContext extends AppContext {
     public void setRepeatJobQueue(RepeatJobQueue repeatJobQueue) {
         this.repeatJobQueue = repeatJobQueue;
     }
+
+	public void setTaskPushMachine(TaskPushMachine taskPushMachine) {
+		this.taskPushMachine = taskPushMachine;
+	}
+
+	public TaskPushMachine getTaskPushMachine() {
+		return taskPushMachine;
+	}
 }

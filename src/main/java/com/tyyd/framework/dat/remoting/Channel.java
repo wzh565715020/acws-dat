@@ -3,9 +3,6 @@ package com.tyyd.framework.dat.remoting;
 
 import java.net.SocketAddress;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/3/15.
- */
 public interface Channel {
 
     SocketAddress localAddress();

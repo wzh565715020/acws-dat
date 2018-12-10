@@ -109,12 +109,12 @@ public class TaskClient<T extends TaskClientNode, Context extends AppContext> ex
         request.setTaskTrackerNodeGroup(taskTrackerNodeGroup);
 
         RemotingCommand requestCommand = RemotingCommand.createRequestCommand(
-                JobProtos.RequestCode.CANCEL_JOB.code(), request);
+                JobProtos.RequestCode.CANCEL_TASK.code(), request);
 
         try {
             RemotingCommand remotingResponse = remotingClient.invokeSync(requestCommand);
 
-            if (JobProtos.ResponseCode.JOB_CANCEL_SUCCESS.code() == remotingResponse.getCode()) {
+            if (JobProtos.ResponseCode.TASK_CANCEL_SUCCESS.code() == remotingResponse.getCode()) {
                 LOGGER.info("Cancel job success taskId={}, taskTrackerNodeGroup={} ", taskId, taskTrackerNodeGroup);
                 response.setSuccess(true);
                 return response;
@@ -172,7 +172,7 @@ public class TaskClient<T extends TaskClientNode, Context extends AppContext> ex
                         return;
                     }
 
-                    if (JobProtos.ResponseCode.JOB_RECEIVE_SUCCESS.code() == responseCommand.getCode()) {
+                    if (JobProtos.ResponseCode.TASK_RECEIVE_SUCCESS.code() == responseCommand.getCode()) {
                         LOGGER.info("Submit Job success: {}", jobs);
                         response.setSuccess(true);
                         return;

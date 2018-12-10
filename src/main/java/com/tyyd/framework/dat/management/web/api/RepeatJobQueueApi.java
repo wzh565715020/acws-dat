@@ -18,7 +18,7 @@ import com.tyyd.framework.dat.management.cluster.BackendAppContext;
 import com.tyyd.framework.dat.management.web.AbstractMVC;
 import com.tyyd.framework.dat.management.web.support.Builder;
 import com.tyyd.framework.dat.management.web.vo.RestfulResponse;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 
 import java.util.Date;
@@ -31,7 +31,7 @@ public class RepeatJobQueueApi extends AbstractMVC {
 
     @RequestMapping("/job-queue/repeat-job-get")
     public RestfulResponse repeatJobGet(JobQueueReq request) {
-        PaginationRsp<JobPo> paginationRsp = appContext.getRepeatJobQueue().pageSelect(request);
+        PaginationRsp<TaskPo> paginationRsp = appContext.getRepeatJobQueue().pageSelect(request);
         RestfulResponse response = new RestfulResponse();
         response.setSuccess(true);
         response.setResults(paginationRsp.getResults());
@@ -51,7 +51,7 @@ public class RepeatJobQueueApi extends AbstractMVC {
             return Builder.build(false, e.getMessage());
         }
         request.setCronExpression(null);
-        JobPo jobPo = appContext.getRepeatJobQueue().getJob(request.getJobId());
+        TaskPo jobPo = appContext.getRepeatJobQueue().getJob(request.getJobId());
         boolean success = appContext.getRepeatJobQueue().selectiveUpdate(request);
         if (success) {
             try {
@@ -92,7 +92,7 @@ public class RepeatJobQueueApi extends AbstractMVC {
         if (StringUtils.isEmpty(request.getJobId())) {
             return Builder.build(false, "JobId 必须传!");
         }
-        JobPo jobPo = appContext.getRepeatJobQueue().getJob(request.getJobId());
+        TaskPo jobPo = appContext.getRepeatJobQueue().getJob(request.getJobId());
         if (jobPo == null) {
             return Builder.build(false, "任务不存在，或者已经删除");
         }

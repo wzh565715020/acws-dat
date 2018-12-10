@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
 import com.tyyd.framework.dat.queue.ExecutingJobQueue;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -42,7 +42,7 @@ public class MongoExecutingJobQueue extends AbstractMongoJobQueue implements Exe
     }
 
     @Override
-    public boolean add(JobPo jobPo) {
+    public boolean add(TaskPo jobPo) {
         try {
             template.save(jobPo);
         } catch (DuplicateKeyException e) {
@@ -54,37 +54,37 @@ public class MongoExecutingJobQueue extends AbstractMongoJobQueue implements Exe
 
     @Override
     public boolean remove(String jobId) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.field("jobId").equal(jobId);
         WriteResult wr = template.delete(query);
         return wr.getN() == 1;
     }
 
     @Override
-    public List<JobPo> getJobs(String taskTrackerIdentity) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+    public List<TaskPo> getJobs(String taskTrackerIdentity) {
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.field("taskTrackerIdentity").equal(taskTrackerIdentity);
         return query.asList();
     }
 
     @Override
-    public List<JobPo> getDeadJobs(long deadline) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+    public List<TaskPo> getDeadJobs(long deadline) {
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.filter("gmtCreated < ", deadline);
         return query.asList();
     }
 
     @Override
-    public JobPo getJob(String taskTrackerNodeGroup, String taskId) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+    public TaskPo getJob(String taskTrackerNodeGroup, String taskId) {
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.field("taskId").equal(taskId).
                 field("taskTrackerNodeGroup").equal(taskTrackerNodeGroup);
         return query.get();
     }
 
     @Override
-    public JobPo getJob(String jobId) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+    public TaskPo getJob(String jobId) {
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.field("jobId").equal(jobId);
         return query.get();
     }

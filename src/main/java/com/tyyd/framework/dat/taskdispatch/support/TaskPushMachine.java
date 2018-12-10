@@ -1,4 +1,4 @@
-package com.tyyd.framework.dat.taskexecuter.support;
+package com.tyyd.framework.dat.taskdispatch.support;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -23,6 +23,7 @@ import com.tyyd.framework.dat.jvmmonitor.JVMConstants;
 import com.tyyd.framework.dat.jvmmonitor.JVMMonitor;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandFieldCheckException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
+import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 
 /**
@@ -30,34 +31,38 @@ import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
  * 只有当JobTracker可用的时候才会去Pull任务 3. Pull只是会给JobTracker发送一个通知
  *
  */
-public class TaskPullMachine {
+public class TaskPushMachine {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TaskPullMachine.class.getSimpleName());
+	private static final Logger LOGGER = LoggerFactory.getLogger(TaskPushMachine.class.getSimpleName());
 
 	// 定时检查TaskTracker是否有空闲的线程，如果有，那么向JobTracker发起任务pull请求
 	private final ScheduledExecutorService SCHEDULED_CHECKER = Executors.newScheduledThreadPool(1,
-			new NamedThreadFactory("LTS-JobPullMachine-Executor", true));
+			new NamedThreadFactory("dat-JobPushMachine-Executor", true));
 	private ScheduledFuture<?> scheduledFuture;
 	private AtomicBoolean start = new AtomicBoolean(false);
-	private TaskExecuterAppContext appContext;
+	private TaskDispatcherAppContext appContext;
 	private Runnable worker;
-	private int jobPullFrequency;
+	private int taskPushFrequency;
 	// 是否启用机器资源检查
 	private boolean machineResCheckEnable = true;
+	
+	private TaskPusher taskPusher;
 
-	public TaskPullMachine(final TaskExecuterAppContext appContext) {
+	public TaskPushMachine(final TaskDispatcherAppContext appContext) {
+		
 		this.appContext = appContext;
-		this.jobPullFrequency = appContext.getConfig().getParameter(Constants.TASK_PUSH_FREQUENCY,
+		taskPusher = new TaskPusher(appContext);
+		this.taskPushFrequency = appContext.getConfig().getParameter(Constants.TASK_PUSH_FREQUENCY,
 				Constants.DEFAULT_TASK_PUSH_FREQUENCY);
 
 		this.machineResCheckEnable = appContext.getConfig().getParameter(Constants.LB_MACHINE_RES_CHECK_ENABLE, true);
 
 		appContext.getEventCenter().subscribe(new EventSubscriber(
-				TaskPullMachine.class.getSimpleName().concat(appContext.getConfig().getIdentity()), new Observer() {
+				TaskPushMachine.class.getSimpleName().concat(appContext.getConfig().getIdentity()), new Observer() {
 					@Override
 					public void onObserved(EventInfo eventInfo) {
 						if (EcTopic.TASK_EXECUTER_AVAILABLE.equals(eventInfo.getTopic())) {
-							// JobTracker 可用了
+							// TASK_EXECUTER 可用了
 							start();
 						} else if (EcTopic.NO_TASK_EXECUTER_AVAILABLE.equals(eventInfo.getTopic())) {
 							stop();
@@ -87,7 +92,7 @@ public class TaskPullMachine {
 		try {
 			if (start.compareAndSet(false, true)) {
 				if (scheduledFuture == null) {
-					scheduledFuture = SCHEDULED_CHECKER.scheduleWithFixedDelay(worker, 1, jobPullFrequency,
+					scheduledFuture = SCHEDULED_CHECKER.scheduleWithFixedDelay(worker, 1, taskPushFrequency,
 							TimeUnit.SECONDS);
 				}
 				LOGGER.info("Start Job pull machine success!");
@@ -113,34 +118,7 @@ public class TaskPullMachine {
 	 * 发送Job pull 请求
 	 */
 	private void sendRequest() throws RemotingCommandFieldCheckException {
-		int availableThreads = appContext.getRunnerPool().getAvailablePoolSize();
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("current availableThreads:{}", availableThreads);
-		}
-		if (availableThreads == 0) {
-			return;
-		}
-		TaskPullRequest requestBody = appContext.getCommandBodyWrapper().wrapper(new TaskPullRequest());
-		requestBody.setAvailableThreads(availableThreads);
-		RemotingCommand request = RemotingCommand.createRequestCommand(JobProtos.RequestCode.TASK_PULL.code(),
-				requestBody);
-
-		try {
-			RemotingCommand responseCommand = appContext.getRemotingClient().invokeSync(request);
-			if (responseCommand == null) {
-				LOGGER.warn("Job pull request failed! response command is null!");
-				return;
-			}
-			if (JobProtos.ResponseCode.TASK_PULL_SUCCESS.code() == responseCommand.getCode()) {
-				if (LOGGER.isDebugEnabled()) {
-					LOGGER.debug("Job pull request success!");
-				}
-				return;
-			}
-			LOGGER.warn("Job pull request failed! response command is null!");
-		} catch (JobTrackerNotFoundException e) {
-			LOGGER.warn("no job tracker available!");
-		}
+		taskPusher.concurrentPush();
 	}
 
 	/**

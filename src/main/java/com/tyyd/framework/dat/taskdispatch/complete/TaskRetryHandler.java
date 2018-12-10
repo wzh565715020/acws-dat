@@ -13,7 +13,7 @@ import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.CronExpressionUtils;
 import com.tyyd.framework.dat.core.support.JobUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
@@ -38,7 +38,7 @@ public class TaskRetryHandler {
 
             JobMeta jobMeta = result.getJobMeta();
             // 1. 加入到重试队列
-            JobPo jobPo = appContext.getExecutingJobQueue().getJob(jobMeta.getJobId());
+            TaskPo jobPo = appContext.getExecutingJobQueue().getJob(jobMeta.getJobId());
             if (jobPo == null) {    // 表示已经被删除了
                 continue;
             }
@@ -50,7 +50,7 @@ public class TaskRetryHandler {
 
             if (jobPo.isCron()) {
                 // 如果是 cron Job, 判断任务下一次执行时间和重试时间的比较
-                JobPo cronJobPo = appContext.getCronJobQueue().getJob(jobMeta.getJobId());
+                TaskPo cronJobPo = appContext.getCronJobQueue().getJob(jobMeta.getJobId());
                 if (cronJobPo != null) {
                     Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(cronJobPo.getCronExpression());
                     if (nextTriggerTime != null && nextTriggerTime.getTime() < nextRetryTriggerTime) {
@@ -62,7 +62,7 @@ public class TaskRetryHandler {
                     }
                 }
             } else if (jobPo.isRepeatable()) {
-                JobPo repeatJobPo = appContext.getRepeatJobQueue().getJob(jobMeta.getJobId());
+                TaskPo repeatJobPo = appContext.getRepeatJobQueue().getJob(jobMeta.getJobId());
                 if (repeatJobPo != null) {
                     // 比较下一次重复时间和重试时间
                     if (repeatJobPo.getRepeatCount() == -1 || (repeatJobPo.getRepeatedCount() < repeatJobPo.getRepeatCount())) {

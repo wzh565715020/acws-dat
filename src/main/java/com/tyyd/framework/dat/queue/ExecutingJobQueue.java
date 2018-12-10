@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.queue;
 
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public interface ExecutingJobQueue extends JobQueue {
     /**
      * 入队列
      */
-    boolean add(JobPo jobPo);
+    boolean add(TaskPo jobPo);
 
     /**
      * 出队列
@@ -24,17 +24,17 @@ public interface ExecutingJobQueue extends JobQueue {
     /**
      * 得到某个TaskTracker节点上正在执行的任务
      */
-    List<JobPo> getJobs(String taskTrackerIdentity);
+    List<TaskPo> getJobs(String taskTrackerIdentity);
 
     /**
      * 根据过期时间得到死掉的任务
      */
-    List<JobPo> getDeadJobs(long deadline);
+    List<TaskPo> getDeadJobs(long deadline);
 
     /**
      * 得到JobPo
      */
-    JobPo getJob(String taskTrackerNodeGroup, String taskId);
+    TaskPo getJob(String taskTrackerNodeGroup, String taskId);
 
-    JobPo getJob(String jobId);
+    TaskPo getJob(String jobId);
 }

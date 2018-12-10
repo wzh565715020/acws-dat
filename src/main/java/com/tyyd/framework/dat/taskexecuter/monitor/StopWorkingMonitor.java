@@ -47,7 +47,7 @@ public class StopWorkingMonitor {
                         offlineTimestamp = null;
                     }
                 });
-                appContext.getEventCenter().subscribe(eventSubscriber, EcTopic.JOB_TRACKER_AVAILABLE);
+                appContext.getEventCenter().subscribe(eventSubscriber, EcTopic.TASK_EXECUTER_AVAILABLE);
 
                 scheduledFuture = SCHEDULED_CHECKER.scheduleWithFixedDelay(new Runnable() {
                     @Override
@@ -81,7 +81,7 @@ public class StopWorkingMonitor {
                 scheduledFuture.cancel(true);
                 SCHEDULED_CHECKER.shutdown();
 
-                appContext.getEventCenter().unSubscribe(EcTopic.JOB_TRACKER_AVAILABLE, eventSubscriber);
+                appContext.getEventCenter().unSubscribe(EcTopic.TASK_EXECUTER_AVAILABLE, eventSubscriber);
 
                 LOGGER.info("stop succeed ");
             }

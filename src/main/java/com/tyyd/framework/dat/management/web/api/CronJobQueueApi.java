@@ -18,7 +18,7 @@ import com.tyyd.framework.dat.management.cluster.BackendAppContext;
 import com.tyyd.framework.dat.management.web.AbstractMVC;
 import com.tyyd.framework.dat.management.web.support.Builder;
 import com.tyyd.framework.dat.management.web.vo.RestfulResponse;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 
 import java.text.ParseException;
@@ -32,7 +32,7 @@ public class CronJobQueueApi extends AbstractMVC {
 
     @RequestMapping("/job-queue/cron-job-get")
     public RestfulResponse cronJobGet(JobQueueReq request) {
-        PaginationRsp<JobPo> paginationRsp = appContext.getCronJobQueue().pageSelect(request);
+        PaginationRsp<TaskPo> paginationRsp = appContext.getCronJobQueue().pageSelect(request);
         RestfulResponse response = new RestfulResponse();
         response.setSuccess(true);
         response.setResults(paginationRsp.getResults());
@@ -56,7 +56,7 @@ public class CronJobQueueApi extends AbstractMVC {
             if (expression.getTimeAfter(new Date()) == null) {
                 return Builder.build(false, StringUtils.format("该CronExpression={} 已经没有执行时间点! 请重新设置或者直接删除。", request.getCronExpression()));
             }
-            JobPo cronJobPo = appContext.getCronJobQueue().getJob(request.getJobId());
+            TaskPo cronJobPo = appContext.getCronJobQueue().getJob(request.getJobId());
             boolean success = appContext.getCronJobQueue().selectiveUpdate(request);
             if (success) {
                 try {
@@ -99,7 +99,7 @@ public class CronJobQueueApi extends AbstractMVC {
         if (StringUtils.isEmpty(request.getJobId())) {
             return Builder.build(false, "JobId 必须传!");
         }
-        JobPo jobPo = appContext.getCronJobQueue().getJob(request.getJobId());
+        TaskPo jobPo = appContext.getCronJobQueue().getJob(request.getJobId());
         if (jobPo == null) {
             return Builder.build(false, "任务不存在，或者已经删除");
         }

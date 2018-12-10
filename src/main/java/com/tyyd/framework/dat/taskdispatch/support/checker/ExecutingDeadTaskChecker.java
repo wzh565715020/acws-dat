@@ -26,10 +26,11 @@ import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.core.protocol.JobProtos;
 import com.tyyd.framework.dat.core.protocol.command.JobAskRequest;
 import com.tyyd.framework.dat.core.protocol.command.JobAskResponse;
+import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
 import com.tyyd.framework.dat.core.support.JobDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.ResponseFuture;
@@ -106,27 +107,27 @@ public class ExecutingDeadTaskChecker {
 
         // 查询出所有死掉的任务 (其实可以直接在数据库中fix的, 查询出来主要是为了日志打印)
         // 一般来说这个是没有多大的，我就不分页去查询了
-        List<JobPo> maybeDeadJobPos = appContext.getExecutingJobQueue().getDeadJobs(
+        List<TaskPo> maybeDeadJobPos = appContext.getExecutingJobQueue().getDeadJobs(
                 SystemClock.now() - maxDeadCheckTime * 1000);
         if (CollectionUtils.isNotEmpty(maybeDeadJobPos)) {
 
-            Map<String/*taskTrackerIdentity*/, List<JobPo>> jobMap = new HashMap<String, List<JobPo>>();
-            for (JobPo jobPo : maybeDeadJobPos) {
-                List<JobPo> jobPos = jobMap.get(jobPo.getTaskTrackerIdentity());
+            Map<String/*taskTrackerIdentity*/, List<TaskPo>> jobMap = new HashMap<String, List<TaskPo>>();
+            for (TaskPo jobPo : maybeDeadJobPos) {
+                List<TaskPo> jobPos = jobMap.get(jobPo.getTaskTrackerIdentity());
                 if (jobPos == null) {
-                    jobPos = new ArrayList<JobPo>();
+                    jobPos = new ArrayList<TaskPo>();
                     jobMap.put(jobPo.getTaskTrackerIdentity(), jobPos);
                 }
                 jobPos.add(jobPo);
             }
 
-            for (Map.Entry<String, List<JobPo>> entry : jobMap.entrySet()) {
+            for (Map.Entry<String, List<TaskPo>> entry : jobMap.entrySet()) {
                 String taskTrackerNodeGroup = entry.getValue().get(0).getTaskTrackerNodeGroup();
-                String taskTrackerIdentity = entry.getKey();
+                String taskExecuterIdentity = entry.getKey();
                 // 去查看这个TaskTrackerIdentity是否存活
-                ChannelWrapper channelWrapper = appContext.getChannelManager().getChannel(taskTrackerNodeGroup, NodeType.TASK_EXECUTER, taskTrackerIdentity);
-                if (channelWrapper == null && taskTrackerIdentity != null) {
-                    Long offlineTimestamp = appContext.getChannelManager().getOfflineTimestamp(taskTrackerIdentity);
+                ChannelWrapper channelWrapper = appContext.getChannelManager().getChannel(taskTrackerNodeGroup, NodeType.TASK_EXECUTER, taskExecuterIdentity);
+                if (channelWrapper == null && taskExecuterIdentity != null) {
+                    Long offlineTimestamp = appContext.getChannelManager().getOfflineTimestamp(taskExecuterIdentity);
                     // 已经离线太久，直接修复
                     if (offlineTimestamp == null || SystemClock.now() - offlineTimestamp > Constants.DEFAULT_TASK_EXECUTER_OFFLINE_LIMIT_MILLIS) {
                         // fixDeadJob
@@ -145,17 +146,17 @@ public class ExecutingDeadTaskChecker {
     /**
      * 向taskTracker询问执行中的任务
      */
-    private void askTimeoutJob(Channel channel, final List<JobPo> jobPos) {
+    private void askTimeoutJob(Channel channel, final List<TaskPo> jobPos) {
         try {
-            RemotingServerDelegate remotingServer = appContext.getRemotingServer();
+            RemotingClientDelegate remotingServer = appContext.getRemotingServer();
             List<String> jobIds = new ArrayList<String>(jobPos.size());
-            for (JobPo jobPo : jobPos) {
+            for (TaskPo jobPo : jobPos) {
                 jobIds.add(jobPo.getJobId());
             }
             JobAskRequest requestBody = appContext.getCommandBodyWrapper().wrapper(new JobAskRequest());
             requestBody.setJobIds(jobIds);
-            RemotingCommand request = RemotingCommand.createRequestCommand(JobProtos.RequestCode.JOB_ASK.code(), requestBody);
-            remotingServer.invokeAsync(channel, request, new AsyncCallback() {
+            RemotingCommand request = RemotingCommand.createRequestCommand(JobProtos.RequestCode.TASK_ASK.code(), requestBody);
+            remotingServer.invokeAsync(request, new AsyncCallback() {
                 @Override
                 public void operationComplete(ResponseFuture responseFuture) {
                     RemotingCommand response = responseFuture.getResponseCommand();
@@ -168,7 +169,7 @@ public class ExecutingDeadTaskChecker {
                                 Thread.sleep(1000L);
                             } catch (InterruptedException ignored) {
                             }
-                            for (JobPo jobPo : jobPos) {
+                            for (TaskPo jobPo : jobPos) {
                                 if (deadJobIds.contains(jobPo.getJobId())) {
                                     fixDeadJob(jobPo);
                                 }
@@ -177,19 +178,19 @@ public class ExecutingDeadTaskChecker {
                     }
                 }
             });
-        } catch (RemotingSendException e) {
+        } catch (Exception e) {
             LOGGER.error("Ask timeout Job error, ", e);
         }
 
     }
 
-    private void fixDeadJob(List<JobPo> jobPos) {
-        for (JobPo jobPo : jobPos) {
+    private void fixDeadJob(List<TaskPo> jobPos) {
+        for (TaskPo jobPo : jobPos) {
             fixDeadJob(jobPo);
         }
     }
 
-    private void fixDeadJob(JobPo jobPo) {
+    private void fixDeadJob(TaskPo jobPo) {
         try {
 
             jobPo.setGmtModified(SystemClock.now());

@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.admin.response.PaginationRsp;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.queue.JobQueue;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.JdbcException;
 import com.tyyd.framework.dat.store.mongo.MongoRepository;
 import org.mongodb.morphia.query.Query;
@@ -25,8 +25,8 @@ public abstract class AbstractMongoJobQueue extends MongoRepository implements J
     }
 
     @Override
-    public PaginationRsp<JobPo> pageSelect(JobQueueReq request) {
-        Query<JobPo> query = template.createQuery(getTargetTable(request.getTaskTrackerNodeGroup()), JobPo.class);
+    public PaginationRsp<TaskPo> pageSelect(JobQueueReq request) {
+        Query<TaskPo> query = template.createQuery(getTargetTable(request.getTaskTrackerNodeGroup()), TaskPo.class);
         addCondition(query, "jobId", request.getJobId());
         addCondition(query, "taskId", request.getTaskId());
         addCondition(query, "taskTrackerNodeGroup", request.getTaskTrackerNodeGroup());
@@ -44,7 +44,7 @@ public abstract class AbstractMongoJobQueue extends MongoRepository implements J
         if (request.getEndGmtModified() != null) {
             query.filter("gmtModified >= ", request.getEndGmtModified().getTime());
         }
-        PaginationRsp<JobPo> response = new PaginationRsp<JobPo>();
+        PaginationRsp<TaskPo> response = new PaginationRsp<TaskPo>();
         Long results = template.getCount(query);
         response.setResults(results.intValue());
         if (results == 0) {
@@ -64,10 +64,10 @@ public abstract class AbstractMongoJobQueue extends MongoRepository implements J
         if (StringUtils.isEmpty(request.getJobId())) {
             throw new JdbcException("Only allow by jobId");
         }
-        Query<JobPo> query = template.createQuery(getTargetTable(request.getTaskTrackerNodeGroup()), JobPo.class);
+        Query<TaskPo> query = template.createQuery(getTargetTable(request.getTaskTrackerNodeGroup()), TaskPo.class);
         query.field("jobId").equal(request.getJobId());
 
-        UpdateOperations<JobPo> operations = template.createUpdateOperations(JobPo.class);
+        UpdateOperations<TaskPo> operations = template.createUpdateOperations(TaskPo.class);
         addUpdateField(operations, "cronExpression", request.getCronExpression());
         addUpdateField(operations, "needFeedback", request.getNeedFeedback());
         addUpdateField(operations, "extParams", request.getExtParams());
@@ -83,7 +83,7 @@ public abstract class AbstractMongoJobQueue extends MongoRepository implements J
         return ur.getUpdatedCount() == 1;
     }
 
-    private Query<JobPo> addCondition(Query<JobPo> query, String field, Object o) {
+    private Query<TaskPo> addCondition(Query<TaskPo> query, String field, Object o) {
         if (!checkCondition(o)) {
             return query;
         }
@@ -91,7 +91,7 @@ public abstract class AbstractMongoJobQueue extends MongoRepository implements J
         return query;
     }
 
-    private UpdateOperations<JobPo> addUpdateField(UpdateOperations<JobPo> operations, String field, Object o) {
+    private UpdateOperations<TaskPo> addUpdateField(UpdateOperations<TaskPo> operations, String field, Object o) {
         if (!checkCondition(o)) {
             return operations;
         }

@@ -39,7 +39,7 @@ public class TaskFinishedProcessor implements RemotingProcessor {
             LOGGER.error(t.getMessage(), t);
         }
 
-        return RemotingCommand.createResponseCommand(JobProtos.ResponseCode.JOB_NOTIFY_SUCCESS.code(),
+        return RemotingCommand.createResponseCommand(JobProtos.ResponseCode.TASK_NOTIFY_SUCCESS.code(),
                 "received successful");
     }
 }

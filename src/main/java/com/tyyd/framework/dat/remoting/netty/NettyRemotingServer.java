@@ -9,6 +9,7 @@ import com.tyyd.framework.dat.remoting.exception.RemotingException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -18,6 +19,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 /**
  * @author Robert HG (254963746@qq.com) on 11/3/15.
@@ -183,5 +185,4 @@ public class NettyRemotingServer extends AbstractRemotingServer {
             RemotingHelper.closeChannel(channel);
         }
     }
-
 }

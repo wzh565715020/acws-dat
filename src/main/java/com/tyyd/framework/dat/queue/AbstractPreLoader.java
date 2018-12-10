@@ -7,7 +7,7 @@ import com.tyyd.framework.dat.core.commons.utils.Callable;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.core.support.NodeShutdownHook;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -18,129 +18,126 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class AbstractPreLoader implements PreLoader {
 
-    private int loadSize;
-    // 预取阀值
-    private double factor;
+	private int loadSize;
+	// 预取阀值
+	private double factor;
 
-    private ConcurrentHashMap<String/*taskTrackerNodeGroup*/, JobPriorityBlockingQueue> JOB_MAP = new ConcurrentHashMap<String, JobPriorityBlockingQueue>();
+	private ConcurrentHashMap<String/* taskTrackerNodeGroup */, JobPriorityBlockingQueue> JOB_MAP = new ConcurrentHashMap<String, JobPriorityBlockingQueue>();
 
-    // 加载的信号
-    private ConcurrentHashSet<String> LOAD_SIGNAL = new ConcurrentHashSet<String>();
-    private ScheduledExecutorService LOAD_EXECUTOR_SERVICE = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("LTS-PreLoader", true));
-    @SuppressWarnings("unused")
+	// 加载的信号
+	private ConcurrentHashSet<String> LOAD_SIGNAL = new ConcurrentHashSet<String>();
+
+	private ScheduledExecutorService LOAD_EXECUTOR_SERVICE = Executors
+			.newSingleThreadScheduledExecutor(new NamedThreadFactory("LTS-PreLoader", true));
 	private ScheduledFuture<?> scheduledFuture;
-    private AtomicBoolean start = new AtomicBoolean(false);
-    private String FORCE_PREFIX = "force_"; // 强制加载的信号
+	private AtomicBoolean start = new AtomicBoolean(false);
+	private String FORCE_PREFIX = "force_"; // 强制加载的信号
 
-    public AbstractPreLoader(final AppContext appContext) {
-        if (start.compareAndSet(false, true)) {
+	public AbstractPreLoader(final AppContext appContext) {
+		if (start.compareAndSet(false, true)) {
 
-            loadSize = appContext.getConfig().getParameter("job.preloader.size", 300);
-            factor = appContext.getConfig().getParameter("job.preloader.factor", 0.2);
+			loadSize = appContext.getConfig().getParameter("job.preloader.size", 300);
+			factor = appContext.getConfig().getParameter("job.preloader.factor", 0.2);
 
-            scheduledFuture = LOAD_EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
-                @Override
-                public void run() {
+			scheduledFuture = LOAD_EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
+				@Override
+				public void run() {
 
-                    for (String loadTaskTrackerNodeGroup : LOAD_SIGNAL) {
+					for (String loadTaskTrackerNodeGroup : LOAD_SIGNAL) {
 
-                        // 是否是强制加载
-                        boolean force = false;
-                        if (loadTaskTrackerNodeGroup.startsWith(FORCE_PREFIX)) {
-                            loadTaskTrackerNodeGroup = loadTaskTrackerNodeGroup.replaceFirst(FORCE_PREFIX, "");
-                            force = true;
-                        }
+						// 是否是强制加载
+						boolean force = false;
+						if (loadTaskTrackerNodeGroup.startsWith(FORCE_PREFIX)) {
+							loadTaskTrackerNodeGroup = loadTaskTrackerNodeGroup.replaceFirst(FORCE_PREFIX, "");
+							force = true;
+						}
 
-                        JobPriorityBlockingQueue queue = JOB_MAP.get(loadTaskTrackerNodeGroup);
-                        if (!force && queue.size() / loadSize < factor) {
-                            // load
-                            List<JobPo> loads = load(loadTaskTrackerNodeGroup, loadSize - queue.size());
-                            // 加入到内存中
-                            if (CollectionUtils.isNotEmpty(loads)) {
-                                for (JobPo load : loads) {
-                                    if (!queue.offer(load)) {
-                                        // 没有成功说明已经满了
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        LOAD_SIGNAL.remove(loadTaskTrackerNodeGroup);
-                    }
-                }
-            }, 500, 500, TimeUnit.MILLISECONDS);
+						JobPriorityBlockingQueue queue = JOB_MAP.get(loadTaskTrackerNodeGroup);
+						if (!force && queue.size() / loadSize < factor) {
+							// load
+							List<TaskPo> loads = load(loadTaskTrackerNodeGroup, loadSize - queue.size());
+							// 加入到内存中
+							if (CollectionUtils.isNotEmpty(loads)) {
+								for (TaskPo load : loads) {
+									if (!queue.offer(load)) {
+										// 没有成功说明已经满了
+										break;
+									}
+								}
+							}
+						}
+						LOAD_SIGNAL.remove(loadTaskTrackerNodeGroup);
+					}
+				}
+			}, 500, 500, TimeUnit.MILLISECONDS);
 
-            NodeShutdownHook.registerHook(appContext, this.getClass().getName(), new Callable() {
-                @Override
-                public void call() throws Exception {
-                    scheduledFuture.cancel(true);
-                    LOAD_EXECUTOR_SERVICE.shutdown();
-                    start.set(false);
-                }
-            });
-        }
-    }
+			NodeShutdownHook.registerHook(appContext, this.getClass().getName(), new Callable() {
+				@Override
+				public void call() throws Exception {
+					scheduledFuture.cancel(true);
+					LOAD_EXECUTOR_SERVICE.shutdown();
+					start.set(false);
+				}
+			});
+		}
+	}
 
-    public JobPo take(String taskTrackerNodeGroup, String taskTrackerIdentity) {
-        while (true) {
-            JobPo jobPo = get(taskTrackerNodeGroup);
-            if (jobPo == null) {
-                return null;
-            }
-            // update jobPo
-            if (lockJob(taskTrackerNodeGroup, jobPo.getJobId(),
-                    taskTrackerIdentity, jobPo.getTriggerTime(),
-                    jobPo.getGmtModified())) {
-                jobPo.setTaskTrackerIdentity(taskTrackerIdentity);
-                jobPo.setIsRunning(true);
-                jobPo.setGmtModified(SystemClock.now());
-                return jobPo;
-            }
-        }
-    }
+	public TaskPo take(String taskTrackerNodeGroup, String taskTrackerIdentity) {
+		while (true) {
+			TaskPo jobPo = get(taskTrackerNodeGroup);
+			if (jobPo == null) {
+				return null;
+			}
+			// update jobPo
+			if (lockJob(taskTrackerNodeGroup, jobPo.getJobId(), taskTrackerIdentity, jobPo.getTriggerTime(),
+					jobPo.getGmtModified())) {
+				jobPo.setTaskTrackerIdentity(taskTrackerIdentity);
+				jobPo.setIsRunning(true);
+				jobPo.setGmtModified(SystemClock.now());
+				return jobPo;
+			}
+		}
+	}
 
-    @Override
-    public void load(String taskTrackerNodeGroup) {
-        if (StringUtils.isEmpty(taskTrackerNodeGroup)) {
-            for (String key : JOB_MAP.keySet()) {
-                LOAD_SIGNAL.add(FORCE_PREFIX + key);
-            }
-            return;
-        }
-        LOAD_SIGNAL.add(FORCE_PREFIX + taskTrackerNodeGroup);
-    }
+	@Override
+	public void load(String taskTrackerNodeGroup) {
+		if (StringUtils.isEmpty(taskTrackerNodeGroup)) {
+			for (String key : JOB_MAP.keySet()) {
+				LOAD_SIGNAL.add(FORCE_PREFIX + key);
+			}
+			return;
+		}
+		LOAD_SIGNAL.add(FORCE_PREFIX + taskTrackerNodeGroup);
+	}
 
-    /**
-     * 锁定任务
-     */
-    protected abstract boolean lockJob(String taskTrackerNodeGroup,
-                                       String jobId,
-                                       String taskTrackerIdentity,
-                                       Long triggerTime,
-                                       Long gmtModified);
+	/**
+	 * 锁定任务
+	 */
+	protected abstract boolean lockJob(String taskTrackerNodeGroup, String jobId, String taskTrackerIdentity,
+			Long triggerTime, Long gmtModified);
 
-    /**
-     * 加载任务
-     */
-    protected abstract List<JobPo> load(String loadTaskTrackerNodeGroup, int loadSize);
+	/**
+	 * 加载任务
+	 */
+	protected abstract List<TaskPo> load(String loadTaskTrackerNodeGroup, int loadSize);
 
-    private JobPo get(String taskTrackerNodeGroup) {
-        JobPriorityBlockingQueue queue = JOB_MAP.get(taskTrackerNodeGroup);
-        if (queue == null) {
-            queue = new JobPriorityBlockingQueue(loadSize);
-            JobPriorityBlockingQueue oldQueue = JOB_MAP.putIfAbsent(taskTrackerNodeGroup, queue);
-            if (oldQueue != null) {
-                queue = oldQueue;
-            }
-        }
+	private TaskPo get(String taskExecuterNodeGroup) {
+		JobPriorityBlockingQueue queue = JOB_MAP.get(taskExecuterNodeGroup);
+		if (queue == null) {
+			queue = new JobPriorityBlockingQueue(loadSize);
+			JobPriorityBlockingQueue oldQueue = JOB_MAP.putIfAbsent(taskExecuterNodeGroup, queue);
+			if (oldQueue != null) {
+				queue = oldQueue;
+			}
+		}
 
-        if (queue.size() / loadSize < factor) {
-            // 触发加载的请求
-            if (!LOAD_SIGNAL.contains(taskTrackerNodeGroup)) {
-                LOAD_SIGNAL.add(taskTrackerNodeGroup);
-            }
-        }
-        return queue.poll();
-    }
+		if (queue.size() / loadSize < factor) {
+			// 触发加载的请求
+			if (!LOAD_SIGNAL.contains(taskExecuterNodeGroup)) {
+				LOAD_SIGNAL.add(taskExecuterNodeGroup);
+			}
+		}
+		return queue.poll();
+	}
 
 }

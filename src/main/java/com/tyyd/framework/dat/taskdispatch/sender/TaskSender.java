@@ -9,7 +9,7 @@ import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.JobDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
@@ -26,7 +26,7 @@ public class TaskSender {
     public SendResult send(String taskTrackerNodeGroup, String taskTrackerIdentity, SendInvoker invoker) {
 
         // 从mongo 中取一个可运行的job
-        final JobPo jobPo = appContext.getPreLoader().take(taskTrackerNodeGroup, taskTrackerIdentity);
+        final TaskPo jobPo = appContext.getPreLoader().take(taskTrackerNodeGroup, taskTrackerIdentity);
         if (jobPo == null) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Job push failed: no job! nodeGroup=" + taskTrackerNodeGroup + ", identity=" + taskTrackerIdentity);
@@ -61,7 +61,7 @@ public class TaskSender {
     }
 
     public interface SendInvoker {
-        SendResult invoke(JobPo jobPo);
+        SendResult invoke(TaskPo jobPo);
     }
 
     public static class SendResult {

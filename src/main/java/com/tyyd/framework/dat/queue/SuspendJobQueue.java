@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.queue;
 
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 
 /**
@@ -15,9 +15,9 @@ public interface SuspendJobQueue extends JobQueue{
      *
      * @throws DupEntryException
      */
-    boolean add(JobPo jobPo);
+    boolean add(TaskPo jobPo);
 
-    JobPo getJob(String jobId);
+    TaskPo getJob(String jobId);
 
     /**
      * 移除Cron Job

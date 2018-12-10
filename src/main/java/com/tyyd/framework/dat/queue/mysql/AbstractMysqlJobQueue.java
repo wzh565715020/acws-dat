@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.commons.utils.CharacterUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.queue.JobQueue;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
 import com.tyyd.framework.dat.store.jdbc.JdbcAbstractAccess;
 import com.tyyd.framework.dat.store.jdbc.builder.*;
@@ -25,7 +25,7 @@ public abstract class AbstractMysqlJobQueue extends JdbcAbstractAccess implement
         super(config);
     }
 
-    protected boolean add(String tableName, JobPo jobPo) {
+    protected boolean add(String tableName, TaskPo jobPo) {
         return new InsertSql(getSqlTemplate())
                 .insert(tableName)
                 .columns("job_id",
@@ -69,9 +69,9 @@ public abstract class AbstractMysqlJobQueue extends JdbcAbstractAccess implement
                 .doInsert() == 1;
     }
 
-    public PaginationRsp<JobPo> pageSelect(JobQueueReq request) {
+    public PaginationRsp<TaskPo> pageSelect(JobQueueReq request) {
 
-        PaginationRsp<JobPo> response = new PaginationRsp<JobPo>();
+        PaginationRsp<TaskPo> response = new PaginationRsp<TaskPo>();
 
         WhereSql whereSql = buildWhereSql(request);
 
@@ -86,7 +86,7 @@ public abstract class AbstractMysqlJobQueue extends JdbcAbstractAccess implement
 
         if (results > 0) {
 
-            List<JobPo> jobPos = new SelectSql(getSqlTemplate())
+            List<TaskPo> jobPos = new SelectSql(getSqlTemplate())
                     .select()
                     .all()
                     .from()

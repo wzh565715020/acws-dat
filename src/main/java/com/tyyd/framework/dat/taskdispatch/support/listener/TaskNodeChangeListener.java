@@ -27,7 +27,7 @@ public class TaskNodeChangeListener implements NodeChangeListener {
         }
         for (Node node : nodes) {
             if (node.getNodeType().equals(NodeType.TASK_EXECUTER)) {
-                appContext.getTaskTrackerManager().addNode(node);
+                appContext.getTaskExecuterManager().addNode(node);
             } else if (node.getNodeType().equals(NodeType.TASK_CLIENT)) {
                 appContext.getJobClientManager().addNode(node);
             }
@@ -41,7 +41,7 @@ public class TaskNodeChangeListener implements NodeChangeListener {
         }
         for (Node node : nodes) {
             if (node.getNodeType().equals(NodeType.TASK_EXECUTER)) {
-                appContext.getTaskTrackerManager().removeNode(node);
+                appContext.getTaskExecuterManager().removeNode(node);
             } else if (node.getNodeType().equals(NodeType.TASK_CLIENT)) {
                 appContext.getJobClientManager().removeNode(node);
             }

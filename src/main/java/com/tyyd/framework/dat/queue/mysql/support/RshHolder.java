@@ -8,7 +8,7 @@ import com.tyyd.framework.dat.core.domain.JobRunResult;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.json.TypeReference;
 import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.domain.NodeGroupPo;
 import com.tyyd.framework.dat.store.jdbc.dbutils.ResultSetHandler;
 
@@ -24,9 +24,9 @@ import java.util.Map;
  */
 public class RshHolder {
 
-    public static final ResultSetHandler<JobPo> JOB_PO_RSH = new ResultSetHandler<JobPo>() {
+    public static final ResultSetHandler<TaskPo> JOB_PO_RSH = new ResultSetHandler<TaskPo>() {
         @Override
-        public JobPo handle(ResultSet rs) throws SQLException {
+        public TaskPo handle(ResultSet rs) throws SQLException {
             if (!rs.next()) {
                 return null;
             }
@@ -34,10 +34,10 @@ public class RshHolder {
         }
     };
 
-    public static final ResultSetHandler<List<JobPo>> JOB_PO_LIST_RSH = new ResultSetHandler<List<JobPo>>() {
+    public static final ResultSetHandler<List<TaskPo>> JOB_PO_LIST_RSH = new ResultSetHandler<List<TaskPo>>() {
         @Override
-        public List<JobPo> handle(ResultSet rs) throws SQLException {
-            List<JobPo> jobPos = new ArrayList<JobPo>();
+        public List<TaskPo> handle(ResultSet rs) throws SQLException {
+            List<TaskPo> jobPos = new ArrayList<TaskPo>();
             while (rs.next()) {
                 jobPos.add(getJobPo(rs));
             }
@@ -45,8 +45,8 @@ public class RshHolder {
         }
     };
 
-    private static JobPo getJobPo(ResultSet rs) throws SQLException {
-        JobPo jobPo = new JobPo();
+    private static TaskPo getJobPo(ResultSet rs) throws SQLException {
+        TaskPo jobPo = new TaskPo();
         jobPo.setJobId(rs.getString("job_id"));
         jobPo.setPriority(rs.getInt("priority"));
         jobPo.setRetryTimes(rs.getInt("retry_times"));

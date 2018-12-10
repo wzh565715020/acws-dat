@@ -16,7 +16,7 @@ import com.alibaba.fastjson.JSON;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
 /**
@@ -69,14 +69,14 @@ public class ExecutableDeadTaskChecker {
      * fix the job that running is true and gmtModified too old
      */
     private void fix() {
-        Set<String> nodeGroups = appContext.getTaskTrackerManager().getNodeGroups();
+        Set<String> nodeGroups = appContext.getTaskExecuterManager().getNodeGroups();
         if (CollectionUtils.isEmpty(nodeGroups)) {
             return;
         }
         for (String nodeGroup : nodeGroups) {
-            List<JobPo> deadJobPo = appContext.getExecutableJobQueue().getDeadJob(nodeGroup, SystemClock.now() - MAX_TIME_OUT);
+            List<TaskPo> deadJobPo = appContext.getExecutableJobQueue().getDeadJob(nodeGroup, SystemClock.now() - MAX_TIME_OUT);
             if (CollectionUtils.isNotEmpty(deadJobPo)) {
-                for (JobPo jobPo : deadJobPo) {
+                for (TaskPo jobPo : deadJobPo) {
                     appContext.getExecutableJobQueue().resume(jobPo);
                     LOGGER.info("Fix executable job : {} ", JSON.toJSONString(jobPo));
                 }

@@ -11,14 +11,10 @@ import com.tyyd.framework.dat.core.domain.Action;
 import com.tyyd.framework.dat.core.domain.Job;
 import com.tyyd.framework.dat.core.domain.JobRunResult;
 import com.tyyd.framework.dat.core.protocol.command.JobCompletedRequest;
-import com.tyyd.framework.dat.core.support.JobDomainConverter;
-import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.taskdispatch.complete.TaskFinishHandler;
 import com.tyyd.framework.dat.taskdispatch.complete.TaskRetryHandler;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
-import com.tyyd.framework.dat.taskdispatch.support.ClientNotifier;
-import com.tyyd.framework.dat.taskdispatch.support.ClientNotifyHandler;
 
 /**
  * 任务完成 
@@ -26,7 +22,6 @@ import com.tyyd.framework.dat.taskdispatch.support.ClientNotifyHandler;
  */
 public class TaskProcBiz implements TaskCompletedBiz {
 
-    private ClientNotifier clientNotifier;
     private final TaskRetryHandler retryHandler;
     private final TaskFinishHandler jobFinishHandler;
     // 任务的最大重试次数
@@ -39,28 +34,6 @@ public class TaskProcBiz implements TaskCompletedBiz {
         this.globalMaxRetryTimes = appContext.getConfig().getParameter(Constants.TASK_MAX_RETRY_TIMES,
                 Constants.DEFAULT_TASK_MAX_RETRY_TIMES);
 
-        this.clientNotifier = new ClientNotifier(appContext, new ClientNotifyHandler<JobRunResult>() {
-            @Override
-            public void handleSuccess(List<JobRunResult> results) {
-                jobFinishHandler.onComplete(results);
-            }
-
-            @Override
-            public void handleFailed(List<JobRunResult> results) {
-                if (CollectionUtils.isNotEmpty(results)) {
-                    List<JobFeedbackPo> jobFeedbackPos = new ArrayList<JobFeedbackPo>(results.size());
-
-                    for (JobRunResult result : results) {
-                        JobFeedbackPo jobFeedbackPo = JobDomainConverter.convert(result);
-                        jobFeedbackPos.add(jobFeedbackPo);
-                    }
-                    // 2. 失败的存储在反馈队列
-                    appContext.getJobFeedbackQueue().add(jobFeedbackPos);
-                    // 3. 完成任务 
-                    jobFinishHandler.onComplete(results);
-                }
-            }
-        });
     }
 
     @Override
@@ -81,11 +54,7 @@ public class TaskProcBiz implements TaskCompletedBiz {
 
         if (!needRetry(result)) {
             // 这种情况下，如果要反馈客户端的，直接反馈客户端，不进行重试
-            if (isNeedFeedback(result.getJobMeta().getJob())) {
-                clientNotifier.send(results);
-            } else {
-                jobFinishHandler.onComplete(results);
-            }
+            jobFinishHandler.onComplete(results);
         } else {
             // 需要retry
             retryHandler.onComplete(results);
@@ -136,9 +105,6 @@ public class TaskProcBiz implements TaskCompletedBiz {
                 finishResults.add(result);
             }
         }
-
-        // 通知客户端
-        clientNotifier.send(feedbackResults);
 
         // 完成任务
         jobFinishHandler.onComplete(finishResults);

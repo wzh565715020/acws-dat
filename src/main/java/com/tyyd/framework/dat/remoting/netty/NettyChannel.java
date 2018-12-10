@@ -8,9 +8,6 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.net.SocketAddress;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/3/15.
- */
 public class NettyChannel implements com.tyyd.framework.dat.remoting.Channel {
 
     private Channel channel;

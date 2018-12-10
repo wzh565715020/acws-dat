@@ -9,7 +9,7 @@ import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.ExecutableJobQueue;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.store.jdbc.exception.JdbcException;
 import com.mongodb.DBCollection;
@@ -71,7 +71,7 @@ public class MongoExecutableJobQueue extends AbstractMongoJobQueue implements Ex
     }
 
     @Override
-    public boolean add(JobPo jobPo) {
+    public boolean add(TaskPo jobPo) {
         try {
             String tableName = JobQueueUtils.getExecutableQueueName(jobPo.getTaskTrackerNodeGroup());
             if (!EXIST_TABLE.contains(tableName)) {
@@ -90,20 +90,20 @@ public class MongoExecutableJobQueue extends AbstractMongoJobQueue implements Ex
     @Override
     public boolean remove(String taskTrackerNodeGroup, String jobId) {
         String tableName = JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup);
-        Query<JobPo> query = template.createQuery(tableName, JobPo.class);
+        Query<TaskPo> query = template.createQuery(tableName, TaskPo.class);
         query.field("jobId").equal(jobId);
         WriteResult wr = template.delete(query);
         return wr.getN() == 1;
     }
 
-    public void resume(JobPo jobPo) {
+    public void resume(TaskPo jobPo) {
         String tableName = JobQueueUtils.getExecutableQueueName(jobPo.getTaskTrackerNodeGroup());
-        Query<JobPo> query = template.createQuery(tableName, JobPo.class);
+        Query<TaskPo> query = template.createQuery(tableName, TaskPo.class);
 
         query.field("jobId").equal(jobPo.getJobId());
 
-        UpdateOperations<JobPo> operations =
-                template.createUpdateOperations(JobPo.class)
+        UpdateOperations<TaskPo> operations =
+                template.createUpdateOperations(TaskPo.class)
                         .set("isRunning", false)
                         .set("taskTrackerIdentity", "")
                         .set("gmtModified", SystemClock.now());
@@ -111,18 +111,18 @@ public class MongoExecutableJobQueue extends AbstractMongoJobQueue implements Ex
     }
 
     @Override
-    public List<JobPo> getDeadJob(String taskTrackerNodeGroup, long deadline) {
+    public List<TaskPo> getDeadJob(String taskTrackerNodeGroup, long deadline) {
         String tableName = JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup);
-        Query<JobPo> query = template.createQuery(tableName, JobPo.class);
+        Query<TaskPo> query = template.createQuery(tableName, TaskPo.class);
         query.field("isRunning").equal(true).
                 filter("gmtCreated < ", deadline);
         return query.asList();
     }
 
     @Override
-    public JobPo getJob(String taskTrackerNodeGroup, String taskId) {
+    public TaskPo getJob(String taskTrackerNodeGroup, String taskId) {
         String tableName = JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup);
-        Query<JobPo> query = template.createQuery(tableName, JobPo.class);
+        Query<TaskPo> query = template.createQuery(tableName, TaskPo.class);
         query.field("taskId").equal(taskId).
                 field("taskTrackerNodeGroup").equal(taskTrackerNodeGroup);
         return query.get();

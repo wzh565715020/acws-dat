@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
 import com.tyyd.framework.dat.queue.RepeatJobQueue;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -42,7 +42,7 @@ public class MongoRepeatJobQueue extends AbstractMongoJobQueue implements Repeat
     }
 
     @Override
-    public boolean add(JobPo jobPo) {
+    public boolean add(TaskPo jobPo) {
         try {
             template.save(jobPo);
         } catch (DuplicateKeyException e) {
@@ -53,23 +53,23 @@ public class MongoRepeatJobQueue extends AbstractMongoJobQueue implements Repeat
     }
 
     @Override
-    public JobPo getJob(String jobId) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+    public TaskPo getJob(String jobId) {
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.field("jobId").equal(jobId);
         return query.get();
     }
 
     @Override
     public boolean remove(String jobId) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.field("jobId").equal(jobId);
         WriteResult wr = template.delete(query);
         return wr.getN() == 1;
     }
 
     @Override
-    public JobPo getJob(String taskTrackerNodeGroup, String taskId) {
-        Query<JobPo> query = template.createQuery(JobPo.class);
+    public TaskPo getJob(String taskTrackerNodeGroup, String taskId) {
+        Query<TaskPo> query = template.createQuery(TaskPo.class);
         query.field("taskId").equal(taskId).
                 field("taskTrackerNodeGroup").equal(taskTrackerNodeGroup);
         return query.get();
@@ -78,15 +78,15 @@ public class MongoRepeatJobQueue extends AbstractMongoJobQueue implements Repeat
     @Override
     public int incRepeatedCount(String jobId) {
         while (true) {
-            JobPo jobPo = getJob(jobId);
+            TaskPo jobPo = getJob(jobId);
             if (jobPo == null) {
                 return -1;
             }
-            Query<JobPo> query = template.createQuery(JobPo.class);
+            Query<TaskPo> query = template.createQuery(TaskPo.class);
             query.field("jobId").equal(jobId);
             query.field("repeatedCount").equal(jobPo.getRepeatedCount());
 
-            UpdateOperations<JobPo> opts = template.createUpdateOperations(JobPo.class);
+            UpdateOperations<TaskPo> opts = template.createUpdateOperations(TaskPo.class);
             opts.set("repeatedCount", jobPo.getRepeatedCount() + 1);
 
             UpdateResults ur = template.update(query, opts);

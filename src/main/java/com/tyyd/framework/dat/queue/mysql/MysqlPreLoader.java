@@ -7,7 +7,7 @@ import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.AbstractPreLoader;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
 import com.tyyd.framework.dat.store.jdbc.SqlTemplate;
 import com.tyyd.framework.dat.store.jdbc.SqlTemplateFactory;
@@ -55,7 +55,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
 
 
     @Override
-    protected List<JobPo> load(String loadTaskTrackerNodeGroup, int loadSize) {
+    protected List<TaskPo> load(String loadTaskTrackerNodeGroup, int loadSize) {
         try {
             return new SelectSql(sqlTemplate)
                     .select()

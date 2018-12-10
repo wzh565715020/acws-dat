@@ -32,10 +32,10 @@ public class RemotingDispatcher extends AbstractRemotingProcessor {
     public RemotingDispatcher(TaskDispatcherAppContext appContext) {
         super(appContext);
         processors.put(RequestCode.SUBMIT_JOB, new TaskSubmitProcessor(appContext));
-        processors.put(RequestCode.JOB_COMPLETED, new TaskCompletedProcessor(appContext));
-        processors.put(RequestCode.JOB_PULL, new TaskPullProcessor(appContext));
+        processors.put(RequestCode.TASK_COMPLETED, new TaskCompletedProcessor(appContext));
+        processors.put(RequestCode.TASK_PULL, new TaskPullProcessor(appContext));
         processors.put(RequestCode.BIZ_LOG_SEND, new TaskBizLogProcessor(appContext));
-        processors.put(RequestCode.CANCEL_JOB, new TaskCancelProcessor(appContext));
+        processors.put(RequestCode.CANCEL_TASK, new TaskCancelProcessor(appContext));
 
         this.reqLimitEnable = appContext.getConfig().getParameter("remoting.req.limit.enable", false);
         Integer maxQPS = appContext.getConfig().getParameter("remoting.req.limit.maxQPS", 5000);

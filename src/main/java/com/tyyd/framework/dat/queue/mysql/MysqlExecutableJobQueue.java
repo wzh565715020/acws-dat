@@ -6,7 +6,7 @@ import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.ExecutableJobQueue;
-import com.tyyd.framework.dat.queue.domain.JobPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
 import com.tyyd.framework.dat.store.jdbc.builder.DeleteSql;
 import com.tyyd.framework.dat.store.jdbc.builder.DropTableSql;
@@ -51,7 +51,7 @@ public class MysqlExecutableJobQueue extends AbstractMysqlJobQueue implements Ex
     }
 
     @Override
-    public boolean add(JobPo jobPo) {
+    public boolean add(TaskPo jobPo) {
         try {
             return super.add(getTableName(jobPo.getTaskTrackerNodeGroup()), jobPo);
         } catch (TableNotExistException e) {
@@ -73,7 +73,7 @@ public class MysqlExecutableJobQueue extends AbstractMysqlJobQueue implements Ex
     }
 
     @Override
-    public void resume(JobPo jobPo) {
+    public void resume(TaskPo jobPo) {
 
         new UpdateSql(getSqlTemplate())
                 .update()
@@ -86,7 +86,7 @@ public class MysqlExecutableJobQueue extends AbstractMysqlJobQueue implements Ex
     }
 
     @Override
-    public List<JobPo> getDeadJob(String taskTrackerNodeGroup, long deadline) {
+    public List<TaskPo> getDeadJob(String taskTrackerNodeGroup, long deadline) {
 
         return new SelectSql(getSqlTemplate())
                 .select()
@@ -99,7 +99,7 @@ public class MysqlExecutableJobQueue extends AbstractMysqlJobQueue implements Ex
     }
 
     @Override
-    public JobPo getJob(String taskTrackerNodeGroup, String taskId) {
+    public TaskPo getJob(String taskTrackerNodeGroup, String taskId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
