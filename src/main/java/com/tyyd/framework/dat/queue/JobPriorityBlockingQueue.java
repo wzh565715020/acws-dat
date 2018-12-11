@@ -31,7 +31,7 @@ public class JobPriorityBlockingQueue {
         this.comparator = new Comparator<TaskPo>() {
             @Override
             public int compare(TaskPo left, TaskPo right) {
-                if (left.getJobId().equals(right.getJobId())) {
+                if (left.getTaskId().equals(right.getTaskId())) {
                     return 0;
                 }
                 int compare = left.getTriggerTime().compareTo(right.getTriggerTime());
@@ -67,13 +67,13 @@ public class JobPriorityBlockingQueue {
         lock.lock();
         int n = size;
         try {
-            if (JOB_ID_SET.contains(e.getJobId())) {
+            if (JOB_ID_SET.contains(e.getTaskId())) {
                 // 如果已经存在了，替换
                 replace(e);
             }else{
                 siftUpUsingComparator(n, e, queue, comparator);
                 size = n + 1;
-                JOB_ID_SET.add(e.getJobId());
+                JOB_ID_SET.add(e.getTaskId());
             }
         } finally {
             lock.unlock();
@@ -95,7 +95,7 @@ public class JobPriorityBlockingQueue {
                 array[n] = null;
                 siftDownUsingComparator(0, x, array, n, comparator);
                 size = n;
-                JOB_ID_SET.remove(result.getJobId());
+                JOB_ID_SET.remove(result.getTaskId());
                 return result;
             }
         } finally {
@@ -158,7 +158,7 @@ public class JobPriorityBlockingQueue {
             TaskPo[] array = queue;
             int n = size;
             for (int i = 0; i < n; i++)
-                if (o.getJobId().equals(array[i].getJobId()))
+                if (o.getTaskId().equals(array[i].getTaskId()))
                     return i;
         }
         return -1;

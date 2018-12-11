@@ -21,7 +21,8 @@ import java.util.Properties;
 public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExecuter>,
         InitializingBean, DisposableBean {
 
-    private TaskExecuter taskTracker;
+    private TaskExecuter taskExecuter;
+    
     private boolean started;
     /**
      * 集群名称
@@ -58,7 +59,7 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
 
     @Override
     public TaskExecuter getObject() throws Exception {
-        return taskTracker;
+        return taskExecuter;
     }
 
     @Override
@@ -84,24 +85,24 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
 
         checkProperties();
 
-        taskTracker = new TaskExecuter();
+        taskExecuter = new TaskExecuter();
 
-        taskTracker.setClusterName(clusterName);
-        taskTracker.setDataPath(dataPath);
-        taskTracker.setWorkThreads(workThreads);
-        taskTracker.setNodeGroup(nodeGroup);
-        taskTracker.setRegistryAddress(registryAddress);
+        taskExecuter.setClusterName(clusterName);
+        taskExecuter.setDataPath(dataPath);
+        taskExecuter.setWorkThreads(workThreads);
+        taskExecuter.setNodeGroup(nodeGroup);
+        taskExecuter.setRegistryAddress(registryAddress);
 
         if (bizLoggerLevel != null) {
-            taskTracker.setBizLoggerLevel(bizLoggerLevel);
+            taskExecuter.setBizLoggerLevel(bizLoggerLevel);
         }
 
         // 设置config
         for (Map.Entry<Object, Object> entry : configs.entrySet()) {
-            taskTracker.addConfig(entry.getKey().toString(), entry.getValue().toString());
+            taskExecuter.addConfig(entry.getKey().toString(), entry.getValue().toString());
         }
 
-        taskTracker.setRunnerFactory(new RunnerFactory() {
+        taskExecuter.setRunnerFactory(new RunnerFactory() {
             @Override
             public TaskRunner newRunner() {
                 return createJobRunner();
@@ -110,7 +111,7 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
 
         if (masterChangeListeners != null) {
             for (MasterChangeListener masterChangeListener : masterChangeListeners) {
-                taskTracker.addMasterChangeListener(masterChangeListener);
+                taskExecuter.addMasterChangeListener(masterChangeListener);
             }
         }
 
@@ -121,7 +122,7 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
      */
     public void start() {
         if (!started) {
-            taskTracker.start();
+            taskExecuter.start();
             started = true;
         }
     }
@@ -130,7 +131,7 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
 
     @Override
     public void destroy() throws Exception {
-        taskTracker.stop();
+        taskExecuter.stop();
     }
 
     public void setClusterName(String clusterName) {

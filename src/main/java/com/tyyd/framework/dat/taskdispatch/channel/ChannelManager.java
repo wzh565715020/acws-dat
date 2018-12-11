@@ -20,19 +20,26 @@ import com.tyyd.framework.dat.core.support.SystemClock;
 public class ChannelManager {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(ChannelManager.class);
+
 	// 客户端列表 (要保证同一个group的node要是无状态的)
-	private final ConcurrentHashMap<String, List<ChannelWrapper>> taskClientChannelMap = new ConcurrentHashMap<String, List<ChannelWrapper>>();
+	private final ConcurrentHashMap<String, List<ChannelWrapper>> taskDispatcherChannelMap = new ConcurrentHashMap<String, List<ChannelWrapper>>();
+
 	// 任务节点列表
 	private final ConcurrentHashMap<String, List<ChannelWrapper>> taskExecuterChannelMap = new ConcurrentHashMap<String, List<ChannelWrapper>>();
+
 	// 用来定时检查已经关闭的channel
 	private final ScheduledExecutorService channelCheckExecutorService = Executors.newScheduledThreadPool(1,
-			new NamedThreadFactory("LTS-Channel-Checker", true));
+			new NamedThreadFactory("DAT-Channel-Checker", true));
+
 	private ScheduledFuture<?> scheduledFuture;
+
 	// 存储离线一定时间内的节点信息
 	private final ConcurrentHashMap<String, Long> offlineTaskExecuterMap = new ConcurrentHashMap<String, Long>();
+
 	// 用来清理离线时间很长的信息
-	private final ScheduledExecutorService offlineTaskTrackerCheckExecutorService = Executors.newScheduledThreadPool(1,
-			new NamedThreadFactory("LTS-offline-TaskTracker-Checker", true));
+	private final ScheduledExecutorService offlineTaskExecuterCheckExecutorService = Executors.newScheduledThreadPool(1,
+			new NamedThreadFactory("DAT-offline-TaskExecuter-Checker", true));
+
 	private ScheduledFuture<?> offlineTaskTrackerScheduledFuture;
 
 	private AtomicBoolean start = new AtomicBoolean(false);
@@ -44,13 +51,13 @@ public class ChannelManager {
 					@Override
 					public void run() {
 						try {
-							checkCloseChannel(NodeType.TASK_CLIENT, taskClientChannelMap);
+							checkCloseChannel(NodeType.TASK_DISPATCH, taskDispatcherChannelMap);
 							if (LOGGER.isDebugEnabled()) {
-								LOGGER.debug("JobClient Channel Pool " + taskClientChannelMap);
+								LOGGER.debug("TASK_DISPATCH Channel Pool " + taskExecuterChannelMap);
 							}
 							checkCloseChannel(NodeType.TASK_EXECUTER, taskExecuterChannelMap);
 							if (LOGGER.isDebugEnabled()) {
-								LOGGER.debug("TaskTracker Channel Pool " + taskExecuterChannelMap);
+								LOGGER.debug("TASK_EXECUTER Channel Pool " + taskExecuterChannelMap);
 							}
 						} catch (Throwable t) {
 							LOGGER.error("Check channel error!", t);
@@ -58,7 +65,7 @@ public class ChannelManager {
 					}
 				}, 10, 10, TimeUnit.SECONDS);
 
-				offlineTaskTrackerScheduledFuture = offlineTaskTrackerCheckExecutorService
+				offlineTaskTrackerScheduledFuture = offlineTaskExecuterCheckExecutorService
 						.scheduleWithFixedDelay(new Runnable() {
 							@Override
 							public void run() {
@@ -91,7 +98,7 @@ public class ChannelManager {
 				scheduledFuture.cancel(true);
 				channelCheckExecutorService.shutdown();
 				offlineTaskTrackerScheduledFuture.cancel(true);
-				offlineTaskTrackerCheckExecutorService.shutdown();
+				offlineTaskExecuterCheckExecutorService.shutdown();
 			}
 			LOGGER.info("Stop channel manager success!");
 		} catch (Throwable t) {
@@ -123,8 +130,8 @@ public class ChannelManager {
 	}
 
 	public List<ChannelWrapper> getChannels(String nodeGroup, NodeType nodeType) {
-		if (nodeType == NodeType.TASK_CLIENT) {
-			return taskClientChannelMap.get(nodeGroup);
+		if (nodeType == NodeType.TASK_DISPATCH) {
+			return taskDispatcherChannelMap.get(nodeGroup);
 		} else if (nodeType == NodeType.TASK_EXECUTER) {
 			return taskExecuterChannelMap.get(nodeGroup);
 		}
@@ -155,8 +162,8 @@ public class ChannelManager {
 		List<ChannelWrapper> channels = getChannels(nodeGroup, nodeType);
 		if (channels == null) {
 			channels = new ArrayList<ChannelWrapper>();
-			if (nodeType == NodeType.TASK_CLIENT) {
-				taskClientChannelMap.put(nodeGroup, channels);
+			if (nodeType == NodeType.TASK_DISPATCH) {
+				taskDispatcherChannelMap.put(nodeGroup, channels);
 			} else if (nodeType == NodeType.TASK_EXECUTER) {
 				taskExecuterChannelMap.put(nodeGroup, channels);
 				// 如果在离线列表中，那么移除

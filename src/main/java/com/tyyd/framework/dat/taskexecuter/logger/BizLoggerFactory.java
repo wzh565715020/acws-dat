@@ -6,12 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.tyyd.framework.dat.core.cluster.LTSConfig;
 import com.tyyd.framework.dat.core.constant.Environment;
 import com.tyyd.framework.dat.core.constant.Level;
-import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
+import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 
-/**
- * @author Robert HG (254963746@qq.com) on 3/27/15.
- */
 public class BizLoggerFactory {
 
     private static final ConcurrentHashMap<String, BizLogger> BIZ_LOGGER_CONCURRENT_HASH_MAP = new ConcurrentHashMap<String, BizLogger>();
@@ -19,7 +16,7 @@ public class BizLoggerFactory {
     /**
      * 保证一个TaskTracker只能有一个Logger, 因为一个jvm可以有多个TaskTracker
      */
-    public static BizLogger getLogger(Level level, RemotingClientDelegate remotingClient, TaskExecuterAppContext appContext) {
+    public static BizLogger getLogger(Level level, RemotingServerDelegate remotingServer, TaskExecuterAppContext appContext) {
 
         // 单元测试的时候返回 Mock
         if (Environment.UNIT_TEST == LTSConfig.getEnvironment()) {
@@ -34,7 +31,7 @@ public class BizLoggerFactory {
                 if (logger != null) {
                     return logger;
                 }
-                logger = new BizLoggerImpl(level, remotingClient, appContext);
+               // logger = new BizLoggerImpl(level, remotingServer, appContext);
 
                 BIZ_LOGGER_CONCURRENT_HASH_MAP.put(key, logger);
             }

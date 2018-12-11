@@ -84,17 +84,17 @@ public abstract class AbstractPreLoader implements PreLoader {
 
 	public TaskPo take(String taskTrackerNodeGroup, String taskTrackerIdentity) {
 		while (true) {
-			TaskPo jobPo = get(taskTrackerNodeGroup);
-			if (jobPo == null) {
+			TaskPo taskPo = get(taskTrackerNodeGroup);
+			if (taskPo == null) {
 				return null;
 			}
 			// update jobPo
-			if (lockJob(taskTrackerNodeGroup, jobPo.getJobId(), taskTrackerIdentity, jobPo.getTriggerTime(),
-					jobPo.getGmtModified())) {
-				jobPo.setTaskTrackerIdentity(taskTrackerIdentity);
-				jobPo.setIsRunning(true);
-				jobPo.setGmtModified(SystemClock.now());
-				return jobPo;
+			if (lockJob(taskTrackerNodeGroup, taskPo.getTaskId(), taskTrackerIdentity, taskPo.getTriggerTime(),
+					taskPo.getGmtModified())) {
+				taskPo.setTaskTrackerIdentity(taskTrackerIdentity);
+				taskPo.setIsRunning(true);
+				taskPo.setGmtModified(SystemClock.now());
+				return taskPo;
 			}
 		}
 	}

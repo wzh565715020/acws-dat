@@ -6,22 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/8/14.
- *         存储的Jod对象
+ *         存储的task对象
  */
 public class TaskPo {
 
     /**
-     * 服务端生成的jobId
-     */
-    private String jobId;
-    /**
      * 优先级 (数值越大 优先级越低)
      */
     private Integer priority;
-    /**
-     * 客户端传过来的ID
-     */
+    
     private String taskId;
     // 创建时间
     private Long gmtCreated;
@@ -115,14 +108,6 @@ public class TaskPo {
 
     public void setPriority(Integer priority) {
         this.priority = priority;
-    }
-
-    public String getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
     }
 
     public String getTaskId() {

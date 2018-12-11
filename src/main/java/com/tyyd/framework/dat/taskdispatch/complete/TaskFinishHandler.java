@@ -7,13 +7,13 @@ import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.constant.Level;
-import com.tyyd.framework.dat.core.domain.JobMeta;
-import com.tyyd.framework.dat.core.domain.JobRunResult;
+import com.tyyd.framework.dat.core.domain.TaskMeta;
+import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.CronExpressionUtils;
-import com.tyyd.framework.dat.core.support.JobDomainConverter;
+import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.JobUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
@@ -30,33 +30,33 @@ public class TaskFinishHandler {
         this.appContext = appContext;
     }
 
-    public void onComplete(List<JobRunResult> results) {
+    public void onComplete(List<TaskRunResult> results) {
         if (CollectionUtils.isEmpty(results)) {
             return;
         }
 
-        for (JobRunResult result : results) {
+        for (TaskRunResult result : results) {
 
-            JobMeta jobMeta = result.getJobMeta();
+            TaskMeta taskMeta = result.getTaskMeta();
 
             // 当前完成的job是否是重试的
-            boolean isRetryForThisTime = "true".equals(jobMeta.getInternalExtParam("isRetry"));
+            boolean isRetryForThisTime = "true".equals(taskMeta.getInternalExtParam("isRetry"));
 
-            if (jobMeta.getJob().isCron()) {
+            if (taskMeta.getJob().isCron()) {
                 // 是 Cron任务
-                finishCronJob(jobMeta.getJobId());
-            } else if (jobMeta.getJob().isRepeatable()) {
-                finishRepeatJob(jobMeta.getJobId(), isRetryForThisTime);
+            	finishTask(taskMeta.getTaskId());
+            } else if (taskMeta.getJob().isRepeatable()) {
+                finishRepeatJob(taskMeta.getTaskId(), isRetryForThisTime);
             }
 
             // 从正在执行的队列中移除
-            appContext.getExecutingJobQueue().remove(jobMeta.getJobId());
+            appContext.getExecutingJobQueue().remove(taskMeta.getTaskId());
         }
     }
 
-    private void finishCronJob(String jobId) {
+    private void finishTask(String jobId) {
 
-        TaskPo jobPo = appContext.getCronJobQueue().getJob(jobId);
+        TaskPo jobPo = appContext.getTaskQueue().getJob(jobId);
         if (jobPo == null) {
             // 可能任务队列中改条记录被删除了
             return;
@@ -64,7 +64,7 @@ public class TaskFinishHandler {
         Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(jobPo.getCronExpression());
         if (nextTriggerTime == null) {
             // 从CronJob队列中移除
-            appContext.getCronJobQueue().remove(jobId);
+            appContext.getTaskQueue().remove(jobId);
             return;
         }
         // 表示下次还要执行
@@ -80,14 +80,14 @@ public class TaskFinishHandler {
     }
 
     private void finishRepeatJob(String jobId, boolean isRetryForThisTime) {
-        TaskPo jobPo = appContext.getRepeatJobQueue().getJob(jobId);
+        TaskPo jobPo = appContext.getTaskQueue().getJob(jobId);
         if (jobPo == null) {
             // 可能任务队列中改条记录被删除了
             return;
         }
         if (jobPo.getRepeatCount() != -1 && jobPo.getRepeatedCount() >= jobPo.getRepeatCount()) {
             // 已经重试完成, 那么删除
-            appContext.getRepeatJobQueue().remove(jobId);
+            appContext.getTaskQueue().remove(jobId);
             repeatJobRemoveLog(jobPo);
             return;
         }
@@ -96,7 +96,7 @@ public class TaskFinishHandler {
         // 如果当前完成的job是重试的,那么不要增加repeatedCount
         if (!isRetryForThisTime) {
             // 更新repeatJob的重复次数
-            repeatedCount = appContext.getRepeatJobQueue().incRepeatedCount(jobId);
+            repeatedCount = appContext.getTaskQueue().incRepeatedCount(jobId);
         }
         if (repeatedCount == -1) {
             // 表示任务已经被删除了
@@ -116,7 +116,7 @@ public class TaskFinishHandler {
     }
 
     private void repeatJobRemoveLog(TaskPo jobPo) {
-        JobLogPo jobLogPo = JobDomainConverter.convertJobLog(jobPo);
+        JobLogPo jobLogPo = TaskDomainConverter.convertJobLog(jobPo);
         jobLogPo.setSuccess(true);
         jobLogPo.setLogType(LogType.DEL);
         jobLogPo.setLogTime(SystemClock.now());

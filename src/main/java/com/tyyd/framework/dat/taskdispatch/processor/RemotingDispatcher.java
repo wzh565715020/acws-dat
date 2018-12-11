@@ -20,7 +20,7 @@ import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
 
 /**
- *         job tracker 总的处理器, 每一种命令对应不同的处理器
+ *  总的处理器, 每一种命令对应不同的处理器
  */
 public class RemotingDispatcher extends AbstractRemotingProcessor {
 
@@ -33,7 +33,6 @@ public class RemotingDispatcher extends AbstractRemotingProcessor {
         super(appContext);
         processors.put(RequestCode.SUBMIT_JOB, new TaskSubmitProcessor(appContext));
         processors.put(RequestCode.TASK_COMPLETED, new TaskCompletedProcessor(appContext));
-        processors.put(RequestCode.TASK_PULL, new TaskPullProcessor(appContext));
         processors.put(RequestCode.BIZ_LOG_SEND, new TaskBizLogProcessor(appContext));
         processors.put(RequestCode.CANCEL_TASK, new TaskCancelProcessor(appContext));
 

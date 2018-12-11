@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.taskexecuter.task;
 import org.springframework.beans.factory.InitializingBean;
 
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.domain.Job;
+import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.taskexecuter.Result;
 import com.tyyd.framework.dat.taskexecuter.runner.TaskRunner;
 
@@ -57,14 +57,14 @@ public class MethodInvokingJobRunner implements InitializingBean {
 
         TaskRunnerHolder.add(shardValue, new TaskRunner() {
             @Override
-            public Result run(Job job) throws Throwable {
+            public Result run(Task job) throws Throwable {
                 if (pTypes == null || pTypes.length == 0) {
                     return (Result) finalMethod.invoke(targetObject);
                 }
                 Object[] pTypeValues = new Object[pTypes.length];
 
                 for (int i = 0; i < pTypes.length; i++) {
-                    if (pTypes[i] == Job.class) {
+                    if (pTypes[i] == Task.class) {
                         pTypeValues[i] = job;
                     } else {
                         pTypeValues[i] = null;

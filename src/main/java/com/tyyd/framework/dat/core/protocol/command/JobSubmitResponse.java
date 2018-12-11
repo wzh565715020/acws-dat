@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.core.protocol.command;
 
 
-import com.tyyd.framework.dat.core.domain.Job;
+import com.tyyd.framework.dat.core.domain.Task;
 
 import java.util.List;
 
@@ -18,13 +18,13 @@ public class JobSubmitResponse extends AbstractRemotingCommandBody {
     private String msg;
 
     // 失败的jobs
-    private List<Job> failedJobs;
+    private List<Task> failedJobs;
 
-    public List<Job> getFailedJobs() {
+    public List<Task> getFailedJobs() {
         return failedJobs;
     }
 
-    public void setFailedJobs(List<Job> failedJobs) {
+    public void setFailedJobs(List<Task> failedJobs) {
         this.failedJobs = failedJobs;
     }
 

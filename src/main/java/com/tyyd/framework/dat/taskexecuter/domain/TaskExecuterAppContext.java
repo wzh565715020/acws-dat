@@ -2,21 +2,23 @@ package com.tyyd.framework.dat.taskexecuter.domain;
 
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.constant.Level;
-import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
+import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
+import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
 import com.tyyd.framework.dat.taskexecuter.monitor.StopWorkingMonitor;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerFactory;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerPool;
-import com.tyyd.framework.dat.taskexecuter.support.TaskPullMachine;
 
 public class TaskExecuterAppContext extends AppContext {
 
-    private RemotingClientDelegate remotingClient;
+    private RemotingServerDelegate remotingServer;
+    
+    // channel manager
+    private ChannelManager channelManager;
+    
     // runner 线程池
     private RunnerPool runnerPool;
     //
     private RunnerFactory runnerFactory;
-    // Pull Job Machine
-    private TaskPullMachine jobPullMachine;
 
     private StopWorkingMonitor stopWorkingMonitor;
     /**
@@ -68,19 +70,20 @@ public class TaskExecuterAppContext extends AppContext {
         this.runnerFactory = runnerFactory;
     }
 
-    public RemotingClientDelegate getRemotingClient() {
-        return remotingClient;
-    }
+    public RemotingServerDelegate getRemotingServer() {
+		return remotingServer;
+	}
 
-    public void setRemotingClient(RemotingClientDelegate remotingClient) {
-        this.remotingClient = remotingClient;
-    }
+	public void setRemotingServer(RemotingServerDelegate remotingServer) {
+		this.remotingServer = remotingServer;
+	}
 
-    public TaskPullMachine getJobPullMachine() {
-        return jobPullMachine;
-    }
+	public ChannelManager getChannelManager() {
+		return channelManager;
+	}
 
-    public void setJobPullMachine(TaskPullMachine jobPullMachine) {
-        this.jobPullMachine = jobPullMachine;
-    }
+	public void setChannelManager(ChannelManager channelManager) {
+		this.channelManager = channelManager;
+	}
+
 }

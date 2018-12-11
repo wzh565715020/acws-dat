@@ -10,27 +10,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.constant.EcTopic;
-import com.tyyd.framework.dat.core.exception.JobTrackerNotFoundException;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
-import com.tyyd.framework.dat.core.protocol.JobProtos;
-import com.tyyd.framework.dat.core.protocol.command.TaskPullRequest;
 import com.tyyd.framework.dat.ec.EventInfo;
 import com.tyyd.framework.dat.ec.EventSubscriber;
 import com.tyyd.framework.dat.ec.Observer;
 import com.tyyd.framework.dat.jvmmonitor.JVMConstants;
 import com.tyyd.framework.dat.jvmmonitor.JVMMonitor;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandFieldCheckException;
-import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
-import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 
-/**
- * 用来向JobTracker去取任务 1. 会订阅JobTracker的可用,不可用消息主题的订阅 2.
- * 只有当JobTracker可用的时候才会去Pull任务 3. Pull只是会给JobTracker发送一个通知
- *
- */
 public class TaskPushMachine {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaskPushMachine.class.getSimpleName());
@@ -88,17 +78,17 @@ public class TaskPushMachine {
 		};
 	}
 
-	private void start() {
+	public void start() {
 		try {
 			if (start.compareAndSet(false, true)) {
 				if (scheduledFuture == null) {
 					scheduledFuture = SCHEDULED_CHECKER.scheduleWithFixedDelay(worker, 1, taskPushFrequency,
 							TimeUnit.SECONDS);
 				}
-				LOGGER.info("Start Job pull machine success!");
+				LOGGER.info("Start task push machine success!");
 			}
 		} catch (Throwable t) {
-			LOGGER.error("Start Job pull machine failed!", t);
+			LOGGER.error("Start stask push machine failed!", t);
 		}
 	}
 

@@ -6,12 +6,13 @@ import java.util.List;
 import java.util.concurrent.*;
 
 import com.tyyd.framework.dat.core.constant.EcTopic;
-import com.tyyd.framework.dat.core.domain.JobMeta;
+import com.tyyd.framework.dat.core.domain.TaskMeta;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.ec.EventInfo;
 import com.tyyd.framework.dat.ec.EventSubscriber;
 import com.tyyd.framework.dat.ec.Observer;
+import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 import com.tyyd.framework.dat.taskexecuter.expcetion.NoAvailableTaskRunnerException;
 
@@ -56,10 +57,10 @@ public class RunnerPool {
                 new ThreadPoolExecutor.AbortPolicy());
     }
 
-    public void execute(JobMeta jobMeta, RunnerCallback callback) throws NoAvailableTaskRunnerException {
+    public void execute(Channel channel, TaskMeta jobMeta, RunnerCallback callback) throws NoAvailableTaskRunnerException {
         try {
             threadPoolExecutor.execute(
-                    new TaskRunnerDelegate(appContext, jobMeta, callback));
+                    new TaskRunnerDelegate(appContext, jobMeta, callback,channel));
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Receive job success ! " + jobMeta);
             }

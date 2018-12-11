@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 /**
  *         抽象服务端
  */
-public abstract class AbstractServerNode<T extends Node, App extends AppContext> extends AbstractJobNode<T, App> {
+public abstract class AbstractServerNode<T extends Node, App extends AppContext> extends AbstractTaskNode<T, App> {
 
     protected RemotingServerDelegate remotingServer;
 
@@ -44,7 +44,7 @@ public abstract class AbstractServerNode<T extends Node, App extends AppContext>
         RemotingServerConfig remotingServerConfig = new RemotingServerConfig();
         // config 配置
         if (config.getListenPort() == 0) {
-            config.setListenPort(Constants.TASK_DISPATCHER_DEFAULT_LISTEN_PORT);
+            config.setListenPort(Constants.TASK_EXECUTER_DEFAULT_LISTEN_PORT);
             node.setPort(config.getListenPort());
         }
         remotingServerConfig.setListenPort(config.getListenPort());

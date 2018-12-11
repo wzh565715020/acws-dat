@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tyyd.framework.dat.admin.response.PaginationRsp;
 import com.tyyd.framework.dat.core.cluster.Node;
-import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.domain.NodeGroupGetReq;
 import com.tyyd.framework.dat.management.access.domain.NodeOnOfflineLog;
@@ -68,31 +67,6 @@ public class NodeApi extends AbstractMVC {
         return response;
     }
 
-    @RequestMapping("node-group-add")
-    public RestfulResponse addNodeGroup(NodeGroupRequest request) {
-        RestfulResponse response = new RestfulResponse();
-        appContext.getNodeGroupStore().addNodeGroup(request.getNodeType(), request.getNodeGroup());
-        if (NodeType.TASK_EXECUTER.equals(request.getNodeType())) {
-            appContext.getExecutableJobQueue().createQueue(request.getNodeGroup());
-        } else if (NodeType.TASK_CLIENT.equals(request.getNodeType())) {
-            appContext.getJobFeedbackQueue().createQueue(request.getNodeGroup());
-        }
-        response.setSuccess(true);
-        return response;
-    }
-
-    @RequestMapping("node-group-del")
-    public RestfulResponse delNodeGroup(NodeGroupRequest request) {
-        RestfulResponse response = new RestfulResponse();
-        appContext.getNodeGroupStore().removeNodeGroup(request.getNodeType(), request.getNodeGroup());
-        if (NodeType.TASK_EXECUTER.equals(request.getNodeType())) {
-            appContext.getExecutableJobQueue().removeQueue(request.getNodeGroup());
-        } else if (NodeType.TASK_CLIENT.equals(request.getNodeType())) {
-            appContext.getJobFeedbackQueue().removeQueue(request.getNodeGroup());
-        }
-        response.setSuccess(true);
-        return response;
-    }
 
     @RequestMapping("node-onoffline-log-get")
     public RestfulResponse delNodeGroup(NodeOnOfflineLogPaginationReq request) {

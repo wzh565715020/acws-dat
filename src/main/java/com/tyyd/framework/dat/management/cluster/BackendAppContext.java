@@ -11,22 +11,20 @@ import com.tyyd.framework.dat.management.access.face.BackendJobTrackerMAccess;
 import com.tyyd.framework.dat.management.access.face.BackendNodeOnOfflineLogAccess;
 import com.tyyd.framework.dat.management.access.face.BackendTaskTrackerMAccess;
 import com.tyyd.framework.dat.management.access.memory.NodeMemCacheAccess;
-import com.tyyd.framework.dat.queue.CronJobQueue;
-import com.tyyd.framework.dat.queue.ExecutableJobQueue;
-import com.tyyd.framework.dat.queue.ExecutingJobQueue;
-import com.tyyd.framework.dat.queue.JobFeedbackQueue;
+import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
+import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
+import com.tyyd.framework.dat.queue.TaskFeedbackQueue;
 import com.tyyd.framework.dat.queue.NodeGroupStore;
-import com.tyyd.framework.dat.queue.RepeatJobQueue;
-import com.tyyd.framework.dat.queue.SuspendJobQueue;
+import com.tyyd.framework.dat.queue.TaskQueue;
+import com.tyyd.framework.dat.queue.SuspendTaskQueue;
 
 public class BackendAppContext extends AppContext {
 
-    private CronJobQueue cronJobQueue;
-    private RepeatJobQueue repeatJobQueue;
-    private ExecutableJobQueue executableJobQueue;
-    private ExecutingJobQueue executingJobQueue;
-    private JobFeedbackQueue jobFeedbackQueue;
-	private SuspendJobQueue suspendJobQueue;
+    private TaskQueue taskQueue;
+    private ExecutableTaskQueue executableJobQueue;
+    private ExecutingTaskQueue executingJobQueue;
+    private TaskFeedbackQueue jobFeedbackQueue;
+	private SuspendTaskQueue suspendJobQueue;
     private NodeGroupStore nodeGroupStore;
     private JobLogger jobLogger;
     private Node node;
@@ -49,43 +47,35 @@ public class BackendAppContext extends AppContext {
         this.node = node;
     }
 
-    public CronJobQueue getCronJobQueue() {
-        return cronJobQueue;
-    }
+    public TaskQueue getTaskQueue() {
+		return taskQueue;
+	}
 
-    public void setCronJobQueue(CronJobQueue cronJobQueue) {
-        this.cronJobQueue = cronJobQueue;
-    }
+	public void setTaskQueue(TaskQueue taskQueue) {
+		this.taskQueue = taskQueue;
+	}
 
-    public RepeatJobQueue getRepeatJobQueue() {
-        return repeatJobQueue;
-    }
-
-    public void setRepeatJobQueue(RepeatJobQueue repeatJobQueue) {
-        this.repeatJobQueue = repeatJobQueue;
-    }
-
-    public ExecutableJobQueue getExecutableJobQueue() {
+	public ExecutableTaskQueue getExecutableJobQueue() {
         return executableJobQueue;
     }
 
-    public void setExecutableJobQueue(ExecutableJobQueue executableJobQueue) {
+    public void setExecutableJobQueue(ExecutableTaskQueue executableJobQueue) {
         this.executableJobQueue = executableJobQueue;
     }
 
-    public ExecutingJobQueue getExecutingJobQueue() {
+    public ExecutingTaskQueue getExecutingJobQueue() {
         return executingJobQueue;
     }
 
-    public void setExecutingJobQueue(ExecutingJobQueue executingJobQueue) {
+    public void setExecutingJobQueue(ExecutingTaskQueue executingJobQueue) {
         this.executingJobQueue = executingJobQueue;
     }
 
-	public SuspendJobQueue getSuspendJobQueue() {
+	public SuspendTaskQueue getSuspendJobQueue() {
 		return suspendJobQueue;
 	}
 
-	public void setSuspendJobQueue(SuspendJobQueue suspendJobQueue) {
+	public void setSuspendJobQueue(SuspendTaskQueue suspendJobQueue) {
 		this.suspendJobQueue = suspendJobQueue;
 	}
 
@@ -97,11 +87,11 @@ public class BackendAppContext extends AppContext {
         this.nodeGroupStore = nodeGroupStore;
     }
 
-    public JobFeedbackQueue getJobFeedbackQueue() {
+    public TaskFeedbackQueue getJobFeedbackQueue() {
         return jobFeedbackQueue;
     }
 
-    public void setJobFeedbackQueue(JobFeedbackQueue jobFeedbackQueue) {
+    public void setJobFeedbackQueue(TaskFeedbackQueue jobFeedbackQueue) {
         this.jobFeedbackQueue = jobFeedbackQueue;
     }
 

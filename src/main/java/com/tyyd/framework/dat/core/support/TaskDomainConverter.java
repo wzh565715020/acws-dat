@@ -1,0 +1,145 @@
+package com.tyyd.framework.dat.core.support;
+
+import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
+import com.tyyd.framework.dat.core.commons.utils.StringUtils;
+import com.tyyd.framework.dat.core.constant.Constants;
+import com.tyyd.framework.dat.core.domain.Task;
+import com.tyyd.framework.dat.core.domain.TaskMeta;
+import com.tyyd.framework.dat.core.domain.TaskRunResult;
+import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
+import com.tyyd.framework.dat.queue.domain.TaskPo;
+
+import java.util.Map;
+import java.util.Set;
+
+public class TaskDomainConverter {
+
+    private TaskDomainConverter() {
+    }
+
+    public static TaskPo convert(Task job) {
+        TaskPo jobPo = new TaskPo();
+        jobPo.setPriority(job.getPriority());
+        jobPo.setTaskId(job.getTaskId());
+        jobPo.setGmtCreated(SystemClock.now());
+        jobPo.setGmtModified(jobPo.getGmtCreated());
+        jobPo.setSubmitNodeGroup(job.getSubmitNodeGroup());
+        jobPo.setTaskTrackerNodeGroup(job.getTaskTrackerNodeGroup());
+
+        if (CollectionUtils.isNotEmpty(job.getExtParams())) {
+            Set<String> removeKeySet = null;
+            for (Map.Entry<String, String> entry : job.getExtParams().entrySet()) {
+                String key = entry.getKey();
+                if (key.startsWith("__LTS_")) {
+                    jobPo.setInternalExtParam(key, entry.getValue());
+                    removeKeySet = CollectionUtils.newHashSetOnNull(removeKeySet);
+                    removeKeySet.add(key);
+                }
+            }
+            if (removeKeySet != null) {
+                for (String key : removeKeySet) {
+                    job.getExtParams().remove(key);
+                }
+            }
+        }
+
+        jobPo.setExtParams(job.getExtParams());
+        jobPo.setNeedFeedback(job.isNeedFeedback());
+        jobPo.setCronExpression(job.getCronExpression());
+        jobPo.setMaxRetryTimes(job.getMaxRetryTimes());
+        jobPo.setRepeatCount(job.getRepeatCount());
+        if (!jobPo.isCron()) {
+            if (job.getTriggerTime() == null) {
+                jobPo.setTriggerTime(SystemClock.now());
+            } else {
+                jobPo.setTriggerTime(job.getTriggerTime());
+            }
+        }
+        if (job.getRepeatCount() != 0) {
+            jobPo.setCronExpression(null);
+            jobPo.setRepeatInterval(job.getRepeatInterval());
+            jobPo.setInternalExtParam(Constants.QUARTZ_FIRST_FIRE_TIME, String.valueOf(jobPo.getTriggerTime()));
+        }
+        return jobPo;
+    }
+
+    /**
+     * JobPo 转 Job
+     */
+    public static TaskMeta convert(TaskPo jobPo) {
+        Task job = new Task();
+        job.setPriority(jobPo.getPriority());
+        job.setExtParams(jobPo.getExtParams());
+        job.setSubmitNodeGroup(jobPo.getSubmitNodeGroup());
+        job.setTaskId(jobPo.getTaskId());
+        job.setTaskTrackerNodeGroup(jobPo.getTaskTrackerNodeGroup());
+        job.setNeedFeedback(jobPo.isNeedFeedback());
+        job.setCronExpression(jobPo.getCronExpression());
+        job.setTriggerTime(jobPo.getTriggerTime());
+        job.setRetryTimes(jobPo.getRetryTimes() == null ? 0 : jobPo.getRetryTimes());
+        job.setMaxRetryTimes(jobPo.getMaxRetryTimes() == null ? 0 : jobPo.getMaxRetryTimes());
+        job.setRepeatCount(jobPo.getRepeatCount());
+        job.setRepeatedCount(jobPo.getRepeatedCount());
+        job.setRepeatInterval(jobPo.getRepeatInterval());
+        TaskMeta jobMeta = new TaskMeta();
+        jobMeta.setTaskId(jobPo.getTaskId());
+        jobMeta.setJob(job);
+        jobMeta.setInternalExtParams(jobPo.getInternalExtParams());
+        return jobMeta;
+    }
+
+    public static JobLogPo convertJobLog(TaskMeta jobMeta) {
+        JobLogPo jobLogPo = new JobLogPo();
+        jobLogPo.setGmtCreated(SystemClock.now());
+        Task job = jobMeta.getJob();
+        jobLogPo.setPriority(job.getPriority());
+        jobLogPo.setExtParams(job.getExtParams());
+        jobLogPo.setInternalExtParams(jobMeta.getInternalExtParams());
+        jobLogPo.setSubmitNodeGroup(job.getSubmitNodeGroup());
+        jobLogPo.setTaskId(job.getTaskId());
+        jobLogPo.setTaskTrackerNodeGroup(job.getTaskTrackerNodeGroup());
+        jobLogPo.setNeedFeedback(job.isNeedFeedback());
+        jobLogPo.setRetryTimes(job.getRetryTimes());
+        jobLogPo.setMaxRetryTimes(job.getMaxRetryTimes());
+        jobLogPo.setJobId(jobMeta.getTaskId());
+        jobLogPo.setCronExpression(job.getCronExpression());
+        jobLogPo.setTriggerTime(job.getTriggerTime());
+
+        jobLogPo.setRepeatCount(job.getRepeatCount());
+        jobLogPo.setRepeatedCount(job.getRepeatedCount());
+        jobLogPo.setRepeatInterval(job.getRepeatInterval());
+        return jobLogPo;
+    }
+
+    public static JobLogPo convertJobLog(TaskPo jobPo) {
+        JobLogPo jobLogPo = new JobLogPo();
+        jobLogPo.setGmtCreated(SystemClock.now());
+        jobLogPo.setPriority(jobPo.getPriority());
+        jobLogPo.setExtParams(jobPo.getExtParams());
+        jobLogPo.setInternalExtParams(jobPo.getInternalExtParams());
+        jobLogPo.setSubmitNodeGroup(jobPo.getSubmitNodeGroup());
+        jobLogPo.setTaskId(jobPo.getTaskId());
+        jobLogPo.setTaskTrackerNodeGroup(jobPo.getTaskTrackerNodeGroup());
+        jobLogPo.setNeedFeedback(jobPo.isNeedFeedback());
+        jobLogPo.setCronExpression(jobPo.getCronExpression());
+        jobLogPo.setTriggerTime(jobPo.getTriggerTime());
+        jobLogPo.setTaskTrackerIdentity(jobPo.getTaskTrackerIdentity());
+        jobLogPo.setRetryTimes(jobPo.getRetryTimes());
+        jobLogPo.setMaxRetryTimes(jobPo.getMaxRetryTimes());
+
+        jobLogPo.setRepeatCount(jobPo.getRepeatCount());
+        jobLogPo.setRepeatedCount(jobPo.getRepeatedCount());
+        jobLogPo.setRepeatInterval(jobPo.getRepeatInterval());
+        return jobLogPo;
+    }
+
+    public static JobFeedbackPo convert(TaskRunResult result) {
+        JobFeedbackPo jobFeedbackPo = new JobFeedbackPo();
+        jobFeedbackPo.setJobRunResult(result);
+        jobFeedbackPo.setId(StringUtils.generateUUID());
+        jobFeedbackPo.setGmtCreated(SystemClock.now());
+        return jobFeedbackPo;
+    }
+
+}

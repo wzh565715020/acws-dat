@@ -3,14 +3,13 @@ package com.tyyd.framework.dat.taskdispatch.domain;
 import com.tyyd.framework.dat.biz.logger.JobLogger;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
-import com.tyyd.framework.dat.queue.CronJobQueue;
-import com.tyyd.framework.dat.queue.ExecutableJobQueue;
-import com.tyyd.framework.dat.queue.ExecutingJobQueue;
-import com.tyyd.framework.dat.queue.JobFeedbackQueue;
+import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
+import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
+import com.tyyd.framework.dat.queue.TaskFeedbackQueue;
 import com.tyyd.framework.dat.queue.NodeGroupStore;
 import com.tyyd.framework.dat.queue.PreLoader;
-import com.tyyd.framework.dat.queue.RepeatJobQueue;
-import com.tyyd.framework.dat.queue.SuspendJobQueue;
+import com.tyyd.framework.dat.queue.TaskQueue;
+import com.tyyd.framework.dat.queue.SuspendTaskQueue;
 import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
 import com.tyyd.framework.dat.taskdispatch.id.IdGenerator;
 import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
@@ -20,7 +19,6 @@ import com.tyyd.framework.dat.taskdispatch.support.TaskPushMachine;
 import com.tyyd.framework.dat.taskdispatch.support.checker.ExecutingDeadTaskChecker;
 import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskClientManager;
 import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
-import com.tyyd.framework.dat.taskexecuter.support.TaskPullMachine;
 
 /**
  * JobTracker Application
@@ -42,20 +40,17 @@ public class TaskDispatcherAppContext extends AppContext {
     private JobLogger jobLogger;
 
     // executable job queue（waiting for exec）
-    private ExecutableJobQueue executableJobQueue;
+    private ExecutableTaskQueue executableTaskQueue;
     // executing job queue
-    private ExecutingJobQueue executingJobQueue;
-    // store the connected node groups
-    private NodeGroupStore nodeGroupStore;
+    private ExecutingTaskQueue executingTaskQueue;
 
     // Cron Job queue
-    private CronJobQueue cronJobQueue;
+    private TaskQueue taskQueue;
     // feedback queue
-    private JobFeedbackQueue jobFeedbackQueue;
+    private TaskFeedbackQueue jobFeedbackQueue;
     // job id generator
     private IdGenerator idGenerator;
-	private SuspendJobQueue suspendJobQueue;
-    private RepeatJobQueue repeatJobQueue;
+	private SuspendTaskQueue suspendJobQueue;
     private PreLoader preLoader;
     private TaskReceiver jobReceiver;
     private TaskSender jobSender;
@@ -94,11 +89,11 @@ public class TaskDispatcherAppContext extends AppContext {
         this.jobLogger = jobLogger;
     }
 
-    public JobFeedbackQueue getJobFeedbackQueue() {
+    public TaskFeedbackQueue getJobFeedbackQueue() {
         return jobFeedbackQueue;
     }
 
-    public void setJobFeedbackQueue(JobFeedbackQueue jobFeedbackQueue) {
+    public void setJobFeedbackQueue(TaskFeedbackQueue jobFeedbackQueue) {
         this.jobFeedbackQueue = jobFeedbackQueue;
     }
 
@@ -150,13 +145,6 @@ public class TaskDispatcherAppContext extends AppContext {
         this.oldDataHandler = oldDataHandler;
     }
 
-    public CronJobQueue getCronJobQueue() {
-        return cronJobQueue;
-    }
-
-    public void setCronJobQueue(CronJobQueue cronJobQueue) {
-        this.cronJobQueue = cronJobQueue;
-    }
 
     public IdGenerator getIdGenerator() {
         return idGenerator;
@@ -166,45 +154,37 @@ public class TaskDispatcherAppContext extends AppContext {
         this.idGenerator = idGenerator;
     }
 
-    public ExecutableJobQueue getExecutableJobQueue() {
-        return executableJobQueue;
+    public ExecutableTaskQueue getExecutableJobQueue() {
+        return executableTaskQueue;
     }
 
-    public void setExecutableJobQueue(ExecutableJobQueue executableJobQueue) {
-        this.executableJobQueue = executableJobQueue;
+    public void setExecutableJobQueue(ExecutableTaskQueue executableJobQueue) {
+        this.executableTaskQueue = executableJobQueue;
     }
 
-    public ExecutingJobQueue getExecutingJobQueue() {
-        return executingJobQueue;
+    public ExecutingTaskQueue getExecutingJobQueue() {
+        return executingTaskQueue;
     }
 
-    public void setExecutingJobQueue(ExecutingJobQueue executingJobQueue) {
-        this.executingJobQueue = executingJobQueue;
+    public void setExecutingJobQueue(ExecutingTaskQueue executingJobQueue) {
+        this.executingTaskQueue = executingJobQueue;
     }
 
-    public NodeGroupStore getNodeGroupStore() {
-        return nodeGroupStore;
-    }
-
-    public void setNodeGroupStore(NodeGroupStore nodeGroupStore) {
-        this.nodeGroupStore = nodeGroupStore;
-    }
-
-	public SuspendJobQueue getSuspendJobQueue() {
+	public SuspendTaskQueue getSuspendJobQueue() {
 		return suspendJobQueue;
 	}
 
-	public void setSuspendJobQueue(SuspendJobQueue suspendJobQueue) {
+	public void setSuspendJobQueue(SuspendTaskQueue suspendJobQueue) {
 		this.suspendJobQueue = suspendJobQueue;
 	}
 
-    public RepeatJobQueue getRepeatJobQueue() {
-        return repeatJobQueue;
-    }
+	public TaskQueue getTaskQueue() {
+		return taskQueue;
+	}
 
-    public void setRepeatJobQueue(RepeatJobQueue repeatJobQueue) {
-        this.repeatJobQueue = repeatJobQueue;
-    }
+	public void setTaskQueue(TaskQueue taskQueue) {
+		this.taskQueue = taskQueue;
+	}
 
 	public void setTaskPushMachine(TaskPushMachine taskPushMachine) {
 		this.taskPushMachine = taskPushMachine;

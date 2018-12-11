@@ -6,7 +6,7 @@ import com.tyyd.framework.dat.core.cmd.JVMInfoGetHttpCmd;
 import com.tyyd.framework.dat.core.cmd.StatusCheckHttpCmd;
 import com.tyyd.framework.dat.core.commons.utils.NetUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.factory.JobNodeConfigFactory;
+import com.tyyd.framework.dat.core.factory.TaskNodeConfigFactory;
 import com.tyyd.framework.dat.core.factory.NodeFactory;
 import com.tyyd.framework.dat.core.json.JSONFactory;
 import com.tyyd.framework.dat.core.registry.AbstractRegistry;
@@ -32,7 +32,7 @@ public class MonitorAgent {
 
     public MonitorAgent() {
         this.appContext = new MonitorAppContext();
-        this.config = JobNodeConfigFactory.getDefaultConfig();
+        this.config = TaskNodeConfigFactory.getDefaultConfig();
         this.appContext.setConfig(config);
     }
 

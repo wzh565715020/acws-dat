@@ -8,7 +8,7 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.domain.Job;
+import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.taskexecuter.Result;
@@ -89,14 +89,14 @@ public class Scanner implements DisposableBean, BeanFactoryPostProcessor, BeanPo
 
                     TaskRunnerHolder.add(shardValue, new TaskRunner() {
                         @Override
-                        public Result run(Job job) throws Throwable {
+                        public Result run(Task job) throws Throwable {
                             if (pTypes == null || pTypes.length == 0) {
                                 return (Result) method.invoke(bean);
                             }
                             Object[] pTypeValues = new Object[pTypes.length];
 
                             for (int i = 0; i < pTypes.length; i++) {
-                                if (pTypes[i] == Job.class) {
+                                if (pTypes[i] == Task.class) {
                                     pTypeValues[i] = job;
                                 } else {
                                     pTypeValues[i] = null;

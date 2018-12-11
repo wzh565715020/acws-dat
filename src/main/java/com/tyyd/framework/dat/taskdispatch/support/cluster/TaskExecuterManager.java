@@ -110,8 +110,10 @@ public class TaskExecuterManager {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			appContext.getChannelManager().offerChannel(channel);
 		}
 		// 更新channel
+		
 		returnTaskExecuterNode.setChannel(channel);
 		taskExecuterNodes.add(returnTaskExecuterNode);
 		LOGGER.info("update node channel , taskTackerNode={}", returnTaskExecuterNode);

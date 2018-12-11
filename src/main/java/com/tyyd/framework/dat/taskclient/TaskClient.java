@@ -16,7 +16,7 @@ import com.tyyd.framework.dat.core.commons.utils.BatchUtils;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.constant.Constants;
-import com.tyyd.framework.dat.core.domain.Job;
+import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.exception.JobSubmitException;
 import com.tyyd.framework.dat.core.exception.JobTrackerNotFoundException;
 import com.tyyd.framework.dat.core.protocol.JobProtos;
@@ -79,15 +79,15 @@ public class TaskClient<T extends TaskClientNode, Context extends AppContext> ex
     protected void beforeStop() {
     }
 
-    public Response submitJob(Job job) throws JobSubmitException {
+    public Response submitJob(Task job) throws JobSubmitException {
         checkStart();
         return protectSubmit(Collections.singletonList(job));
     }
 
-    private Response protectSubmit(List<Job> jobs) throws JobSubmitException {
+    private Response protectSubmit(List<Task> jobs) throws JobSubmitException {
         return protector.execute(jobs, new TaskSubmitExecutor<Response>() {
             @Override
-            public Response execute(List<Job> jobs) throws JobSubmitException {
+            public Response execute(List<Task> jobs) throws JobSubmitException {
                 return submitJob(jobs, SubmitType.ASYNC);
             }
         });
@@ -135,12 +135,12 @@ public class TaskClient<T extends TaskClientNode, Context extends AppContext> ex
         }
     }
 
-    private void checkFields(List<Job> jobs) {
+    private void checkFields(List<Task> jobs) {
         // 参数验证
         if (CollectionUtils.isEmpty(jobs)) {
             throw new JobSubmitException("Job can not be null!");
         }
-        for (Job job : jobs) {
+        for (Task job : jobs) {
             if (job == null) {
                 throw new JobSubmitException("Job can not be null!");
             } else {
@@ -149,7 +149,7 @@ public class TaskClient<T extends TaskClientNode, Context extends AppContext> ex
         }
     }
 
-    protected Response submitJob(final List<Job> jobs, SubmitType type) throws JobSubmitException {
+    protected Response submitJob(final List<Task> jobs, SubmitType type) throws JobSubmitException {
         // 检查参数
         checkFields(jobs);
 
@@ -243,13 +243,13 @@ public class TaskClient<T extends TaskClientNode, Context extends AppContext> ex
         submitCallback.call(remotingClient.invokeSync(requestCommand));
     }
 
-    public Response submitJob(List<Job> jobs) throws JobSubmitException {
+    public Response submitJob(List<Task> jobs) throws JobSubmitException {
         checkStart();
         Response response = new Response();
         response.setSuccess(true);
         int size = jobs.size();
         for (int i = 0; i <= size / BATCH_SIZE; i++) {
-            List<Job> subJobs = BatchUtils.getBatchList(i, BATCH_SIZE, jobs);
+            List<Task> subJobs = BatchUtils.getBatchList(i, BATCH_SIZE, jobs);
 
             if (CollectionUtils.isNotEmpty(subJobs)) {
                 Response subResponse = protectSubmit(subJobs);

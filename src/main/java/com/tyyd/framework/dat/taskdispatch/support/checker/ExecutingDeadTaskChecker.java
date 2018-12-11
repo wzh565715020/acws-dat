@@ -28,7 +28,7 @@ import com.tyyd.framework.dat.core.protocol.command.JobAskRequest;
 import com.tyyd.framework.dat.core.protocol.command.JobAskResponse;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
-import com.tyyd.framework.dat.core.support.JobDomainConverter;
+import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
@@ -151,7 +151,7 @@ public class ExecutingDeadTaskChecker {
             RemotingClientDelegate remotingServer = appContext.getRemotingServer();
             List<String> jobIds = new ArrayList<String>(jobPos.size());
             for (TaskPo jobPo : jobPos) {
-                jobIds.add(jobPo.getJobId());
+                jobIds.add(jobPo.getTaskId());
             }
             JobAskRequest requestBody = appContext.getCommandBodyWrapper().wrapper(new JobAskRequest());
             requestBody.setJobIds(jobIds);
@@ -170,7 +170,7 @@ public class ExecutingDeadTaskChecker {
                             } catch (InterruptedException ignored) {
                             }
                             for (TaskPo jobPo : jobPos) {
-                                if (deadJobIds.contains(jobPo.getJobId())) {
+                                if (deadJobIds.contains(jobPo.getTaskId())) {
                                     fixDeadJob(jobPo);
                                 }
                             }
@@ -204,9 +204,9 @@ public class ExecutingDeadTaskChecker {
             }
 
             // 2. remove from executing queue
-            appContext.getExecutingJobQueue().remove(jobPo.getJobId());
+            appContext.getExecutingJobQueue().remove(jobPo.getTaskId());
 
-            JobLogPo jobLogPo = JobDomainConverter.convertJobLog(jobPo);
+            JobLogPo jobLogPo = TaskDomainConverter.convertJobLog(jobPo);
             jobLogPo.setSuccess(true);
             jobLogPo.setLevel(Level.WARN);
             jobLogPo.setLogType(LogType.FIXED_DEAD);

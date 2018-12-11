@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.queue.domain;
 
 
-import com.tyyd.framework.dat.core.domain.JobRunResult;
+import com.tyyd.framework.dat.core.domain.TaskRunResult;
 
 /**
  * @author Robert HG (254963746@qq.com) on 3/3/15.
@@ -12,13 +12,13 @@ public class JobFeedbackPo{
 
     private Long gmtCreated;
 
-    private JobRunResult jobRunResult;
+    private TaskRunResult jobRunResult;
 
-    public JobRunResult getJobRunResult() {
+    public TaskRunResult getJobRunResult() {
         return jobRunResult;
     }
 
-    public void setJobRunResult(JobRunResult jobRunResult) {
+    public void setJobRunResult(TaskRunResult jobRunResult) {
         this.jobRunResult = jobRunResult;
     }
 

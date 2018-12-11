@@ -4,7 +4,6 @@ package com.tyyd.framework.dat.taskdispatch.domain;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.taskdispatch.channel.ChannelWrapper;
 
 /**

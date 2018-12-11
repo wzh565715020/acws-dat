@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.tyyd.framework.dat.core.domain.Job;
+import com.tyyd.framework.dat.core.domain.Task;
 
 /**
  * 返回给客户端的
@@ -19,26 +19,26 @@ public class Response implements Serializable {
     private String code;
 
     // 如果success 为false, 这个才会有值
-    private List<Job> failedJobs;
+    private List<Task> failedJobs;
 
-    public List<Job> getFailedJobs() {
+    public List<Task> getFailedJobs() {
         return failedJobs;
     }
 
-    public void setFailedJobs(List<Job> failedJobs) {
+    public void setFailedJobs(List<Task> failedJobs) {
         this.failedJobs = failedJobs;
     }
 
-    public void addFailedJobs(List<Job> jobs){
+    public void addFailedJobs(List<Task> jobs){
         if(this.failedJobs == null){
-            this.failedJobs = new ArrayList<Job>();
+            this.failedJobs = new ArrayList<Task>();
         }
         this.failedJobs.addAll(jobs);
     }
 
-    public void addFailedJob(Job job){
+    public void addFailedJob(Task job){
         if(this.failedJobs == null){
-            this.failedJobs = new ArrayList<Job>();
+            this.failedJobs = new ArrayList<Task>();
         }
         this.failedJobs.add(job);
     }

@@ -2,7 +2,7 @@ package com.tyyd.framework.dat.queue.mysql;
 
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
-import com.tyyd.framework.dat.queue.SuspendJobQueue;
+import com.tyyd.framework.dat.queue.SuspendTaskQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
 import com.tyyd.framework.dat.store.jdbc.builder.DeleteSql;
@@ -12,11 +12,10 @@ import com.tyyd.framework.dat.admin.request.JobQueueReq;
 /**
  * @author bug (357693306@qq.com) on 3/4/16.
  */
-public class MysqlSuspendJobQueue extends AbstractMysqlJobQueue implements SuspendJobQueue {
+public class MysqlSuspendJobQueue extends AbstractMysqlTaskQueue implements SuspendTaskQueue {
 
     public MysqlSuspendJobQueue(Config config) {
         super(config);
-        createTable(readSqlFile("sql/mysql/lts_cron_suspend_job_queue.sql", getTableName()));
     }
 
     @Override

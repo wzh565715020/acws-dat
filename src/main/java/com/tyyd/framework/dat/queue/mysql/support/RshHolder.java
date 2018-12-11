@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.constant.Level;
-import com.tyyd.framework.dat.core.domain.JobRunResult;
+import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.json.TypeReference;
 import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
@@ -30,7 +30,7 @@ public class RshHolder {
             if (!rs.next()) {
                 return null;
             }
-            return getJobPo(rs);
+            return getTaskPo(rs);
         }
     };
 
@@ -39,15 +39,14 @@ public class RshHolder {
         public List<TaskPo> handle(ResultSet rs) throws SQLException {
             List<TaskPo> jobPos = new ArrayList<TaskPo>();
             while (rs.next()) {
-                jobPos.add(getJobPo(rs));
+                jobPos.add(getTaskPo(rs));
             }
             return jobPos;
         }
     };
 
-    private static TaskPo getJobPo(ResultSet rs) throws SQLException {
+    private static TaskPo getTaskPo(ResultSet rs) throws SQLException {
         TaskPo jobPo = new TaskPo();
-        jobPo.setJobId(rs.getString("job_id"));
         jobPo.setPriority(rs.getInt("priority"));
         jobPo.setRetryTimes(rs.getInt("retry_times"));
         jobPo.setMaxRetryTimes(rs.getInt("max_retry_times"));
@@ -77,7 +76,7 @@ public class RshHolder {
             while (rs.next()) {
                 JobFeedbackPo jobFeedbackPo = new JobFeedbackPo();
                 jobFeedbackPo.setId(rs.getString("id"));
-                jobFeedbackPo.setJobRunResult(JSON.parse(rs.getString("job_result"), new TypeReference<JobRunResult>() {
+                jobFeedbackPo.setJobRunResult(JSON.parse(rs.getString("job_result"), new TypeReference<TaskRunResult>() {
                 }));
                 jobFeedbackPo.setGmtCreated(rs.getLong("gmt_created"));
                 jobFeedbackPos.add(jobFeedbackPo);

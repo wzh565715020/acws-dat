@@ -1,7 +1,6 @@
 package com.tyyd.framework.dat.queue.mongo;
 
 import com.tyyd.framework.dat.core.AppContext;
-import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.AbstractPreLoader;
@@ -15,9 +14,6 @@ import org.mongodb.morphia.query.UpdateResults;
 
 import java.util.List;
 
-/**
- * @author Robert HG (254963746@qq.com) on 8/13/15.
- */
 public class MongoPreLoader extends AbstractPreLoader {
 
     private MongoTemplate template;
@@ -35,7 +31,7 @@ public class MongoPreLoader extends AbstractPreLoader {
                         .set("taskTrackerIdentity", taskTrackerIdentity)
                         .set("gmtModified", SystemClock.now());
 
-        String tableName = JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup);
+        String tableName = JobQueueUtils.getExecutableQueueName();
 
         Query<TaskPo> updateQuery = template.createQuery(tableName, TaskPo.class);
         updateQuery.field("jobId").equal(jobId)
@@ -48,7 +44,7 @@ public class MongoPreLoader extends AbstractPreLoader {
 
     protected List<TaskPo> load(String loadTaskTrackerNodeGroup, int loadSize) {
         // load
-        String tableName = JobQueueUtils.getExecutableQueueName(loadTaskTrackerNodeGroup);
+        String tableName = JobQueueUtils.getExecutableQueueName();
         Query<TaskPo> query = template.createQuery(tableName, TaskPo.class);
         query.field("isRunning").equal(false)
                 .filter("triggerTime < ", SystemClock.now())

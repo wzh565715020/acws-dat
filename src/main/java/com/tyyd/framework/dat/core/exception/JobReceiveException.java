@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.core.exception;
 
-import com.tyyd.framework.dat.core.domain.Job;
+import com.tyyd.framework.dat.core.domain.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,19 +15,19 @@ public class JobReceiveException extends Exception {
 	/**
      * 出错的job列表
      */
-    private List<Job> jobs;
+    private List<Task> jobs;
 
-    public List<Job> getJobs() {
+    public List<Task> getJobs() {
         return jobs;
     }
 
-    public void setJobs(List<Job> jobs) {
+    public void setJobs(List<Task> jobs) {
         this.jobs = jobs;
     }
 
-    public void addJob(Job job){
+    public void addJob(Task job){
         if(jobs == null){
-            jobs = new ArrayList<Job>();
+            jobs = new ArrayList<Task>();
         }
 
         jobs.add(job);

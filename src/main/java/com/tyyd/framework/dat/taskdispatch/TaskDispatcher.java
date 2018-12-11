@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.taskdispatch;
 import com.tyyd.framework.dat.biz.logger.SmartJobLogger;
 import com.tyyd.framework.dat.core.cluster.AbstractClientNode;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
-import com.tyyd.framework.dat.queue.JobQueueFactory;
+import com.tyyd.framework.dat.queue.TaskQueueFactory;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
 import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
 import com.tyyd.framework.dat.taskdispatch.cmd.AddTaskHttpCmd;
@@ -41,15 +41,13 @@ public class TaskDispatcher extends AbstractClientNode<TaskDispatcherNode, TaskD
         appContext.setRemotingServer(remotingClient);
         appContext.setJobLogger(new SmartJobLogger(appContext));
 
-        JobQueueFactory factory = ServiceLoader.load(JobQueueFactory.class, config);
+        TaskQueueFactory factory = ServiceLoader.load(TaskQueueFactory.class, config);
 
         appContext.setExecutableJobQueue(factory.getExecutableJobQueue(config));
         appContext.setExecutingJobQueue(factory.getExecutingJobQueue(config));
-        appContext.setCronJobQueue(factory.getCronJobQueue(config));
-        appContext.setRepeatJobQueue(factory.getRepeatJobQueue(config));
-        appContext.setSuspendJobQueue(factory.getSuspendJobQueue(config));
-        appContext.setJobFeedbackQueue(factory.getJobFeedbackQueue(config));
-        appContext.setNodeGroupStore(factory.getNodeGroupStore(config));
+        appContext.setTaskQueue(factory.getTaskQueue(config));
+        appContext.setSuspendJobQueue(factory.getSuspendTaskQueue(config));
+        appContext.setJobFeedbackQueue(factory.getTaskFeedbackQueue(config));
         appContext.setPreLoader(factory.getPreLoader(appContext));
         appContext.setJobSender(new TaskSender(appContext));
 
@@ -62,6 +60,7 @@ public class TaskDispatcher extends AbstractClientNode<TaskDispatcherNode, TaskD
     protected void afterStart() {
         appContext.getChannelManager().start();
         appContext.getMStatReporter().start();
+        appContext.getTaskPushMachine().start();
     }
 
     @Override

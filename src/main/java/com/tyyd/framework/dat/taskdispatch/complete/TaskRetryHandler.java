@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
-import com.tyyd.framework.dat.core.domain.JobMeta;
-import com.tyyd.framework.dat.core.domain.JobRunResult;
+import com.tyyd.framework.dat.core.domain.TaskMeta;
+import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.CronExpressionUtils;
@@ -29,16 +29,16 @@ public class TaskRetryHandler {
         this.retryInterval = appContext.getConfig().getParameter("jobtracker.job.retry.interval.millis", 30 * 1000);
     }
 
-    public void onComplete(List<JobRunResult> results) {
+    public void onComplete(List<TaskRunResult> results) {
 
         if (CollectionUtils.isEmpty(results)) {
             return;
         }
-        for (JobRunResult result : results) {
+        for (TaskRunResult result : results) {
 
-            JobMeta jobMeta = result.getJobMeta();
+            TaskMeta jobMeta = result.getTaskMeta();
             // 1. 加入到重试队列
-            TaskPo jobPo = appContext.getExecutingJobQueue().getJob(jobMeta.getJobId());
+            TaskPo jobPo = appContext.getExecutingJobQueue().getJob(jobMeta.getTaskId());
             if (jobPo == null) {    // 表示已经被删除了
                 continue;
             }
@@ -50,7 +50,7 @@ public class TaskRetryHandler {
 
             if (jobPo.isCron()) {
                 // 如果是 cron Job, 判断任务下一次执行时间和重试时间的比较
-                TaskPo cronJobPo = appContext.getCronJobQueue().getJob(jobMeta.getJobId());
+                TaskPo cronJobPo = appContext.getTaskQueue().getJob(jobMeta.getTaskId());
                 if (cronJobPo != null) {
                     Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(cronJobPo.getCronExpression());
                     if (nextTriggerTime != null && nextTriggerTime.getTime() < nextRetryTriggerTime) {
@@ -62,7 +62,7 @@ public class TaskRetryHandler {
                     }
                 }
             } else if (jobPo.isRepeatable()) {
-                TaskPo repeatJobPo = appContext.getRepeatJobQueue().getJob(jobMeta.getJobId());
+                TaskPo repeatJobPo = appContext.getTaskQueue().getJob(jobMeta.getTaskId());
                 if (repeatJobPo != null) {
                     // 比较下一次重复时间和重试时间
                     if (repeatJobPo.getRepeatCount() == -1 || (repeatJobPo.getRepeatedCount() < repeatJobPo.getRepeatCount())) {
@@ -92,7 +92,7 @@ public class TaskRetryHandler {
                 LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(jobPo));
             }
             // 从正在执行的队列中移除
-            appContext.getExecutingJobQueue().remove(jobPo.getJobId());
+            appContext.getExecutingJobQueue().remove(jobPo.getTaskId());
         }
     }
 }

@@ -99,7 +99,6 @@ public abstract class AbstractRemotingServer extends AbstractRemoting implements
             RemotingTimeoutException, RemotingSendRequestException {
         this.invokeAsyncImpl(channel, request, timeoutMillis, asyncCallback);
     }
-
     @Override
     public void invokeOneway(Channel channel, RemotingCommand request, long timeoutMillis)
             throws InterruptedException, RemotingTooMuchRequestException, RemotingTimeoutException,

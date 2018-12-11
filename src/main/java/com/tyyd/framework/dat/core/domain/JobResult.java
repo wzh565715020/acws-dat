@@ -12,7 +12,7 @@ public class JobResult implements Serializable{
 
 	private static final long serialVersionUID = -6542469058048149122L;
 
-	private Job job;
+	private Task job;
 
     // 执行成功还是失败
     private boolean success;
@@ -21,11 +21,11 @@ public class JobResult implements Serializable{
     // 任务完成时间
     private Long time;
 
-    public Job getJob() {
+    public Task getJob() {
         return job;
     }
 
-    public void setJob(Job job) {
+    public void setJob(Task job) {
         this.job = job;
     }
 

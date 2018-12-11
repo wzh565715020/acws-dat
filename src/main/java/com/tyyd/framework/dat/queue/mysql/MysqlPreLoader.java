@@ -1,7 +1,6 @@
 package com.tyyd.framework.dat.queue.mysql;
 
 import com.tyyd.framework.dat.core.AppContext;
-import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
@@ -17,9 +16,6 @@ import com.tyyd.framework.dat.store.jdbc.builder.UpdateSql;
 
 import java.util.List;
 
-/**
- * @author Robert HG (254963746@qq.com) on 8/14/15.
- */
 public class MysqlPreLoader extends AbstractPreLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MysqlPreLoader.class);
@@ -38,7 +34,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
         try {
             return new UpdateSql(sqlTemplate)
                     .update()
-                    .table(getTableName(taskTrackerNodeGroup))
+                    .table(getTableName())
                     .set("is_running", true)
                     .set("task_tracker_identity", taskTrackerIdentity)
                     .set("gmt_modified", SystemClock.now())
@@ -61,7 +57,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
                     .select()
                     .all()
                     .from()
-                    .table(getTableName(loadTaskTrackerNodeGroup))
+                    .table(getTableName())
                     .where("is_running = ?", false)
                     .and("trigger_time< ?", SystemClock.now())
                     .orderBy()
@@ -76,7 +72,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
         }
     }
 
-    private String getTableName(String taskTrackerNodeGroup) {
-        return JobQueueUtils.getExecutableQueueName(taskTrackerNodeGroup);
+    private String getTableName() {
+        return JobQueueUtils.getExecutableQueueName();
     }
 }

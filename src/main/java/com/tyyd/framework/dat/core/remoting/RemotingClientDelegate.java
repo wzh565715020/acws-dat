@@ -131,16 +131,11 @@ public class RemotingClientDelegate {
      */
     public void invokeAsync(Channel channel,RemotingCommand request, AsyncCallback asyncCallback)
             throws JobTrackerNotFoundException {
-
-        Node taskExecuter = getTaskExecuterNode();
-
         try {
-            remotingClient.invokeAsync(taskExecuter.getAddress(), request,
+            remotingClient.invokeAsync(channel, request,
                     appContext.getConfig().getInvokeTimeoutMillis(), asyncCallback);
             this.serverEnable = true;
         } catch (Throwable e) {
-            // 将这个JobTracker移除
-            taskExecuters.remove(taskExecuter);
         }
     }
     /**

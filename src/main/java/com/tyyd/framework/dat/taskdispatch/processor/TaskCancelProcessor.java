@@ -8,7 +8,7 @@ import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.protocol.JobProtos;
 import com.tyyd.framework.dat.core.protocol.command.JobCancelRequest;
-import com.tyyd.framework.dat.core.support.JobDomainConverter;
+import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.remoting.Channel;
@@ -31,25 +31,25 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
 
         String taskId = jobCancelRequest.getTaskId();
         String taskTrackerNodeGroup = jobCancelRequest.getTaskTrackerNodeGroup();
-        TaskPo job = appContext.getCronJobQueue().getJob(taskTrackerNodeGroup, taskId);
+        TaskPo job = appContext.getTaskQueue().getJob(taskTrackerNodeGroup, taskId);
         if (job == null) {
-            job = appContext.getExecutableJobQueue().getJob(taskTrackerNodeGroup, taskId);
+            job = appContext.getExecutableJobQueue().getTask(taskTrackerNodeGroup, taskId);
         }
 
         if (job != null) {
-            appContext.getExecutableJobQueue().remove(job.getTaskTrackerNodeGroup(), job.getJobId());
+            appContext.getExecutableJobQueue().remove(job.getTaskTrackerNodeGroup(), job.getTaskId());
             if (job.isCron()) {
-                appContext.getCronJobQueue().remove(job.getJobId());
+                appContext.getTaskQueue().remove(job.getTaskId());
             }
             // 记录日志
-            JobLogPo jobLogPo = JobDomainConverter.convertJobLog(job);
+            JobLogPo jobLogPo = TaskDomainConverter.convertJobLog(job);
             jobLogPo.setSuccess(true);
             jobLogPo.setLogType(LogType.DEL);
             jobLogPo.setLogTime(SystemClock.now());
             jobLogPo.setLevel(Level.INFO);
             appContext.getJobLogger().log(jobLogPo);
 
-            LOGGER.info("Cancel Job success , jobId={}, taskId={}, taskTrackerNodeGroup={}", job.getJobId(), taskId, taskTrackerNodeGroup);
+            LOGGER.info("Cancel Job success , jobId={}, taskId={}, taskTrackerNodeGroup={}", job.getTaskId(), taskId, taskTrackerNodeGroup);
             return RemotingCommand.createResponseCommand(JobProtos
                     .ResponseCode.TASK_CANCEL_SUCCESS.code());
         }

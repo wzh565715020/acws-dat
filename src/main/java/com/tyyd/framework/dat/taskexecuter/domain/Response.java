@@ -1,7 +1,8 @@
 package com.tyyd.framework.dat.taskexecuter.domain;
 
 import com.tyyd.framework.dat.core.domain.Action;
-import com.tyyd.framework.dat.core.domain.JobMeta;
+import com.tyyd.framework.dat.core.domain.TaskMeta;
+import com.tyyd.framework.dat.remoting.Channel;
 
 public class Response {
 
@@ -9,8 +10,9 @@ public class Response {
 
     private String msg;
 
-    private JobMeta jobMeta;
-
+    private TaskMeta taskMeta;
+    
+    private Channel channel;
     /**
      * 是否接收新任务
      */
@@ -24,12 +26,12 @@ public class Response {
         this.msg = msg;
     }
 
-    public JobMeta getJobMeta() {
-        return jobMeta;
+    public TaskMeta getTaskMeta() {
+        return taskMeta;
     }
 
-    public void setJobMeta(JobMeta jobMeta) {
-        this.jobMeta = jobMeta;
+    public void setJobMeta(TaskMeta jobMeta) {
+        this.taskMeta = jobMeta;
     }
 
     public boolean isReceiveNewJob() {
@@ -47,4 +49,13 @@ public class Response {
     public void setAction(Action action) {
         this.action = action;
     }
+
+	public Channel getChannel() {
+		return channel;
+	}
+
+	public void setChannel(Channel channel) {
+		this.channel = channel;
+	}
+    
 }

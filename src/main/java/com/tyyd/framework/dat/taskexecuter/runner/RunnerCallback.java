@@ -1,6 +1,5 @@
 package com.tyyd.framework.dat.taskexecuter.runner;
 
-import com.tyyd.framework.dat.core.domain.JobMeta;
 import com.tyyd.framework.dat.taskexecuter.domain.Response;
 
 public interface RunnerCallback {
@@ -10,6 +9,6 @@ public interface RunnerCallback {
      * @param response
      * @return 如果有新的任务, 那么返回新的任务过来
      */
-    public JobMeta runComplete(Response response);
+    public void runComplete(Response response);
 
 }

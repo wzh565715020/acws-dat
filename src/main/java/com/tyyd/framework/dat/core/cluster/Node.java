@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.core.cluster;
 
-import com.tyyd.framework.dat.core.domain.Job;
+import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.registry.NodeRegistryUtils;
 
@@ -34,13 +34,13 @@ public class Node {
 
     private String fullString;
 
-    private Job job;
+    private Task job;
 
-    public Job getJob() {
+    public Task getJob() {
         return job;
     }
 
-    public void setJob(Job job) {
+    public void setJob(Task job) {
         this.job = job;
     }
 

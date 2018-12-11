@@ -11,7 +11,7 @@ import com.tyyd.framework.dat.cmd.HttpCmdRequest;
 import com.tyyd.framework.dat.cmd.HttpCmdResponse;
 import com.tyyd.framework.dat.core.cmd.HttpCmdNames;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.domain.Job;
+import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.protocol.command.JobSubmitRequest;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
@@ -52,7 +52,7 @@ public class AddTaskHttpCmd implements HttpCmdProc {
             return response;
         }
         try {
-            Job job = JSON.parse(jobJSON, Job.class);
+            Task job = JSON.parse(jobJSON, Task.class);
             if (job == null) {
                 response.setMsg("job can not be null");
                 return response;

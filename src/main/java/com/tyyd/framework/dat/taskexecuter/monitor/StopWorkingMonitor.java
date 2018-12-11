@@ -53,7 +53,7 @@ public class StopWorkingMonitor {
                     @Override
                     public void run() {
                         try {
-                            if (offlineTimestamp == null && appContext.getRemotingClient().isServerEnable()) {
+                            if (offlineTimestamp == null) {
                                 offlineTimestamp = SystemClock.now();
                             }
 

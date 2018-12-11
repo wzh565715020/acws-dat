@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.queue.mysql;
 import com.tyyd.framework.dat.admin.request.JobQueueReq;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.support.JobQueueUtils;
-import com.tyyd.framework.dat.queue.ExecutingJobQueue;
+import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
 import com.tyyd.framework.dat.store.jdbc.builder.DeleteSql;
@@ -14,12 +14,10 @@ import java.util.List;
 /**
  * @author Robert HG (254963746@qq.com) on 5/31/15.
  */
-public class MysqlExecutingJobQueue extends AbstractMysqlJobQueue implements ExecutingJobQueue {
+public class MysqlExecutingJobQueue extends AbstractMysqlTaskQueue implements ExecutingTaskQueue {
 
     public MysqlExecutingJobQueue(Config config) {
         super(config);
-        // create table
-        createTable(readSqlFile("sql/mysql/lts_executing_job_queue.sql", getTableName()));
     }
 
     @Override

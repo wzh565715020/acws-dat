@@ -8,11 +8,11 @@ import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.domain.Action;
-import com.tyyd.framework.dat.core.domain.JobRunResult;
+import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.protocol.command.JobCompletedRequest;
-import com.tyyd.framework.dat.core.support.JobDomainConverter;
+import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.remoting.protocol.RemotingProtos;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
@@ -37,7 +37,7 @@ public class TaskStatBiz implements TaskCompletedBiz {
     @Override
     public RemotingCommand doBiz(JobCompletedRequest request) {
 
-        List<JobRunResult> results = request.getJobRunResults();
+        List<TaskRunResult> results = request.getJobRunResults();
 
         if (CollectionUtils.isEmpty(results)) {
             return RemotingCommand.createResponseCommand(RemotingProtos
@@ -49,10 +49,10 @@ public class TaskStatBiz implements TaskCompletedBiz {
 
         LogType logType = request.isReSend() ? LogType.RESEND : LogType.FINISHED;
 
-        for (JobRunResult result : results) {
+        for (TaskRunResult result : results) {
 
             // 记录日志
-            JobLogPo jobLogPo = JobDomainConverter.convertJobLog(result.getJobMeta());
+            JobLogPo jobLogPo = TaskDomainConverter.convertJobLog(result.getTaskMeta());
             jobLogPo.setMsg(result.getMsg());
             jobLogPo.setLogType(logType);
             jobLogPo.setSuccess(Action.EXECUTE_SUCCESS.equals(result.getAction()));

@@ -24,7 +24,6 @@ public class MysqlJobLogger extends JdbcAbstractAccess implements JobLogger {
 
     public MysqlJobLogger(Config config) {
         super(config);
-        createTable(readSqlFile("sql/mysql/lts_job_log_po.sql"));
     }
 
     @Override

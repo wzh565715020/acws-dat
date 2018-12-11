@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
-import com.tyyd.framework.dat.core.domain.Job;
+import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.support.RetryScheduler;
 import com.tyyd.framework.dat.taskclient.domain.TaskClientAppContext;
 import com.tyyd.framework.dat.taskclient.domain.TaskClientNode;
@@ -19,19 +19,19 @@ import com.tyyd.framework.dat.taskclient.support.TaskSubmitProtectException;
  */
 public class RetryJobClient extends TaskClient<TaskClientNode, TaskClientAppContext> {
 
-    private RetryScheduler<Job> retryScheduler;
+    private RetryScheduler<Task> retryScheduler;
 
     @Override
     protected void beforeStart() {
         super.beforeStart();
-        retryScheduler = new RetryScheduler<Job>(appContext, 30) {
+        retryScheduler = new RetryScheduler<Task>(appContext, 30) {
             @Override
             protected boolean isRemotingEnable() {
                 return isServerEnable();
             }
 
             @Override
-            protected boolean retry(List<Job> jobs) {
+            protected boolean retry(List<Task> jobs) {
                 Response response = null;
                 try {
                     // 重试必须走同步，不然会造成文件锁，死锁
@@ -58,12 +58,12 @@ public class RetryJobClient extends TaskClient<TaskClientNode, TaskClientAppCont
     }
 
     @Override
-    public Response submitJob(Job job) {
+    public Response submitJob(Task job) {
         return submitJob(Collections.singletonList(job));
     }
 
     @Override
-    public Response submitJob(List<Job> jobs) {
+    public Response submitJob(List<Task> jobs) {
 
         Response response;
         try {
@@ -77,7 +77,7 @@ public class RetryJobClient extends TaskClient<TaskClientNode, TaskClientAppCont
         }
         if (!response.isSuccess()) {
             try {
-                for (Job job : response.getFailedJobs()) {
+                for (Task job : response.getFailedJobs()) {
                     retryScheduler.inSchedule(job.getTaskId(), job);
                     stat.incFailStoreNum();
                 }
@@ -94,11 +94,11 @@ public class RetryJobClient extends TaskClient<TaskClientNode, TaskClientAppCont
         return response;
     }
 
-    private Response superSubmitJob(List<Job> jobs) {
+    private Response superSubmitJob(List<Task> jobs) {
         return super.submitJob(jobs);
     }
 
-    private Response superSubmitJob(List<Job> jobs, SubmitType type) {
+    private Response superSubmitJob(List<Task> jobs, SubmitType type) {
         return super.submitJob(jobs, type);
     }
 }

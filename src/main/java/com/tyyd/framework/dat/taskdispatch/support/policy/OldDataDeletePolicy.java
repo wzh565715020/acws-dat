@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.taskdispatch.support.policy;
 
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.JobFeedbackQueue;
+import com.tyyd.framework.dat.queue.TaskFeedbackQueue;
 import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
 import com.tyyd.framework.dat.taskdispatch.support.OldDataHandler;
 
@@ -16,11 +16,11 @@ public class OldDataDeletePolicy implements OldDataHandler {
         this.expired = expired;
     }
 
-    public boolean handle(JobFeedbackQueue jobFeedbackQueue, JobFeedbackPo jobFeedbackPo, JobFeedbackPo po) {
+    public boolean handle(TaskFeedbackQueue jobFeedbackQueue, JobFeedbackPo jobFeedbackPo, JobFeedbackPo po) {
 
         if (SystemClock.now() - jobFeedbackPo.getGmtCreated() > expired) {
             // delete
-            jobFeedbackQueue.remove(po.getJobRunResult().getJobMeta().getJob().getTaskTrackerNodeGroup(), po.getId());
+            jobFeedbackQueue.remove(po.getJobRunResult().getTaskMeta().getJob().getTaskTrackerNodeGroup(), po.getId());
             return true;
         }
 

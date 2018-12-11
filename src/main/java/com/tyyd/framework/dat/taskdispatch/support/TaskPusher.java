@@ -15,10 +15,9 @@ import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.exception.RequestTimeoutException;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.core.protocol.JobProtos;
-import com.tyyd.framework.dat.core.protocol.command.TaskPullRequest;
-import com.tyyd.framework.dat.core.protocol.command.JobPushRequest;
+import com.tyyd.framework.dat.core.protocol.command.TaskPushRequest;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
-import com.tyyd.framework.dat.core.support.JobDomainConverter;
+import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
@@ -55,7 +54,7 @@ public class TaskPusher {
             @Override
             public void run() {
                 try {
-                    push("");
+                    push(appContext.getConfig().getParameter(Constants.TASK_PUSH_NODE_GROUP));
                 } catch (Exception e) {
                     LOGGER.error("Job push failed!", e);
                 }
@@ -108,68 +107,6 @@ public class TaskPusher {
         }
     }
 
-    public void concurrentPush(final TaskPullRequest request) {
-
-        this.executorService.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    push(request);
-                } catch (Exception e) {
-                    LOGGER.error("Job push failed!", e);
-                }
-            }
-        });
-    }
-
-    private void push(final TaskPullRequest request) {
-
-        String nodeGroup = request.getNodeGroup();
-        String identity = request.getIdentity();
-        // 更新TaskExecuter的可用线程数
-        appContext.getTaskExecuterManager().updateTaskTrackerAvailableThreads(nodeGroup,
-                identity, request.getAvailableThreads(), request.getTimestamp());
-        TaskExecuterNode taskExecuterNode = appContext.getTaskExecuterManager().
-                getTaskTrackerNode(nodeGroup,identity);
-
-        if (taskExecuterNode == null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("taskTrackerNodeGroup:{}, taskTrackerIdentity:{} , didn't have node.", nodeGroup, identity);
-            }
-            return;
-        }
-
-        int availableThreads = taskExecuterNode.getAvailableThread().get();
-        if (availableThreads == 0) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("taskTrackerNodeGroup:{}, taskTrackerIdentity:{} , availableThreads:0", nodeGroup, identity);
-            }
-        }
-        while (availableThreads > 0) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("taskTrackerNodeGroup:{}, taskTrackerIdentity:{} , availableThreads:{}",
-                        nodeGroup, identity, availableThreads);
-            }
-            // 推送任务
-            TaskPushResult result = send(remotingClient, taskExecuterNode);
-            switch (result) {
-                case SUCCESS:
-                    availableThreads = taskExecuterNode.getAvailableThread().decrementAndGet();
-                    stat.incPushJobNum();
-                    break;
-                case FAILED:
-                    // 还是要继续发送
-                    break;
-                case NO_JOB:
-                    // 没有任务了
-                    return;
-                case SENT_ERROR:
-                    // TaskTracker链接失败
-                    return;
-            }
-        }
-    }
-
     /**
      * 是否推送成功
      */
@@ -183,8 +120,8 @@ public class TaskPusher {
             public TaskSender.SendResult invoke(final TaskPo jobPo) {
 
                 // 发送给TaskTracker执行
-                JobPushRequest body = appContext.getCommandBodyWrapper().wrapper(new JobPushRequest());
-                body.setJobMeta(JobDomainConverter.convert(jobPo));
+                TaskPushRequest body = appContext.getCommandBodyWrapper().wrapper(new TaskPushRequest());
+                body.setJobMeta(TaskDomainConverter.convert(jobPo));
                 RemotingCommand commandRequest = RemotingCommand.createRequestCommand(JobProtos.RequestCode.PUSH_TASK.code(), body);
 
                 // 是否分发推送任务成功
@@ -238,7 +175,7 @@ public class TaskPusher {
                         LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(jobPo));
                         needResume = false;
                     }
-                    appContext.getExecutingJobQueue().remove(jobPo.getJobId());
+                    appContext.getExecutingJobQueue().remove(jobPo.getTaskId());
                     if (needResume) {
                         appContext.getExecutableJobQueue().resume(jobPo);
                     }

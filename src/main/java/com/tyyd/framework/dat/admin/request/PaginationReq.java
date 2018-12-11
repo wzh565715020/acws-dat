@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.admin.request;
 
-/**
- * @author Robert HG (254963746@qq.com) on 6/6/15.
- */
 public class PaginationReq {
 
     private Integer start = 0;

@@ -19,7 +19,7 @@ public interface Constants {
 
     String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    int TASK_DISPATCHER_DEFAULT_LISTEN_PORT = 35001;
+    int TASK_EXECUTER_DEFAULT_LISTEN_PORT = 35001;
 
     // 默认集群名字
     String DEFAULT_CLUSTER_NAME = "defaultCluster";
@@ -77,7 +77,11 @@ public interface Constants {
 
     Charset UTF_8 = Charset.forName("UTF-8");
 
-    String TASK_PUSH_FREQUENCY = "task.pull.frequency";
+    String TASK_PUSH_FREQUENCY = "task.push.frequency";
+    
+    String TASK_PUSH_NODE_GROUP = "task.push.node.group";
+    
+    
     int DEFAULT_TASK_PUSH_FREQUENCY = 1;
 
     // TaskTracker 离线(网络隔离)时间 10s，超过10s，自动停止当前执行任务

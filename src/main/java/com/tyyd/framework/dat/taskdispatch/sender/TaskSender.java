@@ -7,7 +7,7 @@ import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
-import com.tyyd.framework.dat.core.support.JobDomainConverter;
+import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
@@ -43,13 +43,13 @@ public class TaskSender {
             appContext.getExecutableJobQueue().resume(jobPo);
             return new SendResult(false, TaskPushResult.FAILED);
         }
-        appContext.getExecutableJobQueue().remove(jobPo.getTaskTrackerNodeGroup(), jobPo.getJobId());
+        appContext.getExecutableJobQueue().remove(jobPo.getTaskTrackerNodeGroup(), jobPo.getTaskId());
 
         SendResult sendResult = invoker.invoke(jobPo);
 
         if (sendResult.isSuccess()) {
             // 记录日志
-            JobLogPo jobLogPo = JobDomainConverter.convertJobLog(jobPo);
+            JobLogPo jobLogPo = TaskDomainConverter.convertJobLog(jobPo);
             jobLogPo.setSuccess(true);
             jobLogPo.setLogType(LogType.SENT);
             jobLogPo.setLogTime(SystemClock.now());

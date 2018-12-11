@@ -8,8 +8,8 @@ import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.domain.Action;
-import com.tyyd.framework.dat.core.domain.Job;
-import com.tyyd.framework.dat.core.domain.JobRunResult;
+import com.tyyd.framework.dat.core.domain.Task;
+import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.protocol.command.JobCompletedRequest;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.taskdispatch.complete.TaskFinishHandler;
@@ -39,7 +39,7 @@ public class TaskProcBiz implements TaskCompletedBiz {
     @Override
     public RemotingCommand doBiz(JobCompletedRequest request) {
 
-        List<JobRunResult> results = request.getJobRunResults();
+        List<TaskRunResult> results = request.getJobRunResults();
 
         if (CollectionUtils.sizeOf(results) == 1) {
             singleResultsProcess(results);
@@ -49,22 +49,15 @@ public class TaskProcBiz implements TaskCompletedBiz {
         return null;
     }
 
-    private void singleResultsProcess(List<JobRunResult> results) {
-        JobRunResult result = results.get(0);
-
-        if (!needRetry(result)) {
-            // 这种情况下，如果要反馈客户端的，直接反馈客户端，不进行重试
-            jobFinishHandler.onComplete(results);
-        } else {
-            // 需要retry
-            retryHandler.onComplete(results);
-        }
+    private void singleResultsProcess(List<TaskRunResult> results) {
+        // 这种情况下，如果要反馈客户端的，直接反馈客户端，不进行重试
+        jobFinishHandler.onComplete(results);
     }
 
     /**
      * 判断任务是否需要加入重试队列
      */
-    private boolean needRetry(JobRunResult result) {
+    private boolean needRetry(TaskRunResult result) {
         // 判断类型
         if (!(Action.EXECUTE_LATER.equals(result.getAction())
                 || Action.EXECUTE_EXCEPTION.equals(result.getAction()))) {
@@ -72,7 +65,7 @@ public class TaskProcBiz implements TaskCompletedBiz {
         }
 
         // 判断重试次数
-        Job job = result.getJobMeta().getJob();
+        Task job = result.getTaskMeta().getJob();
         Integer retryTimes = job.getRetryTimes();
         int jobMaxRetryTimes = job.getMaxRetryTimes();
         return !(retryTimes >= globalMaxRetryTimes || retryTimes >= jobMaxRetryTimes);
@@ -81,21 +74,21 @@ public class TaskProcBiz implements TaskCompletedBiz {
     /**
      * 这里情况一般是发送失败，重新发送的
      */
-    private void multiResultsProcess(List<JobRunResult> results) {
+    private void multiResultsProcess(List<TaskRunResult> results) {
 
-        List<JobRunResult> retryResults = null;
+        List<TaskRunResult> retryResults = null;
         // 过滤出来需要通知客户端的
-        List<JobRunResult> feedbackResults = null;
+        List<TaskRunResult> feedbackResults = null;
         // 不需要反馈的
-        List<JobRunResult> finishResults = null;
+        List<TaskRunResult> finishResults = null;
 
-        for (JobRunResult result : results) {
+        for (TaskRunResult result : results) {
 
             if (needRetry(result)) {
                 // 需要加入到重试队列的
                 retryResults = CollectionUtils.newArrayListOnNull(retryResults);
                 retryResults.add(result);
-            } else if (isNeedFeedback(result.getJobMeta().getJob())) {
+            } else if (isNeedFeedback(result.getTaskMeta().getJob())) {
                 // 需要反馈给客户端
                 feedbackResults = CollectionUtils.newArrayListOnNull(feedbackResults);
                 feedbackResults.add(result);
@@ -113,7 +106,7 @@ public class TaskProcBiz implements TaskCompletedBiz {
         retryHandler.onComplete(retryResults);
     }
 
-    private boolean isNeedFeedback(Job job) {
+    private boolean isNeedFeedback(Task job) {
         if (job == null) {
             return false;
         }

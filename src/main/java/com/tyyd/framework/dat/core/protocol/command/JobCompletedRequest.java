@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.core.protocol.command;
 
-import com.tyyd.framework.dat.core.domain.JobRunResult;
+import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.remoting.annotation.NotNull;
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class JobCompletedRequest extends AbstractRemotingCommandBody {
     private boolean receiveNewJob = false;
 
     @NotNull
-    private List<JobRunResult> jobRunResults;
+    private List<TaskRunResult> jobRunResults;
 
     // 是否是重发(重发是批量发)
     private boolean reSend = false;
@@ -40,17 +40,17 @@ public class JobCompletedRequest extends AbstractRemotingCommandBody {
         this.receiveNewJob = receiveNewJob;
     }
 
-    public List<JobRunResult> getJobRunResults() {
+    public List<TaskRunResult> getJobRunResults() {
         return jobRunResults;
     }
 
-    public void setJobRunResults(List<JobRunResult> jobRunResults) {
+    public void setJobRunResults(List<TaskRunResult> jobRunResults) {
         this.jobRunResults = jobRunResults;
     }
 
-    public void addJobResult(JobRunResult jobRunResult) {
+    public void addJobResult(TaskRunResult jobRunResult) {
         if (jobRunResults == null) {
-            jobRunResults = new ArrayList<JobRunResult>();
+            jobRunResults = new ArrayList<TaskRunResult>();
         }
         jobRunResults.add(jobRunResult);
     }

@@ -1,6 +1,8 @@
 package com.tyyd.framework.dat.core.remoting;
 
 import com.tyyd.framework.dat.core.AppContext;
+import com.tyyd.framework.dat.core.cluster.Node;
+import com.tyyd.framework.dat.core.exception.JobTrackerNotFoundException;
 import com.tyyd.framework.dat.core.exception.RemotingSendException;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
@@ -12,14 +14,15 @@ import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import java.util.concurrent.ExecutorService;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/18/14.
  *         对 remotingServer 的包装
  */
 public class RemotingServerDelegate {
 
     private RemotingServer remotingServer;
     private AppContext appContext;
-
+    // JobTracker 是否可用
+    private volatile boolean serverEnable = false;
+    
     public RemotingServerDelegate(RemotingServer remotingServer, AppContext appContext) {
         this.remotingServer = remotingServer;
         this.appContext = appContext;
@@ -63,7 +66,6 @@ public class RemotingServerDelegate {
             throw new RemotingSendException(t);
         }
     }
-
     public void invokeOneway(Channel channel, RemotingCommand request)
             throws RemotingSendException {
         try {
@@ -78,4 +80,13 @@ public class RemotingServerDelegate {
     public void shutdown() {
         remotingServer.shutdown();
     }
+
+	public boolean isServerEnable() {
+		return serverEnable;
+	}
+
+	public void setServerEnable(boolean serverEnable) {
+		this.serverEnable = serverEnable;
+	}
+    
 }

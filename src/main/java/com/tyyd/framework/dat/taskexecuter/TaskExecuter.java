@@ -1,9 +1,10 @@
 package com.tyyd.framework.dat.taskexecuter;
 
-import com.tyyd.framework.dat.core.cluster.AbstractClientNode;
+import com.tyyd.framework.dat.core.cluster.AbstractServerNode;
 import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
+import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
 import com.tyyd.framework.dat.taskexecuter.cmd.TaskTerminateCmd;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterNode;
@@ -13,12 +14,11 @@ import com.tyyd.framework.dat.taskexecuter.processor.RemotingDispatcher;
 import com.tyyd.framework.dat.taskexecuter.runner.TaskRunner;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerFactory;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerPool;
-import com.tyyd.framework.dat.taskexecuter.support.TaskPullMachine;
 
 /**
  *         任务执行节点
  */
-public class TaskExecuter extends AbstractClientNode<TaskExecuterNode, TaskExecuterAppContext> {
+public class TaskExecuter extends AbstractServerNode<TaskExecuterNode, TaskExecuterAppContext> {
 
     public TaskExecuter() {
         appContext.setMStatReporter(new TaskExecuterMStatReporter(appContext));
@@ -26,11 +26,12 @@ public class TaskExecuter extends AbstractClientNode<TaskExecuterNode, TaskExecu
 
     @Override
     protected void beforeStart() {
-        appContext.setRemotingClient(remotingClient);
+        appContext.setRemotingServer(remotingServer);
+        // channel 管理者
+        appContext.setChannelManager(new ChannelManager());
         // 设置 线程池
         appContext.setRunnerPool(new RunnerPool(appContext));
         appContext.getMStatReporter().start();
-        appContext.setJobPullMachine(new TaskPullMachine(appContext));
         appContext.setStopWorkingMonitor(new StopWorkingMonitor(appContext));
 
         appContext.getHttpCmdServer().registerCommands(

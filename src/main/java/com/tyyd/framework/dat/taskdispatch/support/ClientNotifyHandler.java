@@ -3,9 +3,9 @@ package com.tyyd.framework.dat.taskdispatch.support;
 
 import java.util.List;
 
-import com.tyyd.framework.dat.core.domain.JobRunResult;
+import com.tyyd.framework.dat.core.domain.TaskRunResult;
 
-public interface ClientNotifyHandler<T extends JobRunResult> {
+public interface ClientNotifyHandler<T extends TaskRunResult> {
 
     /**
      * 通知成功的处理

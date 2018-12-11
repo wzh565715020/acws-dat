@@ -63,9 +63,6 @@ public class TaskClientManager {
         LOGGER.info("add JobClient node:{}", jobClientNode);
         jobClientNodes.add(jobClientNode);
 
-        // create feedback queue
-        appContext.getJobFeedbackQueue().createQueue(node.getGroup());
-        appContext.getNodeGroupStore().addNodeGroup(NodeType.TASK_CLIENT, node.getGroup());
     }
 
     /**

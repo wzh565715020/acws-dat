@@ -18,7 +18,7 @@ import com.tyyd.framework.dat.management.access.BackendAccessFactory;
 import com.tyyd.framework.dat.management.access.memory.NodeMemCacheAccess;
 import com.tyyd.framework.dat.management.cluster.BackendAppContext;
 import com.tyyd.framework.dat.management.cluster.BackendNode;
-import com.tyyd.framework.dat.queue.JobQueueFactory;
+import com.tyyd.framework.dat.queue.TaskQueueFactory;
 
 import java.util.Map;
 
@@ -91,14 +91,12 @@ public class BackendAppContextFactoryBean implements FactoryBean<BackendAppConte
     }
 
     private void initJobQueue(Config config) {
-        JobQueueFactory factory = ServiceLoader.load(JobQueueFactory.class, config);
+        TaskQueueFactory factory = ServiceLoader.load(TaskQueueFactory.class, config);
         appContext.setExecutableJobQueue(factory.getExecutableJobQueue(config));
         appContext.setExecutingJobQueue(factory.getExecutingJobQueue(config));
-        appContext.setCronJobQueue(factory.getCronJobQueue(config));
-        appContext.setRepeatJobQueue(factory.getRepeatJobQueue(config));
-        appContext.setSuspendJobQueue(factory.getSuspendJobQueue(config));
-        appContext.setJobFeedbackQueue(factory.getJobFeedbackQueue(config));
-        appContext.setNodeGroupStore(factory.getNodeGroupStore(config));
+        appContext.setTaskQueue(factory.getTaskQueue(config));
+        appContext.setSuspendJobQueue(factory.getSuspendTaskQueue(config));
+        appContext.setJobFeedbackQueue(factory.getTaskFeedbackQueue(config));
         appContext.setJobLogger(new SmartJobLogger(appContext));
     }
 
