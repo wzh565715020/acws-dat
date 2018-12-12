@@ -8,221 +8,192 @@ import com.tyyd.framework.dat.core.support.CronExpression;
 import com.tyyd.framework.dat.remoting.annotation.NotNull;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Task implements Serializable {
 
     private static final long serialVersionUID = 7881199011994149340L;
-
-    @NotNull
+	@NotNull
     private String taskId;
-    /**
-     * 优先级 (数值越大 优先级越低)
-     */
-    private Integer priority = 100;
-    // 提交的节点 （可以手动指定）
-    private String submitNodeGroup;
-    // 执行的节点
-    @NotNull
-    private String taskTrackerNodeGroup;
+	private String taskName;
+	private String taskClass;
+	private String taskType;
+	private String taskExecType;
+	/**
+	 * 执行时间表达式 (和 quartz 表达式一样)
+	 */
+	private String cron;
 
-    private Map<String, String> extParams;
-    // 是否要反馈给客户端
-    private boolean needFeedback = false;
-    // 已经重试的次数 (用户不要设置)
-    private int retryTimes = 0;
-    // 该任务最大的重试次数
-    private int maxRetryTimes = 0;
-    /**
-     * 执行表达式 和 quartz 的一样
-     * 如果这个为空，表示立即执行的
-     */
-    private String cronExpression;
+	private String params;
 
-    /**
-     * 重复次数 (-1 表示无限制重复)
-     */
-    private int repeatCount = 0;
-    /**
-     * 已经重复的次数, (用户不要设置)
-     */
-    private Integer repeatedCount = 0;
-    /**
-     * 重复interval
-     */
-    private Long repeatInterval;
-    /**
-     * 任务的最触发发时间
-     * 如果设置了 cronExpression， 那么这个字段没用
-     */
     private Long triggerTime;
-    /**
-     * 当任务队列中存在这个任务的时候，是否替换更新
-     */
-    private boolean replaceOnExist = false;
+	/**
+	 * 重复次数
+	 */
+	private Integer repeatCount = 0;
 
-    public Integer getPriority() {
-        return priority;
-    }
+	private String memo;
+	/**
+	 * 提交客户端的节点组
+	 */
+	private String submitNode;
+	/**
+	 * 已经重复的次数
+	 */
+	private Integer repeatedCount = 0;
+	private Integer retryTimes = 0;
+	private Integer maxRetryTimes = 0;
+	
+	public Integer getRetryTimes() {
+		return retryTimes;
+	}
 
-    public void setPriority(Integer priority) {
-        this.priority = priority;
-    }
+	public void setRetryTimes(Integer retryTimes) {
+		this.retryTimes = retryTimes;
+	}
 
-    public String getTaskId() {
-        return taskId;
-    }
+	public Integer getMaxRetryTimes() {
+		return maxRetryTimes;
+	}
 
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-    }
+	public void setMaxRetryTimes(Integer maxRetryTimes) {
+		this.maxRetryTimes = maxRetryTimes;
+	}
 
-    public String getSubmitNodeGroup() {
-        return submitNodeGroup;
-    }
 
-    public void setSubmitNodeGroup(String submitNodeGroup) {
-        this.submitNodeGroup = submitNodeGroup;
-    }
+	private Long repeatInterval;
 
-    public String getTaskTrackerNodeGroup() {
-        return taskTrackerNodeGroup;
-    }
+	public String getTaskId() {
+		return taskId;
+	}
 
-    public void setTaskTrackerNodeGroup(String taskTrackerNodeGroup) {
-        this.taskTrackerNodeGroup = taskTrackerNodeGroup;
-    }
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
 
-    public boolean isNeedFeedback() {
-        return needFeedback;
-    }
+	public String getTaskName() {
+		return taskName;
+	}
 
-    public Integer getRetryTimes() {
-        return retryTimes;
-    }
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
+	}
 
-    public void setRetryTimes(int retryTimes) {
-        this.retryTimes = retryTimes;
-    }
+	public String getTaskClass() {
+		return taskClass;
+	}
 
-    public void setNeedFeedback(boolean needFeedback) {
-        this.needFeedback = needFeedback;
-    }
+	public void setTaskClass(String taskClass) {
+		this.taskClass = taskClass;
+	}
 
-    public Map<String, String> getExtParams() {
-        return extParams;
-    }
+	public String getTaskType() {
+		return taskType;
+	}
 
-    public void setExtParams(Map<String, String> extParams) {
-        this.extParams = extParams;
-    }
+	public void setTaskType(String taskType) {
+		this.taskType = taskType;
+	}
 
-    public String getParam(String key) {
-        if (extParams == null) {
-            return null;
-        }
-        return extParams.get(key);
-    }
+	public String getTaskExecType() {
+		return taskExecType;
+	}
 
-    public void setParam(String key, String value) {
-        if (extParams == null) {
-            extParams = new HashMap<String, String>();
-        }
-        extParams.put(key, value);
-    }
+	public void setTaskExecType(String taskExecType) {
+		this.taskExecType = taskExecType;
+	}
 
-    public String getCronExpression() {
-        return cronExpression;
-    }
+	public String getCron() {
+		return cron;
+	}
 
-    public void setCronExpression(String cronExpression) {
-        this.cronExpression = cronExpression;
-    }
+	public void setCron(String cron) {
+		this.cron = cron;
+	}
 
-    public boolean isCron() {
-        return this.cronExpression != null && !"".equals(this.cronExpression.trim());
-    }
+	public String getParams() {
+		return params;
+	}
 
-    public boolean isRepeatable() {
-        return (this.repeatInterval != null && this.repeatInterval > 0) && (this.repeatCount >= -1 && this.repeatCount != 0);
-    }
+	public void setParams(String params) {
+		this.params = params;
+	}
 
-    public void setTriggerDate(Date date) {
-        if (date != null) {
-            this.triggerTime = date.getTime();
-        }
-    }
 
-    public Long getTriggerTime() {
-        return triggerTime;
-    }
+	public Integer getRepeatCount() {
+		return repeatCount;
+	}
 
-    public void setTriggerTime(Long triggerTime) {
-        this.triggerTime = triggerTime;
-    }
+	public void setRepeatCount(Integer repeatCount) {
+		this.repeatCount = repeatCount;
+	}
 
-    public boolean isReplaceOnExist() {
-        return replaceOnExist;
-    }
+	public String getMemo() {
+		return memo;
+	}
 
-    public void setReplaceOnExist(boolean replaceOnExist) {
-        this.replaceOnExist = replaceOnExist;
-    }
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
 
-    public int getMaxRetryTimes() {
-        return maxRetryTimes;
-    }
+	public String getSubmitNode() {
+		return submitNode;
+	}
 
-    public void setMaxRetryTimes(int maxRetryTimes) {
-        this.maxRetryTimes = maxRetryTimes;
-    }
+	public void setSubmitNode(String submitNode) {
+		this.submitNode = submitNode;
+	}
 
-    public int getRepeatCount() {
-        return repeatCount;
-    }
 
-    public void setRepeatCount(int repeatCount) {
-        this.repeatCount = repeatCount;
-    }
+	public Integer getRepeatedCount() {
+		return repeatedCount;
+	}
 
-    public Long getRepeatInterval() {
-        return repeatInterval;
-    }
+	public void setRepeatedCount(Integer repeatedCount) {
+		this.repeatedCount = repeatedCount;
+	}
 
-    public void setRepeatInterval(Long repeatInterval) {
-        this.repeatInterval = repeatInterval;
-    }
 
-    public Integer getRepeatedCount() {
-        return repeatedCount;
-    }
+	@Override
+	public String toString() {
+		return JSON.toJSONString(this);
+	}
 
-    public void setRepeatedCount(Integer repeatedCount) {
-        this.repeatedCount = repeatedCount;
-    }
+	public Long getTriggerTime() {
+		return triggerTime;
+	}
 
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
+	public void setTriggerTime(Long triggerTime) {
+		this.triggerTime = triggerTime;
+	}
+
+	public Long getRepeatInterval() {
+		return repeatInterval;
+	}
+
+	public void setRepeatInterval(Long repeatInterval) {
+		this.repeatInterval = repeatInterval;
+	}
+
 
     public void checkField() throws JobSubmitException {
         if (taskId == null) {
             throw new JobSubmitException("taskId can not be null! job is " + toString());
         }
-        if (taskTrackerNodeGroup == null) {
-            throw new JobSubmitException("taskTrackerNodeGroup can not be null! job is " + toString());
-        }
-        if (StringUtils.isNotEmpty(cronExpression) && !CronExpression.isValidExpression(cronExpression)) {
+        if (StringUtils.isNotEmpty(cron) && !CronExpression.isValidExpression(cron)) {
             throw new JobSubmitException("cronExpression invalid! job is " + toString());
-        }
-        if (maxRetryTimes < 0) {
-            throw new JobSubmitException("maxRetryTimes invalid, must be great than zero! job is " + toString());
         }
         if (repeatCount < -1) {
             throw new JobSubmitException("repeatCount invalid, must be great than -1! job is " + toString());
         }
     }
+
+	public boolean isCron() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isRepeatable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

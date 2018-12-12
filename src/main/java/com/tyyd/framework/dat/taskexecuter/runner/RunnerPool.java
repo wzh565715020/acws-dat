@@ -27,11 +27,11 @@ public class RunnerPool {
 
     private RunnerFactory runnerFactory;
     private TaskExecuterAppContext appContext;
-    private RunningJobManager runningJobManager;
+    private RunningTaskManager runningJobManager;
 
     public RunnerPool(final TaskExecuterAppContext appContext) {
         this.appContext = appContext;
-        this.runningJobManager = new RunningJobManager();
+        this.runningJobManager = new RunningTaskManager();
 
         threadPoolExecutor = initThreadPoolExecutor();
 
@@ -129,20 +129,20 @@ public class RunnerPool {
     /**
      * 用来管理正在执行的任务
      */
-    public class RunningJobManager {
+    public class RunningTaskManager {
 
-        private final ConcurrentMap<String/*jobId*/, TaskRunnerDelegate> JOBS = new ConcurrentHashMap<String, TaskRunnerDelegate>();
+        private final ConcurrentMap<String/*jobId*/, TaskRunnerDelegate> TASKS = new ConcurrentHashMap<String, TaskRunnerDelegate>();
 
         public void in(String jobId, TaskRunnerDelegate jobRunnerDelegate) {
-            JOBS.putIfAbsent(jobId, jobRunnerDelegate);
+            TASKS.putIfAbsent(jobId, jobRunnerDelegate);
         }
 
         public void out(String jobId) {
-            JOBS.remove(jobId);
+            TASKS.remove(jobId);
         }
 
         public boolean running(String jobId) {
-            return JOBS.containsKey(jobId);
+            return TASKS.containsKey(jobId);
         }
 
         /**
@@ -151,7 +151,7 @@ public class RunnerPool {
         public List<String> getNotExists(List<String> jobIds) {
 
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Ask jobs: " + jobIds + " Running jobs ：" + JOBS.keySet());
+                LOGGER.debug("Ask jobs: " + jobIds + " Running jobs ：" + TASKS.keySet());
             }
             List<String> notExistList = new ArrayList<String>();
             for (String jobId : jobIds) {
@@ -163,7 +163,7 @@ public class RunnerPool {
         }
 
         public void terminateJob(String jobId) {
-            TaskRunnerDelegate jobRunnerDelegate = JOBS.get(jobId);
+            TaskRunnerDelegate jobRunnerDelegate = TASKS.get(jobId);
             if (jobRunnerDelegate != null) {
                 try {
                     jobRunnerDelegate.currentThread().interrupt();
@@ -174,7 +174,7 @@ public class RunnerPool {
         }
     }
 
-    public RunningJobManager getRunningJobManager() {
+    public RunningTaskManager getRunningJobManager() {
         return runningJobManager;
     }
 }

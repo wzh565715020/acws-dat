@@ -6,6 +6,7 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.stereotype.Service;
 
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.domain.Task;
@@ -38,7 +39,7 @@ public class Scanner implements DisposableBean, BeanFactoryPostProcessor, BeanPo
                 Object scanner = scannerClass.getConstructor(new Class<?>[]{BeanDefinitionRegistry.class, boolean.class}).newInstance(beanFactory, true);
                 // add filter
                 Class<?> filterClass = Class.forName("org.springframework.core.type.filter.AnnotationTypeFilter");
-                Object filter = filterClass.getConstructor(Class.class).newInstance(DTA.class);
+                Object filter = filterClass.getConstructor(Class.class).newInstance(Service.class);
                 Method addIncludeFilter = scannerClass.getMethod("addIncludeFilter", Class.forName("org.springframework.core.type.filter.TypeFilter"));
                 addIncludeFilter.invoke(scanner, filter);
                 // scan packages
@@ -64,7 +65,7 @@ public class Scanner implements DisposableBean, BeanFactoryPostProcessor, BeanPo
             return bean;
         }
 
-        if (!clazz.isAnnotationPresent(DTA.class)) {
+        if (!clazz.isAnnotationPresent(Service.class)) {
             return bean;
         }
 

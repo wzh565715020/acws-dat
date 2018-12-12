@@ -9,7 +9,7 @@ import java.util.List;
  * @author Robert HG (254963746@qq.com) on 7/24/14.
  *         任务传递信息
  */
-public class JobSubmitRequest extends AbstractRemotingCommandBody {
+public class TaskSubmitRequest extends AbstractRemotingCommandBody {
 
 	private static final long serialVersionUID = 7229438891247265777L;
 	

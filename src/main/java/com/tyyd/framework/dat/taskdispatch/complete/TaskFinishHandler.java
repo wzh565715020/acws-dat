@@ -14,7 +14,7 @@ import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.CronExpressionUtils;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
-import com.tyyd.framework.dat.core.support.JobUtils;
+import com.tyyd.framework.dat.core.support.TaskUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
@@ -56,12 +56,12 @@ public class TaskFinishHandler {
 
     private void finishTask(String jobId) {
 
-        TaskPo jobPo = appContext.getTaskQueue().getJob(jobId);
-        if (jobPo == null) {
+        TaskPo taskPo = appContext.getTaskQueue().getTask(jobId);
+        if (taskPo == null) {
             // 可能任务队列中改条记录被删除了
             return;
         }
-        Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(jobPo.getCronExpression());
+        Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(taskPo.getCron());
         if (nextTriggerTime == null) {
             // 从CronJob队列中移除
             appContext.getTaskQueue().remove(jobId);
@@ -69,18 +69,17 @@ public class TaskFinishHandler {
         }
         // 表示下次还要执行
         try {
-            jobPo.setTaskTrackerIdentity(null);
-            jobPo.setIsRunning(false);
-            jobPo.setTriggerTime(nextTriggerTime.getTime());
-            jobPo.setGmtModified(SystemClock.now());
-            appContext.getExecutableJobQueue().add(jobPo);
+            taskPo.setTaskExecuteNode(null);
+            taskPo.setTriggerTime(nextTriggerTime.getTime());
+            taskPo.setUpdateDate(SystemClock.now());
+            appContext.getExecutableJobQueue().add(taskPo);
         } catch (DupEntryException e) {
-            LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(jobPo));
+            LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(taskPo));
         }
     }
 
     private void finishRepeatJob(String jobId, boolean isRetryForThisTime) {
-        TaskPo jobPo = appContext.getTaskQueue().getJob(jobId);
+        TaskPo jobPo = appContext.getTaskQueue().getTask(jobId);
         if (jobPo == null) {
             // 可能任务队列中改条记录被删除了
             return;
@@ -102,13 +101,12 @@ public class TaskFinishHandler {
             // 表示任务已经被删除了
             return;
         }
-        long nexTriggerTime = JobUtils.getRepeatNextTriggerTime(jobPo);
+        long nexTriggerTime = TaskUtils.getRepeatNextTriggerTime(jobPo);
         try {
             jobPo.setRepeatedCount(repeatedCount);
-            jobPo.setTaskTrackerIdentity(null);
-            jobPo.setIsRunning(false);
+            jobPo.setTaskExecuteNode(null);
             jobPo.setTriggerTime(nexTriggerTime);
-            jobPo.setGmtModified(SystemClock.now());
+            jobPo.setUpdateDate(SystemClock.now());
             appContext.getExecutableJobQueue().add(jobPo);
         } catch (DupEntryException e) {
             LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(jobPo));

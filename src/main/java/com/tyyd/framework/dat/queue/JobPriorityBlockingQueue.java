@@ -20,7 +20,7 @@ public class JobPriorityBlockingQueue {
 
     private volatile int size;
     private TaskPo[] queue;
-    private ConcurrentHashSet<String/*jobId*/> JOB_ID_SET = new ConcurrentHashSet<String>();
+    private ConcurrentHashSet<String> ID_SET = new ConcurrentHashSet<String>();
 
     public JobPriorityBlockingQueue(int capacity) {
         if (capacity < 1) {
@@ -38,11 +38,10 @@ public class JobPriorityBlockingQueue {
                 if (compare != 0) {
                     return compare;
                 }
-                compare = left.getPriority().compareTo(right.getPriority());
                 if (compare != 0) {
                     return compare;
                 }
-                compare = left.getGmtCreated().compareTo(right.getGmtCreated());
+                compare = left.getCreateDate().compareTo(right.getCreateDate());
                 if (compare != 0) {
                     return compare;
                 }
@@ -67,13 +66,13 @@ public class JobPriorityBlockingQueue {
         lock.lock();
         int n = size;
         try {
-            if (JOB_ID_SET.contains(e.getTaskId())) {
+            if (ID_SET.contains(e.getId())) {
                 // 如果已经存在了，替换
                 replace(e);
             }else{
                 siftUpUsingComparator(n, e, queue, comparator);
                 size = n + 1;
-                JOB_ID_SET.add(e.getTaskId());
+                ID_SET.add(e.getId());
             }
         } finally {
             lock.unlock();
@@ -95,7 +94,7 @@ public class JobPriorityBlockingQueue {
                 array[n] = null;
                 siftDownUsingComparator(0, x, array, n, comparator);
                 size = n;
-                JOB_ID_SET.remove(result.getTaskId());
+                ID_SET.remove(result.getId());
                 return result;
             }
         } finally {

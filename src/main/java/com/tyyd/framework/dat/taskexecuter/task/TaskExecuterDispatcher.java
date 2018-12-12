@@ -7,36 +7,23 @@ import com.tyyd.framework.dat.taskexecuter.runner.TaskRunner;
 
 public class TaskExecuterDispatcher implements TaskRunner {
 
-    private String shardField = "taskId";
-
     @Override
     public Result run(Task job) throws Throwable {
 
-        String value;
-        if (shardField.equals("taskId")) {
-            value = job.getTaskId();
-        } else {
-            value = job.getParam(shardField);
-        }
+        String value = job.getTaskClass();
 
-        TaskRunner jobRunner = null;
+        TaskRunner taskRunner = null;
         if (StringUtils.isNotEmpty(value)) {
-            jobRunner = TaskRunnerHolder.getTaskRunner(value);
+            taskRunner = TaskRunnerHolder.getTaskRunner(value);
         }
-        if (jobRunner == null) {
-            jobRunner = TaskRunnerHolder.getTaskRunner("_LTS_DEFAULT");
+        if (taskRunner == null) {
+            taskRunner = TaskRunnerHolder.getTaskRunner("_DAT_DEFAULT");
 
-            if (jobRunner == null) {
+            if (taskRunner == null) {
                 throw new TaskDispatchException("Can not find JobRunner by Shard Value : [" + value + "]");
             }
         }
-        return jobRunner.run(job);
-    }
-
-    public void setShardField(String shardField) {
-        if (StringUtils.isNotEmpty(shardField)) {
-            this.shardField = shardField;
-        }
+        return taskRunner.run(job);
     }
 
 }

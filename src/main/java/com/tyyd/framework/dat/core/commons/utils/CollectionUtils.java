@@ -2,6 +2,9 @@ package com.tyyd.framework.dat.core.commons.utils;
 
 import java.util.*;
 
+import com.tyyd.framework.dat.core.cluster.Node;
+import com.tyyd.framework.dat.core.registry.NodeRegistryUtils;
+
 public class CollectionUtils {
 
     private CollectionUtils() {
@@ -68,13 +71,13 @@ public class CollectionUtils {
     /**
      * 返回第一个列表中比第二个多出来的元素
      */
-    public static <T> List<T> getLeftDiff(List<T> list1, List<T> list2) {
+    public static List<Node> getLeftDiff(List<Node> list1, List<Node> list2) {
         if (isEmpty(list2)) {
             return list1;
         }
-        List<T> list = new ArrayList<T>();
+        List<Node> list = new ArrayList<Node>();
         if (isNotEmpty(list1)) {
-            for (T o : list1) {
+            for (Node o : list1) {
                 if (!list2.contains(o)) {
                     list.add(o);
                 }
@@ -96,6 +99,23 @@ public class CollectionUtils {
         }
         List<T> list = new ArrayList<T>(t.length);
         Collections.addAll(list, t);
+        return list;
+    }
+    /**
+     * 返回第一个列表中比第二个多出来的元素
+     */
+    public static List<Node> getNotDiff(List<Node> list1, List<Node> list2) {
+        if (isEmpty(list2)) {
+            return null;
+        }
+        List<Node> list = new ArrayList<Node>();
+        if (isNotEmpty(list1)) {
+            for (Node o : list1) {
+                if (list2.contains(o)) {
+                    list.add(o);
+                }
+            }
+        }
         return list;
     }
 }

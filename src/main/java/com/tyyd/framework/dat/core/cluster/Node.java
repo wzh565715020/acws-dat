@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 6/22/14.
  *         节点
  */
 public class Node {
@@ -24,6 +23,10 @@ public class Node {
     private Long createTime;
     // 线程个数
     private Integer threads;
+    
+    // 线程个数
+    private Integer availableThreads;
+    
     // 唯一标识
     private String identity;
     // 命令端口
@@ -147,7 +150,16 @@ public class Node {
         this.clusterName = clusterName;
     }
 
-    @Override
+
+	public Integer getAvailableThreads() {
+		return availableThreads;
+	}
+
+	public void setAvailableThreads(Integer availableThreads) {
+		this.availableThreads = availableThreads;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

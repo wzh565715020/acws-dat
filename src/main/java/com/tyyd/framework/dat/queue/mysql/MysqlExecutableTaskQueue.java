@@ -1,9 +1,7 @@
 package com.tyyd.framework.dat.queue.mysql;
 
-import com.tyyd.framework.dat.admin.request.JobQueueReq;
 import com.tyyd.framework.dat.core.cluster.Config;
-import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.support.JobQueueUtils;
+import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
@@ -21,15 +19,8 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskQueue implements 
     }
 
     @Override
-    protected String getTableName(JobQueueReq request) {
-        if (StringUtils.isEmpty(request.getTaskTrackerNodeGroup())) {
-            throw new IllegalArgumentException(" takeTrackerNodeGroup cat not be null");
-        }
-        return getTableName();
-    }
-
-    private String getTableName() {
-        return JobQueueUtils.getExecutableQueueName();
+    protected String getTableName() {
+        return TaskQueueUtils.getExecutableQueueName();
     }
 
     @Override
@@ -38,12 +29,12 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskQueue implements 
     }
 
     @Override
-    public boolean remove(String taskTrackerNodeGroup, String jobId) {
+    public boolean remove(String id) {
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
                 .table(getTableName())
-                .where("job_id = ?", jobId)
+                .where("id = ?", id)
                 .doDelete() == 1;
     }
 
@@ -61,7 +52,7 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskQueue implements 
     }
 
     @Override
-    public List<TaskPo> getDeadJob(String taskTrackerNodeGroup, long deadline) {
+    public List<TaskPo> getDeadJob(long deadline) {
 
         return new SelectSql(getSqlTemplate())
                 .select()
@@ -70,19 +61,18 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskQueue implements 
                 .table(getTableName())
                 .where("is_running = ?", true)
                 .and("gmt_modified < ?", deadline)
-                .list(RshHolder.JOB_PO_LIST_RSH);
+                .list(RshHolder.TASK_PO_LIST_RSH);
     }
 
     @Override
-    public TaskPo getTask(String taskTrackerNodeGroup, String taskId) {
+    public TaskPo getTask(String id) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
-                .where("task_id = ?", taskId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
-                .single(RshHolder.JOB_PO_RSH);
+                .where("id = ?", id)
+                .single(RshHolder.TASK_PO_RSH);
     }
 
 }

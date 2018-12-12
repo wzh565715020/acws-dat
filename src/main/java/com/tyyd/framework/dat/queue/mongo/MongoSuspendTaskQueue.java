@@ -2,7 +2,7 @@ package com.tyyd.framework.dat.queue.mongo;
 
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
-import com.tyyd.framework.dat.core.support.JobQueueUtils;
+import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.queue.SuspendTaskQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
@@ -22,7 +22,7 @@ public class MongoSuspendTaskQueue extends AbstractMongoTaskQueue implements Sus
     public MongoSuspendTaskQueue(Config config) {
         super(config);
         // table name (Collection name) for single table
-        setTableName(JobQueueUtils.SUSPEND_JOB_QUEUE);
+        setTableName(TaskQueueUtils.TASK_POOL);
 
         // create table
         DBCollection dbCollection = template.getCollection();
@@ -36,7 +36,7 @@ public class MongoSuspendTaskQueue extends AbstractMongoTaskQueue implements Sus
 
     @Override
     protected String getTargetTable(){
-        return JobQueueUtils.SUSPEND_JOB_QUEUE;
+        return TaskQueueUtils.TASK_POOL;
     }
 
     @Override

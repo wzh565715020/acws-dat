@@ -12,7 +12,6 @@ import com.tyyd.framework.dat.remoting.protocol.RemotingProtos;
 import com.tyyd.framework.dat.taskdispatch.complete.biz.TaskCompletedBiz;
 import com.tyyd.framework.dat.taskdispatch.complete.biz.TaskProcBiz;
 import com.tyyd.framework.dat.taskdispatch.complete.biz.TaskStatBiz;
-import com.tyyd.framework.dat.taskdispatch.complete.biz.PushNewJobBiz;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
 /**

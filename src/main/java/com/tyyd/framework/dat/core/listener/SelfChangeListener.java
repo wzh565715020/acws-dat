@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * 用来监听自己的节点信息变化
  *
- * @author Robert HG (254963746@qq.com) on 5/11/15.
  */
 public class SelfChangeListener implements NodeChangeListener {
 
@@ -59,4 +58,10 @@ public class SelfChangeListener implements NodeChangeListener {
     public void removeNodes(List<Node> nodes) {
 
     }
+
+
+	@Override
+	public void updateNodes(List<Node> nodes) {
+		
+	}
 }

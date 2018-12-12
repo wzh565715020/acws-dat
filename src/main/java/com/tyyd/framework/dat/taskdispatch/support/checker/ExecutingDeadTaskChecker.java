@@ -27,7 +27,6 @@ import com.tyyd.framework.dat.core.protocol.JobProtos;
 import com.tyyd.framework.dat.core.protocol.command.JobAskRequest;
 import com.tyyd.framework.dat.core.protocol.command.JobAskResponse;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
-import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
@@ -113,19 +112,18 @@ public class ExecutingDeadTaskChecker {
 
             Map<String/*taskTrackerIdentity*/, List<TaskPo>> jobMap = new HashMap<String, List<TaskPo>>();
             for (TaskPo jobPo : maybeDeadJobPos) {
-                List<TaskPo> jobPos = jobMap.get(jobPo.getTaskTrackerIdentity());
+                List<TaskPo> jobPos = jobMap.get(jobPo.getTaskExecuteNode());
                 if (jobPos == null) {
                     jobPos = new ArrayList<TaskPo>();
-                    jobMap.put(jobPo.getTaskTrackerIdentity(), jobPos);
+                    jobMap.put(jobPo.getTaskExecuteNode(), jobPos);
                 }
                 jobPos.add(jobPo);
             }
 
             for (Map.Entry<String, List<TaskPo>> entry : jobMap.entrySet()) {
-                String taskTrackerNodeGroup = entry.getValue().get(0).getTaskTrackerNodeGroup();
                 String taskExecuterIdentity = entry.getKey();
                 // 去查看这个TaskTrackerIdentity是否存活
-                ChannelWrapper channelWrapper = appContext.getChannelManager().getChannel(taskTrackerNodeGroup, NodeType.TASK_EXECUTER, taskExecuterIdentity);
+                ChannelWrapper channelWrapper = appContext.getChannelManager().getChannel(NodeType.TASK_EXECUTER, taskExecuterIdentity);
                 if (channelWrapper == null && taskExecuterIdentity != null) {
                     Long offlineTimestamp = appContext.getChannelManager().getOfflineTimestamp(taskExecuterIdentity);
                     // 已经离线太久，直接修复
@@ -193,9 +191,8 @@ public class ExecutingDeadTaskChecker {
     private void fixDeadJob(TaskPo jobPo) {
         try {
 
-            jobPo.setGmtModified(SystemClock.now());
-            jobPo.setTaskTrackerIdentity(null);
-            jobPo.setIsRunning(false);
+            jobPo.setUpdateDate(SystemClock.now());
+            jobPo.setTaskExecuteNode(null);
             // 1. add to executable queue
             try {
                 appContext.getExecutableJobQueue().add(jobPo);

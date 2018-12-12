@@ -2,7 +2,6 @@ package com.tyyd.framework.dat.ec;
 
 /**
  * 事件订阅者
- * @author Robert HG (254963746@qq.com) on 5/11/15.
  */
 public class EventSubscriber {
 

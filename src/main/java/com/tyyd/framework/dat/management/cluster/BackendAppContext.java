@@ -14,7 +14,6 @@ import com.tyyd.framework.dat.management.access.memory.NodeMemCacheAccess;
 import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
 import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
 import com.tyyd.framework.dat.queue.TaskFeedbackQueue;
-import com.tyyd.framework.dat.queue.NodeGroupStore;
 import com.tyyd.framework.dat.queue.TaskQueue;
 import com.tyyd.framework.dat.queue.SuspendTaskQueue;
 
@@ -25,7 +24,6 @@ public class BackendAppContext extends AppContext {
     private ExecutingTaskQueue executingJobQueue;
     private TaskFeedbackQueue jobFeedbackQueue;
 	private SuspendTaskQueue suspendJobQueue;
-    private NodeGroupStore nodeGroupStore;
     private JobLogger jobLogger;
     private Node node;
 
@@ -78,14 +76,6 @@ public class BackendAppContext extends AppContext {
 	public void setSuspendJobQueue(SuspendTaskQueue suspendJobQueue) {
 		this.suspendJobQueue = suspendJobQueue;
 	}
-
-	public NodeGroupStore getNodeGroupStore() {
-        return nodeGroupStore;
-    }
-
-    public void setNodeGroupStore(NodeGroupStore nodeGroupStore) {
-        this.nodeGroupStore = nodeGroupStore;
-    }
 
     public TaskFeedbackQueue getJobFeedbackQueue() {
         return jobFeedbackQueue;

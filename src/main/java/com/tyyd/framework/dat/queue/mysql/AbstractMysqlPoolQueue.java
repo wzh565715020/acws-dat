@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.commons.utils.CharacterUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.queue.QueueInterface;
-import com.tyyd.framework.dat.queue.domain.TaskPo;
+import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
 import com.tyyd.framework.dat.store.jdbc.JdbcAbstractAccess;
 import com.tyyd.framework.dat.store.jdbc.builder.*;
@@ -16,53 +16,39 @@ import com.tyyd.framework.dat.admin.response.PaginationRsp;
 
 import java.util.List;
 
-public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implements QueueInterface {
+public abstract class AbstractMysqlPoolQueue extends JdbcAbstractAccess implements QueueInterface {
 
-    public AbstractMysqlTaskQueue(Config config) {
+    public AbstractMysqlPoolQueue(Config config) {
         super(config);
     }
 
-    protected boolean add(String tableName, TaskPo taskPo) {
+    protected boolean add(String tableName, PoolPo poolPo) {
         return new InsertSql(getSqlTemplate())
                 .insert(tableName)
-                .columns("task_id",
-                		"task_name",
-                		"task_class",
-                		"task_type",
-                		"task_exec_type",
-                        "retry_times",
-                        "max_retry_times",
+                .columns("pool_id",
+                		"pool_name",
+                		"max_count",
+                		"task_ids",
+                		"memo",
                         "create_date",
                         "update_date",
-                        "submit_node",
-                        "params",
-                        "cron",
-                        "trigger_time",
-                        "repeat_count",
-                        "repeated_count",
-                        "repeat_interval")
-                .values(taskPo.getTaskId(),
-                		taskPo.getTaskName(),
-                		taskPo.getTaskClass(),
-                		taskPo.getTaskType(),
-                		taskPo.getTaskExecType(),
-                        taskPo.getRetryTimes(),
-                        taskPo.getMaxRetryTimes(),
-                        taskPo.getCreateDate(),
-                        taskPo.getUpdateDate(),
-                        taskPo.getSubmitNode(),
-                        taskPo.getParams(),
-                        taskPo.getCron(),
-                        taskPo.getTriggerTime(),
-                        taskPo.getRepeatCount(),
-                        taskPo.getRepeatedCount(),
-                        taskPo.getRepeatInterval())
+                        "create_userid",
+                        "update_userid")
+                .values(poolPo.getPoolId(),
+                		poolPo.getPoolName(),
+                		poolPo.getMaxCount(),
+                		poolPo.getTaskIds(),
+                		poolPo.getMemo(),
+                		poolPo.getCreateDate(),
+                		poolPo.getUpdateDate(),
+                		poolPo.getCreateUserId(),
+                		poolPo.getUpdateUserId())
                 .doInsert() == 1;
     }
 
-    public PaginationRsp<TaskPo> pageSelect(TaskQueueReq request) {
+    public PaginationRsp<PoolPo> pageSelect(TaskQueueReq request) {
 
-        PaginationRsp<TaskPo> response = new PaginationRsp<TaskPo>();
+        PaginationRsp<PoolPo> response = new PaginationRsp<PoolPo>();
 
         WhereSql whereSql = buildWhereSql(request);
 
@@ -77,7 +63,7 @@ public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implemen
 
         if (results > 0) {
 
-            List<TaskPo> jobPos = new SelectSql(getSqlTemplate())
+            List<PoolPo> poolPos = new SelectSql(getSqlTemplate())
                     .select()
                     .all()
                     .from()
@@ -86,8 +72,8 @@ public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implemen
                     .orderBy()
                     .column(CharacterUtils.camelCase2Underscore(request.getField()), OrderByType.convert(request.getDirection()))
                     .limit(request.getStart(), request.getLimit())
-                    .list(RshHolder.TASK_PO_LIST_RSH);
-            response.setRows(jobPos);
+                    .list(RshHolder.POOL_PO_LIST_RSH);
+            response.setRows(poolPos);
         }
         return response;
     }
@@ -115,7 +101,7 @@ public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implemen
 
     private WhereSql buildWhereSql(TaskQueueReq request) {
         return new WhereSql()
-                .andOnNotEmpty("task_id = ?", request.getTaskId())
+                .andOnNotEmpty("pool_id = ?", request.getTaskId())
                 .andOnNotEmpty("submit_node = ?", request.getSubmitNode())
                 .andBetween("create_date", JdbcTypeUtils.toTimestamp(request.getStartGmtCreated()), JdbcTypeUtils.toTimestamp(request.getEndGmtCreated()))
                 .andBetween("update_date", JdbcTypeUtils.toTimestamp(request.getStartGmtModified()), JdbcTypeUtils.toTimestamp(request.getEndGmtModified()));

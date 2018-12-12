@@ -31,13 +31,13 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
 
         String taskId = jobCancelRequest.getTaskId();
         String taskTrackerNodeGroup = jobCancelRequest.getTaskTrackerNodeGroup();
-        TaskPo job = appContext.getTaskQueue().getJob(taskTrackerNodeGroup, taskId);
+        TaskPo job = appContext.getTaskQueue().getTask(taskId);
         if (job == null) {
-            job = appContext.getExecutableJobQueue().getTask(taskTrackerNodeGroup, taskId);
+            job = appContext.getExecutableJobQueue().getTask(taskId);
         }
 
         if (job != null) {
-            appContext.getExecutableJobQueue().remove(job.getTaskTrackerNodeGroup(), job.getTaskId());
+            appContext.getExecutableJobQueue().remove(job.getTaskId());
             if (job.isCron()) {
                 appContext.getTaskQueue().remove(job.getTaskId());
             }

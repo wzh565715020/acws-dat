@@ -3,14 +3,13 @@ package com.tyyd.framework.dat.admin.request;
 import java.util.Date;
 import java.util.Map;
 
-public class JobQueueReq extends PaginationReq {
+public class TaskQueueReq extends PaginationReq {
 
     // ------------ 下面是查询条件值 ---------------
-    private String jobId;
 
     private String taskId;
 
-    private String submitNodeGroup;
+    private String submitNode;
 
     private String taskTrackerNodeGroup;
 
@@ -37,14 +36,6 @@ public class JobQueueReq extends PaginationReq {
 
     private Long repeatInterval;
 
-    public String getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
-    }
-
     public String getTaskId() {
         return taskId;
     }
@@ -53,12 +44,12 @@ public class JobQueueReq extends PaginationReq {
         this.taskId = taskId;
     }
 
-    public String getSubmitNodeGroup() {
-        return submitNodeGroup;
+    public String getSubmitNode() {
+        return submitNode;
     }
 
-    public void setSubmitNodeGroup(String submitNodeGroup) {
-        this.submitNodeGroup = submitNodeGroup;
+    public void setSubmitNode(String submitNode) {
+        this.submitNode = submitNode;
     }
 
     public String getTaskTrackerNodeGroup() {

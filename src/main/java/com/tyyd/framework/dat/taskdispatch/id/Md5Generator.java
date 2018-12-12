@@ -6,6 +6,6 @@ import com.tyyd.framework.dat.queue.domain.TaskPo;
 public class Md5Generator implements IdGenerator{
     @Override
     public String generate(TaskPo jobPo) {
-        return Md5Encrypt.md5(jobPo.getTaskId() + jobPo.getSubmitNodeGroup() + jobPo.getGmtCreated());
+        return Md5Encrypt.md5(jobPo.getTaskId() + jobPo.getSubmitNode() + jobPo.getCreateDate());
     }
 }

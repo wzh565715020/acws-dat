@@ -3,6 +3,7 @@ package com.tyyd.framework.dat.core;
 import com.tyyd.framework.dat.cmd.HttpCmdServer;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.cluster.MasterElector;
+import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.core.cluster.SubscribedNodeManager;
 import com.tyyd.framework.dat.core.monitor.MStatReporter;
 import com.tyyd.framework.dat.core.protocol.command.CommandBodyWrapper;
@@ -10,7 +11,6 @@ import com.tyyd.framework.dat.core.registry.RegistryStatMonitor;
 import com.tyyd.framework.dat.ec.EventCenter;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/17/14.
  *         用来存储 程序的数据
  */
 public abstract class AppContext {
@@ -31,7 +31,9 @@ public abstract class AppContext {
     private RegistryStatMonitor registryStatMonitor;
     // 命令中心
     private HttpCmdServer httpCmdServer;
-
+    
+    private Node node;
+    
     public MStatReporter getMStatReporter() {
         return mStatReporter;
     }
@@ -95,4 +97,11 @@ public abstract class AppContext {
     public void setHttpCmdServer(HttpCmdServer httpCmdServer) {
         this.httpCmdServer = httpCmdServer;
     }
+	public Node getNode() {
+		return node;
+	}
+
+	public void setNode(Node node) {
+		this.node = node;
+	}
 }

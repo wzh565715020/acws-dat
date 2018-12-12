@@ -8,7 +8,7 @@ import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
  *
  * @author Robert HG (254963746@qq.com) on 5/27/15.
  */
-public interface SuspendTaskQueue extends TaskQueueInterface{
+public interface SuspendTaskQueue extends QueueInterface{
 
     /**
      * 添加任务

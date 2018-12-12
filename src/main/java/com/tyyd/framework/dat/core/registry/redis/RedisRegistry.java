@@ -299,30 +299,29 @@ public class RedisRegistry extends FailbackRegistry {
             Map<String, String> values = jedis.hgetAll(key);
             List<String> currentChildren = values == null ? new ArrayList<String>(0) : new ArrayList<String>(values.keySet());
             List<String> oldChildren = cachedNodeMap.get(key);
-
+            List<Node> currentNodeChildren = new ArrayList<Node>(currentChildren.size());
+			for (String child : currentChildren) {
+				Node node = NodeRegistryUtils.parse(child);
+				currentNodeChildren.add(node);
+			}
+			List<Node> oldNodeChildren = new ArrayList<Node>(oldChildren.size());
+			for (String child : oldChildren) {
+				Node node = NodeRegistryUtils.parse(child);
+				oldNodeChildren.add(node);
+			}
             // 1. 找出增加的 节点
-            List<String> addChildren = CollectionUtils.getLeftDiff(currentChildren, oldChildren);
+            List<Node> addChildren = CollectionUtils.getLeftDiff(currentNodeChildren, oldNodeChildren);
             // 2. 找出减少的 节点
-            List<String> decChildren = CollectionUtils.getLeftDiff(oldChildren, currentChildren);
-
+            List<Node> decChildren = CollectionUtils.getLeftDiff(oldNodeChildren, currentNodeChildren);
+            
             if (CollectionUtils.isNotEmpty(addChildren)) {
-                List<Node> nodes = new ArrayList<Node>(addChildren.size());
-                for (String child : addChildren) {
-                    Node node = NodeRegistryUtils.parse(child);
-                    nodes.add(node);
-                }
                 for (NotifyListener listener : listeners) {
-                    notify(NotifyEvent.ADD, nodes, listener);
+                    notify(NotifyEvent.ADD, addChildren, listener);
                 }
             }
             if (CollectionUtils.isNotEmpty(decChildren)) {
-                List<Node> nodes = new ArrayList<Node>(decChildren.size());
-                for (String child : decChildren) {
-                    Node node = NodeRegistryUtils.parse(child);
-                    nodes.add(node);
-                }
                 for (NotifyListener listener : listeners) {
-                    notify(NotifyEvent.REMOVE, nodes, listener);
+                    notify(NotifyEvent.REMOVE, decChildren, listener);
                 }
             }
             cachedNodeMap.put(key, currentChildren);
@@ -432,5 +431,10 @@ public class RedisRegistry extends FailbackRegistry {
             }
         }
     }
+
+	@Override
+	public void updateRegister(String path, Node node) {
+		
+	}
 
 }

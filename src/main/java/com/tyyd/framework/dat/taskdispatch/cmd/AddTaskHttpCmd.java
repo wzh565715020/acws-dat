@@ -13,7 +13,7 @@ import com.tyyd.framework.dat.core.cmd.HttpCmdNames;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.json.JSON;
-import com.tyyd.framework.dat.core.protocol.command.JobSubmitRequest;
+import com.tyyd.framework.dat.core.protocol.command.TaskSubmitRequest;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
 /**
@@ -58,14 +58,9 @@ public class AddTaskHttpCmd implements HttpCmdProc {
                 return response;
             }
 
-            if (job.isNeedFeedback() && StringUtils.isEmpty(job.getSubmitNodeGroup())) {
-                response.setMsg("if needFeedback, job.SubmitNodeGroup can not be null");
-                return response;
-            }
-
             job.checkField();
 
-            JobSubmitRequest jobSubmitRequest = new JobSubmitRequest();
+            TaskSubmitRequest jobSubmitRequest = new TaskSubmitRequest();
             jobSubmitRequest.setJobs(Collections.singletonList(job));
             appContext.getJobReceiver().receive(jobSubmitRequest);
 

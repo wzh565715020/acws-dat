@@ -3,7 +3,12 @@ package com.tyyd.framework.dat.taskdispatch.channel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -22,11 +27,9 @@ public class ChannelManager {
 	private final Logger LOGGER = LoggerFactory.getLogger(ChannelManager.class);
 
 	// 客户端列表 (要保证同一个group的node要是无状态的)
-	private final ConcurrentHashMap<String, List<ChannelWrapper>> taskDispatcherChannelMap = new ConcurrentHashMap<String, List<ChannelWrapper>>();
-
+	private List<ChannelWrapper> taskDispatcherChannelList = new CopyOnWriteArrayList<>();
 	// 任务节点列表
-	private final ConcurrentHashMap<String, List<ChannelWrapper>> taskExecuterChannelMap = new ConcurrentHashMap<String, List<ChannelWrapper>>();
-
+	private List<ChannelWrapper> taskExecuterChannelList = new CopyOnWriteArrayList<>();
 	// 用来定时检查已经关闭的channel
 	private final ScheduledExecutorService channelCheckExecutorService = Executors.newScheduledThreadPool(1,
 			new NamedThreadFactory("DAT-Channel-Checker", true));
@@ -35,7 +38,6 @@ public class ChannelManager {
 
 	// 存储离线一定时间内的节点信息
 	private final ConcurrentHashMap<String, Long> offlineTaskExecuterMap = new ConcurrentHashMap<String, Long>();
-
 	// 用来清理离线时间很长的信息
 	private final ScheduledExecutorService offlineTaskExecuterCheckExecutorService = Executors.newScheduledThreadPool(1,
 			new NamedThreadFactory("DAT-offline-TaskExecuter-Checker", true));
@@ -51,13 +53,13 @@ public class ChannelManager {
 					@Override
 					public void run() {
 						try {
-							checkCloseChannel(NodeType.TASK_DISPATCH, taskDispatcherChannelMap);
+							checkCloseChannel(NodeType.TASK_DISPATCH, taskDispatcherChannelList);
 							if (LOGGER.isDebugEnabled()) {
-								LOGGER.debug("TASK_DISPATCH Channel Pool " + taskExecuterChannelMap);
+								LOGGER.debug("TASK_DISPATCH Channel Pool " + taskDispatcherChannelList);
 							}
-							checkCloseChannel(NodeType.TASK_EXECUTER, taskExecuterChannelMap);
+							checkCloseChannel(NodeType.TASK_EXECUTER, taskExecuterChannelList);
 							if (LOGGER.isDebugEnabled()) {
-								LOGGER.debug("TASK_EXECUTER Channel Pool " + taskExecuterChannelMap);
+								LOGGER.debug("TASK_EXECUTER Channel Pool " + taskExecuterChannelList);
 							}
 						} catch (Throwable t) {
 							LOGGER.error("Check channel error!", t);
@@ -109,31 +111,28 @@ public class ChannelManager {
 	/**
 	 * 检查 关闭的channel
 	 */
-	private void checkCloseChannel(NodeType nodeType, ConcurrentHashMap<String, List<ChannelWrapper>> channelMap) {
-		for (Map.Entry<String, List<ChannelWrapper>> entry : channelMap.entrySet()) {
-			List<ChannelWrapper> channels = entry.getValue();
-			List<ChannelWrapper> removeList = new ArrayList<ChannelWrapper>();
-			for (ChannelWrapper channel : channels) {
-				if (channel.isClosed()) {
-					removeList.add(channel);
-					LOGGER.info("close channel={}", channel);
-				}
+	private void checkCloseChannel(NodeType nodeType, List<ChannelWrapper> channels) {
+		List<ChannelWrapper> removeList = new ArrayList<ChannelWrapper>();
+		for (ChannelWrapper channel : channels) {
+			if (channel.isClosed()) {
+				removeList.add(channel);
+				LOGGER.info("close channel={}", channel);
 			}
-			channels.removeAll(removeList);
-			// 加入到离线列表中
-			if (nodeType == NodeType.TASK_EXECUTER) {
-				for (ChannelWrapper channelWrapper : removeList) {
-					offlineTaskExecuterMap.put(channelWrapper.getIdentity(), SystemClock.now());
-				}
+		}
+		channels.removeAll(removeList);
+		// 加入到离线列表中
+		if (nodeType == NodeType.TASK_EXECUTER) {
+			for (ChannelWrapper channelWrapper : removeList) {
+				offlineTaskExecuterMap.put(channelWrapper.getIdentity(), SystemClock.now());
 			}
 		}
 	}
 
-	public List<ChannelWrapper> getChannels(String nodeGroup, NodeType nodeType) {
+	public List<ChannelWrapper> getChannels(NodeType nodeType) {
 		if (nodeType == NodeType.TASK_DISPATCH) {
-			return taskDispatcherChannelMap.get(nodeGroup);
+			return taskDispatcherChannelList;
 		} else if (nodeType == NodeType.TASK_EXECUTER) {
-			return taskExecuterChannelMap.get(nodeGroup);
+			return taskExecuterChannelList;
 		}
 		return null;
 	}
@@ -141,8 +140,8 @@ public class ChannelManager {
 	/**
 	 * 根据 节点唯一编号得到 channel
 	 */
-	public ChannelWrapper getChannel(String nodeGroup, NodeType nodeType, String identity) {
-		List<ChannelWrapper> channelWrappers = getChannels(nodeGroup, nodeType);
+	public ChannelWrapper getChannel(NodeType nodeType, String identity) {
+		List<ChannelWrapper> channelWrappers = getChannels(nodeType);
 		if (channelWrappers != null && channelWrappers.size() != 0) {
 			for (ChannelWrapper channelWrapper : channelWrappers) {
 				if (channelWrapper.getIdentity().equals(identity)) {
@@ -157,27 +156,11 @@ public class ChannelManager {
 	 * 添加channel
 	 */
 	public void offerChannel(ChannelWrapper channel) {
-		String nodeGroup = channel.getNodeGroup();
 		NodeType nodeType = channel.getNodeType();
-		List<ChannelWrapper> channels = getChannels(nodeGroup, nodeType);
-		if (channels == null) {
-			channels = new ArrayList<ChannelWrapper>();
-			if (nodeType == NodeType.TASK_DISPATCH) {
-				taskDispatcherChannelMap.put(nodeGroup, channels);
-			} else if (nodeType == NodeType.TASK_EXECUTER) {
-				taskExecuterChannelMap.put(nodeGroup, channels);
-				// 如果在离线列表中，那么移除
-				if (offlineTaskExecuterMap.containsKey(channel.getIdentity())) {
-					offlineTaskExecuterMap.remove(channel.getIdentity());
-				}
-			}
+		List<ChannelWrapper> channels = getChannels(nodeType);
+		if (!channels.contains(channel)) {
 			channels.add(channel);
 			LOGGER.info("new connected channel={}", channel);
-		} else {
-			if (!channels.contains(channel)) {
-				channels.add(channel);
-				LOGGER.info("new connected channel={}", channel);
-			}
 		}
 	}
 
@@ -186,9 +169,8 @@ public class ChannelManager {
 	}
 
 	public void removeChannel(ChannelWrapper channel) {
-		String nodeGroup = channel.getNodeGroup();
 		NodeType nodeType = channel.getNodeType();
-		List<ChannelWrapper> channels = getChannels(nodeGroup, nodeType);
+		List<ChannelWrapper> channels = getChannels(nodeType);
 		if (channels != null) {
 			channels.remove(channel);
 			LOGGER.info("remove channel={}", channel);

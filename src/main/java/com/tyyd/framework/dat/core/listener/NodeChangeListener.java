@@ -4,9 +4,6 @@ import com.tyyd.framework.dat.core.cluster.Node;
 
 import java.util.List;
 
-/**
- * @author Robert HG (254963746@qq.com) on 5/18/15.
- */
 public interface NodeChangeListener {
 
     /**
@@ -21,5 +18,10 @@ public interface NodeChangeListener {
      * @param nodes 节点列表
      */
     public void removeNodes(List<Node> nodes);
+    /**
+     * 更新节点
+     * @param nodes 节点列表
+     */
+    public void updateNodes(List<Node> nodes);
 
 }

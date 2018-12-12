@@ -3,7 +3,6 @@ package com.tyyd.framework.dat.core.registry;
 import com.tyyd.framework.dat.core.cluster.Node;
 
 /**
- * @author Robert HG (254963746@qq.com) on 6/22/14.
  *         节点注册接口
  */
 public interface Registry {
@@ -32,4 +31,8 @@ public interface Registry {
      * 销毁
      */
     void destroy();
+    /**
+     * 节点更新
+     */
+    void updateRegister(String path,Node node);
 }

@@ -111,7 +111,7 @@ public class TaskProcBiz implements TaskCompletedBiz {
             return false;
         }
         // 容错,如果没有提交节点组,那么不反馈
-        return !StringUtils.isEmpty(job.getSubmitNodeGroup()) && job.isNeedFeedback();
+        return !StringUtils.isEmpty(job.getSubmitNode());
     }
 
 }

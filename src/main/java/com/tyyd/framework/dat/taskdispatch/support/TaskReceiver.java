@@ -14,7 +14,7 @@ import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.exception.JobReceiveException;
-import com.tyyd.framework.dat.core.protocol.command.JobSubmitRequest;
+import com.tyyd.framework.dat.core.protocol.command.TaskSubmitRequest;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.core.support.CronExpressionUtils;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
@@ -45,21 +45,21 @@ public class TaskReceiver {
     /**
      * jobTracker 接受任务
      */
-    public void receive(JobSubmitRequest request) throws JobReceiveException {
+    public void receive(TaskSubmitRequest request) throws JobReceiveException {
 
-        List<Task> jobs = request.getJobs();
-        if (CollectionUtils.isEmpty(jobs)) {
+        List<Task> tasks = request.getJobs();
+        if (CollectionUtils.isEmpty(tasks)) {
             return;
         }
         JobReceiveException exception = null;
-        for (Task job : jobs) {
+        for (Task task : tasks) {
             try {
-                addToQueue(job, request);
+                addToQueue(task, request);
             } catch (Exception t) {
                 if (exception == null) {
                     exception = new JobReceiveException(t);
                 }
-                exception.addJob(job);
+                exception.addJob(task);
             }
         }
 
@@ -68,39 +68,32 @@ public class TaskReceiver {
         }
     }
 
-    private TaskPo addToQueue(Task job, JobSubmitRequest request) {
+    private TaskPo addToQueue(Task task, TaskSubmitRequest request) {
 
-        TaskPo jobPo = null;
+        TaskPo taskPo = null;
         boolean success = false;
         BizLogCode code = null;
         try {
-            jobPo = TaskDomainConverter.convert(job);
-            if (jobPo == null) {
-                LOGGER.warn("Job can not be null。{}", job);
+            taskPo = TaskDomainConverter.convert(task);
+            if (taskPo == null) {
+                LOGGER.warn("Job can not be null。{}", task);
                 return null;
             }
-            if (StringUtils.isEmpty(jobPo.getSubmitNodeGroup())) {
-                jobPo.setSubmitNodeGroup(request.getNodeGroup());
+            if (StringUtils.isEmpty(taskPo.getSubmitNode())) {
+                taskPo.setSubmitNode(request.getNodeGroup());
             }
             // 设置 jobId
-            jobPo.setTaskId(idGenerator.generate(jobPo));
+            taskPo.setTaskId(idGenerator.generate(taskPo));
 
             // 添加任务
-            addJob(job, jobPo);
+            addJob(task, taskPo);
 
             success = true;
             code = BizLogCode.SUCCESS;
 
         } catch (DupEntryException e) {
             // 已经存在
-            if (job.isReplaceOnExist()) {
-                Assert.notNull(jobPo);
-                success = replaceOnExist(job, jobPo);
-                code = success ? BizLogCode.DUP_REPLACE : BizLogCode.DUP_FAILED;
-            } else {
-                code = BizLogCode.DUP_IGNORE;
-                LOGGER.info("Job already exist. nodeGroup={}, {}", request.getNodeGroup(), job);
-            }
+                LOGGER.info("Job already exist. nodeGroup={}, {}", request.getNodeGroup(), task);
         } finally {
             if (success) {
                 stat.incReceiveJobNum();
@@ -108,9 +101,9 @@ public class TaskReceiver {
         }
 
         // 记录日志
-        jobBizLog(jobPo, code);
+        jobBizLog(taskPo, code);
 
-        return jobPo;
+        return taskPo;
     }
 
     /**
@@ -122,16 +115,7 @@ public class TaskReceiver {
         } else if (job.isRepeatable()) {
             addRepeatJob(taskPo);
         } else {
-            boolean needAdd2ExecutableJobQueue = true;
-            String ignoreAddOnExecuting = CollectionUtils.getValue(taskPo.getInternalExtParams(), "__LTS_ignoreAddOnExecuting");
-            if (ignoreAddOnExecuting != null && "true".equals(ignoreAddOnExecuting)) {
-                if (appContext.getExecutingJobQueue().getJob(taskPo.getTaskTrackerNodeGroup(), taskPo.getTaskId()) != null) {
-                    needAdd2ExecutableJobQueue = false;
-                }
-            }
-            if (needAdd2ExecutableJobQueue) {
-                appContext.getExecutableJobQueue().add(taskPo);
-            }
+            appContext.getExecutableJobQueue().add(taskPo);
         }
         LOGGER.info("Receive Job success. {}", job);
     }
@@ -144,16 +128,16 @@ public class TaskReceiver {
         // 得到老的jobId
         TaskPo oldJobPo;
         if (job.isCron()) {
-            oldJobPo = appContext.getTaskQueue().getJob(job.getTaskTrackerNodeGroup(), job.getTaskId());
+            oldJobPo = appContext.getTaskQueue().getTask(job.getTaskId());
         } else if (job.isRepeatable()) {
-            oldJobPo = appContext.getTaskQueue().getJob(job.getTaskTrackerNodeGroup(), job.getTaskId());
+            oldJobPo = appContext.getTaskQueue().getTask(job.getTaskId());
         } else {
-            oldJobPo = appContext.getExecutableJobQueue().getTask(job.getTaskTrackerNodeGroup(), job.getTaskId());
+            oldJobPo = appContext.getExecutableJobQueue().getTask(job.getTaskId());
         }
         if (oldJobPo != null) {
             String jobId = oldJobPo.getTaskId();
             // 1. 删除任务
-            appContext.getExecutableJobQueue().remove(job.getTaskTrackerNodeGroup(), jobId);
+            appContext.getExecutableJobQueue().remove(jobId);
             if (job.isCron()) {
                 appContext.getTaskQueue().remove(jobId);
             } else if (job.isRepeatable()) {
@@ -177,13 +161,13 @@ public class TaskReceiver {
      * 添加Cron 任务
      */
     private void addCronJob(TaskPo jobPo) throws DupEntryException {
-        Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(jobPo.getCronExpression());
+        Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(jobPo.getCron());
         if (nextTriggerTime != null) {
             // 1.add to cron job queue
             appContext.getTaskQueue().add(jobPo);
 
             // 没有正在执行, 则添加
-            if (appContext.getExecutingJobQueue().getJob(jobPo.getTaskTrackerNodeGroup(), jobPo.getTaskId()) == null) {
+            if (appContext.getExecutingJobQueue().getJob(jobPo.getTaskId()) == null) {
                 // 2. add to executable queue
                 jobPo.setTriggerTime(nextTriggerTime.getTime());
                 appContext.getExecutableJobQueue().add(jobPo);
@@ -199,7 +183,7 @@ public class TaskReceiver {
         appContext.getTaskQueue().add(jobPo);
 
         // 没有正在执行, 则添加
-        if (appContext.getExecutingJobQueue().getJob(jobPo.getTaskTrackerNodeGroup(), jobPo.getTaskId()) == null) {
+        if (appContext.getExecutingJobQueue().getJob(jobPo.getTaskId()) == null) {
             // 2. add to executable queue
             appContext.getExecutableJobQueue().add(jobPo);
         }

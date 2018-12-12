@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author Robert HG (254963746@qq.com) on 5/28/15.
  */
-public interface ExecutingTaskQueue extends TaskQueueInterface {
+public interface ExecutingTaskQueue extends QueueInterface {
 
     /**
      * 入队列

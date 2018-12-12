@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.queue.mysql;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
-import com.tyyd.framework.dat.core.support.JobQueueUtils;
+import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.AbstractPreLoader;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
@@ -27,7 +27,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
     }
 
     @Override
-    protected boolean lockJob(String taskTrackerNodeGroup, String jobId,
+    protected boolean lockTask(String id,
                               String taskTrackerIdentity,
                               Long triggerTime,
                               Long gmtModified) {
@@ -36,12 +36,11 @@ public class MysqlPreLoader extends AbstractPreLoader {
                     .update()
                     .table(getTableName())
                     .set("is_running", true)
-                    .set("task_tracker_identity", taskTrackerIdentity)
-                    .set("gmt_modified", SystemClock.now())
-                    .where("job_id = ?", jobId)
+                    .set("task_execute_node", taskTrackerIdentity)
+                    .set("update_time", SystemClock.now())
+                    .where("id = ?", id)
                     .and("is_running = ?", false)
                     .and("trigger_time = ?", triggerTime)
-                    .and("gmt_modified = ?", gmtModified)
                     .doUpdate() == 1;
         } catch (Exception e) {
             LOGGER.error("Error when lock job:" + e.getMessage(), e);
@@ -51,7 +50,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
 
 
     @Override
-    protected List<TaskPo> load(String loadTaskTrackerNodeGroup, int loadSize) {
+    protected List<TaskPo> load(int loadSize) {
         try {
             return new SelectSql(sqlTemplate)
                     .select()
@@ -63,9 +62,8 @@ public class MysqlPreLoader extends AbstractPreLoader {
                     .orderBy()
                     .column("trigger_time", OrderByType.ASC)
                     .column("priority", OrderByType.ASC)
-                    .column("gmt_created", OrderByType.ASC)
                     .limit(0, loadSize)
-                    .list(RshHolder.JOB_PO_LIST_RSH);
+                    .list(RshHolder.TASK_PO_LIST_RSH);
         } catch (Exception e) {
             LOGGER.error("Error when load job:" + e.getMessage(), e);
             return null;
@@ -73,6 +71,6 @@ public class MysqlPreLoader extends AbstractPreLoader {
     }
 
     private String getTableName() {
-        return JobQueueUtils.getExecutableQueueName();
+        return TaskQueueUtils.getExecutableQueueName();
     }
 }

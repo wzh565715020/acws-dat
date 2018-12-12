@@ -2,7 +2,7 @@ package com.tyyd.framework.dat.queue.mongo;
 
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
-import com.tyyd.framework.dat.core.support.JobQueueUtils;
+import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.queue.TaskQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
@@ -21,7 +21,7 @@ public class MongoTaskQueue extends AbstractMongoTaskQueue implements TaskQueue 
     public MongoTaskQueue(Config config) {
         super(config);
         // table name (Collection name) for single table
-        setTableName(JobQueueUtils.TASK_QUEUE);
+        setTableName(TaskQueueUtils.TASK_QUEUE);
 
         // create table
         DBCollection dbCollection = template.getCollection();
@@ -35,7 +35,7 @@ public class MongoTaskQueue extends AbstractMongoTaskQueue implements TaskQueue 
 
     @Override
     protected String getTargetTable() {
-        return JobQueueUtils.TASK_QUEUE;
+        return TaskQueueUtils.TASK_QUEUE;
     }
 
     @Override
@@ -50,32 +50,24 @@ public class MongoTaskQueue extends AbstractMongoTaskQueue implements TaskQueue 
     }
 
     @Override
-    public TaskPo getJob(String jobId) {
+    public TaskPo getTask(String taskId) {
         Query<TaskPo> query = template.createQuery(TaskPo.class);
-        query.field("jobId").equal(jobId);
+        query.field("task_id").equal(taskId);
         return query.get();
     }
 
     @Override
-    public boolean remove(String jobId) {
+    public boolean remove(String taskId) {
         Query<TaskPo> query = template.createQuery(TaskPo.class);
-        query.field("jobId").equal(jobId);
+        query.field("jobId").equal(taskId);
         WriteResult wr = template.delete(query);
         return wr.getN() == 1;
     }
 
     @Override
-    public TaskPo getJob(String taskTrackerNodeGroup, String taskId) {
-        Query<TaskPo> query = template.createQuery(TaskPo.class);
-        query.field("taskId").equal(taskId).
-                field("taskTrackerNodeGroup").equal(taskTrackerNodeGroup);
-        return query.get();
-    }
-
-    @Override
     public int incRepeatedCount(String jobId) {
         while (true) {
-            TaskPo jobPo = getJob(jobId);
+            TaskPo jobPo = getTask(jobId);
             if (jobPo == null) {
                 return -1;
             }

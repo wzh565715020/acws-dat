@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.queue.mongo;
 
 import com.tyyd.framework.dat.core.AppContext;
-import com.tyyd.framework.dat.core.support.JobQueueUtils;
+import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.AbstractPreLoader;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
@@ -24,17 +24,16 @@ public class MongoPreLoader extends AbstractPreLoader {
                 (AdvancedDatastore) DataStoreProvider.getDataStore(appContext.getConfig()));
     }
 
-    protected boolean lockJob(String taskTrackerNodeGroup, String jobId, String taskTrackerIdentity, Long triggerTime, Long gmtModified) {
+    protected boolean lockTask(String id, String taskTrackerIdentity, Long triggerTime, Long gmtModified) {
         UpdateOperations<TaskPo> operations =
                 template.createUpdateOperations(TaskPo.class)
                         .set("isRunning", true)
-                        .set("taskTrackerIdentity", taskTrackerIdentity)
-                        .set("gmtModified", SystemClock.now());
+                        .set("taskTrackerIdentity", taskTrackerIdentity);
 
-        String tableName = JobQueueUtils.getExecutableQueueName();
+        String tableName = TaskQueueUtils.getExecutableQueueName();
 
         Query<TaskPo> updateQuery = template.createQuery(tableName, TaskPo.class);
-        updateQuery.field("jobId").equal(jobId)
+        updateQuery.field("id").equal(id)
                 .field("isRunning").equal(false)
                 .field("triggerTime").equal(triggerTime)
                 .field("gmtModified").equal(gmtModified);
@@ -42,9 +41,9 @@ public class MongoPreLoader extends AbstractPreLoader {
         return updateResult.getUpdatedCount() == 1;
     }
 
-    protected List<TaskPo> load(String loadTaskTrackerNodeGroup, int loadSize) {
+    protected List<TaskPo> load(int loadSize) {
         // load
-        String tableName = JobQueueUtils.getExecutableQueueName();
+        String tableName = TaskQueueUtils.getExecutableQueueName();
         Query<TaskPo> query = template.createQuery(tableName, TaskPo.class);
         query.field("isRunning").equal(false)
                 .filter("triggerTime < ", SystemClock.now())

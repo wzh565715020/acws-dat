@@ -10,14 +10,12 @@ public class ChannelWrapper {
 
     private Channel channel;
     private NodeType nodeType;
-    private String nodeGroup;
     // 节点的唯一标识
     private String identity;
 
-    public ChannelWrapper(Channel channel, NodeType nodeType, String nodeGroup, String identity) {
+    public ChannelWrapper(Channel channel, NodeType nodeType, String identity) {
         this.channel = channel;
         this.nodeType = nodeType;
-        this.nodeGroup = nodeGroup;
         this.identity = identity;
     }
 
@@ -35,14 +33,6 @@ public class ChannelWrapper {
 
     public void setNodeType(NodeType nodeType) {
         this.nodeType = nodeType;
-    }
-
-    public String getNodeGroup() {
-        return nodeGroup;
-    }
-
-    public void setNodeGroup(String nodeGroup) {
-        this.nodeGroup = nodeGroup;
     }
 
     public String getIdentity() {
@@ -70,7 +60,6 @@ public class ChannelWrapper {
 
         if (channel != null ? !channel.equals(that.channel) : that.channel != null) return false;
         if (identity != null ? !identity.equals(that.identity) : that.identity != null) return false;
-        if (nodeGroup != null ? !nodeGroup.equals(that.nodeGroup) : that.nodeGroup != null) return false;
         if (nodeType != that.nodeType) return false;
 
         return true;
@@ -80,7 +69,6 @@ public class ChannelWrapper {
     public int hashCode() {
         int result = channel != null ? channel.hashCode() : 0;
         result = 31 * result + (nodeType != null ? nodeType.hashCode() : 0);
-        result = 31 * result + (nodeGroup != null ? nodeGroup.hashCode() : 0);
         result = 31 * result + (identity != null ? identity.hashCode() : 0);
         return result;
     }
@@ -90,7 +78,6 @@ public class ChannelWrapper {
         return "ChannelWrapper{" +
                 "channel=" + channel +
                 ", nodeType=" + nodeType +
-                ", nodeGroup='" + nodeGroup + '\'' +
                 ", identity='" + identity + '\'' +
                 '}';
     }

@@ -23,33 +23,32 @@ public class TaskSender {
         this.appContext = appContext;
     }
 
-    public SendResult send(String taskTrackerNodeGroup, String taskTrackerIdentity, SendInvoker invoker) {
+    public SendResult send(String taskExecuterIdentity, SendInvoker invoker) {
 
-        // 从mongo 中取一个可运行的job
-        final TaskPo jobPo = appContext.getPreLoader().take(taskTrackerNodeGroup, taskTrackerIdentity);
-        if (jobPo == null) {
+        //取一个可运行的task
+        final TaskPo taskPo = appContext.getPreLoader().take(taskExecuterIdentity);
+        if (taskPo == null) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Job push failed: no job! nodeGroup=" + taskTrackerNodeGroup + ", identity=" + taskTrackerIdentity);
+                LOGGER.debug("Task push failed: no Task!identity " + taskExecuterIdentity);
             }
             return new SendResult(false, TaskPushResult.NO_JOB);
         }
-
         // IMPORTANT: 这里要先切换队列
         try {
-            jobPo.setGmtModified(jobPo.getGmtCreated());
-            appContext.getExecutingJobQueue().add(jobPo);
+            taskPo.setCreateDate(taskPo.getCreateDate());
+            appContext.getExecutingJobQueue().add(taskPo);
         } catch (DupEntryException e) {
-            LOGGER.warn("ExecutingJobQueue already exist:" + JSON.toJSONString(jobPo));
-            appContext.getExecutableJobQueue().resume(jobPo);
+            LOGGER.warn("ExecutingJobQueue already exist:" + JSON.toJSONString(taskPo));
+            appContext.getExecutableJobQueue().resume(taskPo);
             return new SendResult(false, TaskPushResult.FAILED);
         }
-        appContext.getExecutableJobQueue().remove(jobPo.getTaskTrackerNodeGroup(), jobPo.getTaskId());
+        appContext.getExecutableJobQueue().remove(taskPo.getId());
 
-        SendResult sendResult = invoker.invoke(jobPo);
+        SendResult sendResult = invoker.invoke(taskPo);
 
         if (sendResult.isSuccess()) {
             // 记录日志
-            JobLogPo jobLogPo = TaskDomainConverter.convertJobLog(jobPo);
+            JobLogPo jobLogPo = TaskDomainConverter.convertJobLog(taskPo);
             jobLogPo.setSuccess(true);
             jobLogPo.setLogType(LogType.SENT);
             jobLogPo.setLogTime(SystemClock.now());

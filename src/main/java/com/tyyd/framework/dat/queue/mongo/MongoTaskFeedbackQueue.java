@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
-import com.tyyd.framework.dat.core.support.JobQueueUtils;
+import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.queue.TaskFeedbackQueue;
 import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
 import com.tyyd.framework.dat.store.mongo.MongoRepository;
@@ -35,8 +35,7 @@ public class MongoTaskFeedbackQueue extends MongoRepository implements TaskFeedb
             return true;
         }
         for (JobFeedbackPo jobFeedbackPo : jobFeedbackPos) {
-            String tableName = JobQueueUtils.getFeedbackQueueName(
-                    jobFeedbackPo.getJobRunResult().getTaskMeta().getJob().getSubmitNodeGroup());
+            String tableName = TaskQueueUtils.getFeedbackQueueName();
             try {
                 template.save(tableName, jobFeedbackPo);
             } catch (DuplicateKeyException e) {
@@ -47,27 +46,27 @@ public class MongoTaskFeedbackQueue extends MongoRepository implements TaskFeedb
     }
 
     @Override
-    public boolean remove(String jobClientNodeGroup, String id) {
-        Query<JobFeedbackPo> query = createQuery(jobClientNodeGroup);
+    public boolean remove(String id) {
+        Query<JobFeedbackPo> query = createQuery();
         query.field("id").equal(id);
         WriteResult wr = template.delete(query);
         return wr.getN() == 1;
     }
 
-    private Query<JobFeedbackPo> createQuery(String jobClientNodeGroup) {
-        String tableName = JobQueueUtils.getFeedbackQueueName(jobClientNodeGroup);
+    private Query<JobFeedbackPo> createQuery() {
+        String tableName = TaskQueueUtils.getFeedbackQueueName();
         return template.createQuery(tableName, JobFeedbackPo.class);
     }
 
     @Override
-    public long getCount(String jobClientNodeGroup) {
-        Query<JobFeedbackPo> query = createQuery(jobClientNodeGroup);
+    public long getCount() {
+        Query<JobFeedbackPo> query = createQuery();
         return template.getCount(query);
     }
 
     @Override
-    public List<JobFeedbackPo> fetchTop(String jobClientNodeGroup, int top) {
-        Query<JobFeedbackPo> query = createQuery(jobClientNodeGroup);
+    public List<JobFeedbackPo> fetchTop(int top) {
+        Query<JobFeedbackPo> query = createQuery();
         query.order("gmtCreated").limit(top);
         return query.asList();
     }

@@ -2,7 +2,7 @@ package com.tyyd.framework.dat.queue.mongo;
 
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
-import com.tyyd.framework.dat.core.support.JobQueueUtils;
+import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
@@ -22,7 +22,7 @@ public class MongoExecutingTaskQueue extends AbstractMongoTaskQueue implements E
     public MongoExecutingTaskQueue(Config config) {
         super(config);
         // table name (Collection name) for single table
-        setTableName(JobQueueUtils.EXECUTING_JOB_QUEUE);
+        setTableName(TaskQueueUtils.EXECUTING_JOB_QUEUE);
 
         // create table
         DBCollection dbCollection = template.getCollection();
@@ -38,7 +38,7 @@ public class MongoExecutingTaskQueue extends AbstractMongoTaskQueue implements E
 
     @Override
     protected String getTargetTable() {
-        return JobQueueUtils.EXECUTING_JOB_QUEUE;
+        return TaskQueueUtils.EXECUTING_JOB_QUEUE;
     }
 
     @Override

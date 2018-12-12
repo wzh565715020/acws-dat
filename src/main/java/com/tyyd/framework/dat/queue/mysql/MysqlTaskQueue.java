@@ -1,8 +1,7 @@
 package com.tyyd.framework.dat.queue.mysql;
 
-import com.tyyd.framework.dat.admin.request.JobQueueReq;
 import com.tyyd.framework.dat.core.cluster.Config;
-import com.tyyd.framework.dat.core.support.JobQueueUtils;
+import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.queue.TaskQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
@@ -17,24 +16,19 @@ public class MysqlTaskQueue extends AbstractMysqlTaskQueue implements TaskQueue 
     }
 
     @Override
-    protected String getTableName(JobQueueReq request) {
-        return getTableName();
+    public boolean add(TaskPo taskPo) {
+        return super.add(getTableName(), taskPo);
     }
 
     @Override
-    public boolean add(TaskPo jobPo) {
-        return super.add(getTableName(), jobPo);
-    }
-
-    @Override
-    public TaskPo getJob(String jobId) {
+    public TaskPo getTask(String jobId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
-                .where("job_id = ?", jobId)
-                .single(RshHolder.JOB_PO_RSH);
+                .where("task_id = ?", jobId)
+                .single(RshHolder.TASK_PO_RSH);
     }
 
     @Override
@@ -43,27 +37,15 @@ public class MysqlTaskQueue extends AbstractMysqlTaskQueue implements TaskQueue 
                 .delete()
                 .from()
                 .table(getTableName())
-                .where("job_id = ?", jobId)
+                .where("task_id = ?", jobId)
                 .doDelete() == 1;
     }
 
-    @Override
-    public TaskPo getJob(String taskTrackerNodeGroup, String taskId) {
-
-        return new SelectSql(getSqlTemplate())
-                .select()
-                .all()
-                .from()
-                .table(getTableName())
-                .where("task_id = ?", taskId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
-                .single(RshHolder.JOB_PO_RSH);
-    }
 
     @Override
     public int incRepeatedCount(String jobId) {
         while (true) {
-            TaskPo jobPo = getJob(jobId);
+            TaskPo jobPo = getTask(jobId);
             if (jobPo == null) {
                 return -1;
             }
@@ -79,8 +61,9 @@ public class MysqlTaskQueue extends AbstractMysqlTaskQueue implements TaskQueue 
         }
     }
 
-    private String getTableName() {
-        return JobQueueUtils.TASK_QUEUE;
+    @Override
+    protected String getTableName() {
+        return TaskQueueUtils.TASK_QUEUE;
     }
 
 }

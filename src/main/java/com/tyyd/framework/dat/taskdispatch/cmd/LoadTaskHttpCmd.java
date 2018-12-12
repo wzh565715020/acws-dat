@@ -37,7 +37,7 @@ public class LoadTaskHttpCmd implements HttpCmdProc {
     public HttpCmdResponse execute(HttpCmdRequest request) throws Exception {
 
         String taskTrackerNodeGroup = request.getParam("nodeGroup");
-        appContext.getPreLoader().load(taskTrackerNodeGroup);
+        //appContext.getPreLoader().load(taskTrackerNodeGroup);
 
         LOGGER.info("load job succeed : nodeGroup={}", taskTrackerNodeGroup);
 

@@ -22,7 +22,7 @@ import com.tyyd.framework.dat.core.exception.JobTrackerNotFoundException;
 import com.tyyd.framework.dat.core.protocol.JobProtos;
 import com.tyyd.framework.dat.core.protocol.command.CommandBodyWrapper;
 import com.tyyd.framework.dat.core.protocol.command.JobCancelRequest;
-import com.tyyd.framework.dat.core.protocol.command.JobSubmitRequest;
+import com.tyyd.framework.dat.core.protocol.command.TaskSubmitRequest;
 import com.tyyd.framework.dat.core.protocol.command.JobSubmitResponse;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
@@ -155,7 +155,7 @@ public class TaskClient<T extends TaskClientNode, Context extends AppContext> ex
 
         final Response response = new Response();
         try {
-            JobSubmitRequest jobSubmitRequest = CommandBodyWrapper.wrapper(appContext, new JobSubmitRequest());
+            TaskSubmitRequest jobSubmitRequest = CommandBodyWrapper.wrapper(appContext, new TaskSubmitRequest());
             jobSubmitRequest.setJobs(jobs);
 
             RemotingCommand requestCommand = RemotingCommand.createRequestCommand(

@@ -2,7 +2,6 @@ package com.tyyd.framework.dat.taskdispatch.support.checker;
 
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -69,19 +68,13 @@ public class ExecutableDeadTaskChecker {
      * fix the job that running is true and gmtModified too old
      */
     private void fix() {
-        Set<String> nodeGroups = appContext.getTaskExecuterManager().getNodeGroups();
-        if (CollectionUtils.isEmpty(nodeGroups)) {
-            return;
-        }
-        for (String nodeGroup : nodeGroups) {
-            List<TaskPo> deadJobPo = appContext.getExecutableJobQueue().getDeadJob(nodeGroup, SystemClock.now() - MAX_TIME_OUT);
+            List<TaskPo> deadJobPo = appContext.getExecutableJobQueue().getDeadJob(SystemClock.now() - MAX_TIME_OUT);
             if (CollectionUtils.isNotEmpty(deadJobPo)) {
                 for (TaskPo jobPo : deadJobPo) {
                     appContext.getExecutableJobQueue().resume(jobPo);
                     LOGGER.info("Fix executable job : {} ", JSON.toJSONString(jobPo));
                 }
             }
-        }
     }
 
     public void stop() {

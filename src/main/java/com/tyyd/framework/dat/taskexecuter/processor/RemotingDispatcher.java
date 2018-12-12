@@ -46,11 +46,10 @@ public class RemotingDispatcher extends AbstractProcessor {
      */
     private void offerHandler(Channel channel, RemotingCommand request) {
         AbstractRemotingCommandBody commandBody = request.getBody();
-        String nodeGroup = commandBody.getNodeGroup();
         String identity = commandBody.getIdentity();
         NodeType nodeType = NodeType.valueOf(commandBody.getNodeType());
 
         // 1. 将 channel 纳入管理中(不存在就加入)
-        appContext.getChannelManager().offerChannel(new ChannelWrapper(channel, nodeType, nodeGroup, identity));
+        appContext.getChannelManager().offerChannel(new ChannelWrapper(channel, nodeType, identity));
     }
 }

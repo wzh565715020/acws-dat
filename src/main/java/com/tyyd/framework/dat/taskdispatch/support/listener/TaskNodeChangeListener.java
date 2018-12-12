@@ -28,8 +28,6 @@ public class TaskNodeChangeListener implements NodeChangeListener {
         for (Node node : nodes) {
             if (node.getNodeType().equals(NodeType.TASK_EXECUTER)) {
                 appContext.getTaskExecuterManager().addNode(node);
-            } else if (node.getNodeType().equals(NodeType.TASK_CLIENT)) {
-                appContext.getJobClientManager().addNode(node);
             }
         }
     }
@@ -42,8 +40,17 @@ public class TaskNodeChangeListener implements NodeChangeListener {
         for (Node node : nodes) {
             if (node.getNodeType().equals(NodeType.TASK_EXECUTER)) {
                 appContext.getTaskExecuterManager().removeNode(node);
-            } else if (node.getNodeType().equals(NodeType.TASK_CLIENT)) {
-                appContext.getJobClientManager().removeNode(node);
+            }
+        }
+    }
+    @Override
+    public void updateNodes(List<Node> nodes) {
+        if (CollectionUtils.isEmpty(nodes)) {
+            return;
+        }
+        for (Node node : nodes) {
+            if (node.getNodeType().equals(NodeType.TASK_EXECUTER)) {
+                appContext.getTaskExecuterManager().updateNode(node);
             }
         }
     }

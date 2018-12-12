@@ -61,4 +61,9 @@ public class MasterElectionListener implements NodeChangeListener {
                 && node.getGroup().equals(appContext.getConfig().getNodeGroup());
     }
 
+	@Override
+	public void updateNodes(List<Node> nodes) {
+		
+	}
+
 }

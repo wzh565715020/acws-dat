@@ -1,10 +1,10 @@
 package com.tyyd.framework.dat.queue.mongo;
 
-import com.tyyd.framework.dat.admin.request.JobQueueReq;
+import com.tyyd.framework.dat.admin.request.TaskQueueReq;
 import com.tyyd.framework.dat.admin.response.PaginationRsp;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.queue.TaskQueueInterface;
+import com.tyyd.framework.dat.queue.QueueInterface;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.JdbcException;
 import com.tyyd.framework.dat.store.mongo.MongoRepository;
@@ -15,34 +15,28 @@ import org.mongodb.morphia.query.UpdateResults;
 import java.util.Date;
 import java.util.HashMap;
 
-/**
- * @author Robert HG (254963746@qq.com) on 6/7/15.
- */
-public abstract class AbstractMongoTaskQueue extends MongoRepository implements TaskQueueInterface {
+public abstract class AbstractMongoTaskQueue extends MongoRepository implements QueueInterface {
 
     public AbstractMongoTaskQueue(Config config) {
         super(config);
     }
 
     @Override
-    public PaginationRsp<TaskPo> pageSelect(JobQueueReq request) {
+    public PaginationRsp<TaskPo> pageSelect(TaskQueueReq request) {
         Query<TaskPo> query = template.createQuery(getTargetTable(), TaskPo.class);
-        addCondition(query, "jobId", request.getJobId());
         addCondition(query, "taskId", request.getTaskId());
-        addCondition(query, "taskTrackerNodeGroup", request.getTaskTrackerNodeGroup());
-        addCondition(query, "submitNodeGroup", request.getSubmitNodeGroup());
-        addCondition(query, "needFeedback", request.getNeedFeedback());
+        addCondition(query, "submitNode", request.getSubmitNode());
         if (request.getStartGmtCreated() != null) {
-            query.filter("gmtCreated >= ", request.getStartGmtCreated().getTime());
+            query.filter("create_date >= ", request.getStartGmtCreated().getTime());
         }
         if (request.getEndGmtCreated() != null) {
-            query.filter("gmtCreated <= ", request.getEndGmtCreated().getTime());
+            query.filter("create_date <= ", request.getEndGmtCreated().getTime());
         }
         if (request.getStartGmtModified() != null) {
-            query.filter("gmtModified <= ", request.getStartGmtModified().getTime());
+            query.filter("update_date <= ", request.getStartGmtModified().getTime());
         }
         if (request.getEndGmtModified() != null) {
-            query.filter("gmtModified >= ", request.getEndGmtModified().getTime());
+            query.filter("update_date >= ", request.getEndGmtModified().getTime());
         }
         PaginationRsp<TaskPo> response = new PaginationRsp<TaskPo>();
         Long results = template.getCount(query);
@@ -60,22 +54,20 @@ public abstract class AbstractMongoTaskQueue extends MongoRepository implements 
     }
 
     @Override
-    public boolean selectiveUpdate(JobQueueReq request) {
-        if (StringUtils.isEmpty(request.getJobId())) {
+    public boolean selectiveUpdate(TaskQueueReq request) {
+        if (StringUtils.isEmpty(request.getTaskId())) {
             throw new JdbcException("Only allow by jobId");
         }
         Query<TaskPo> query = template.createQuery(getTargetTable(), TaskPo.class);
-        query.field("jobId").equal(request.getJobId());
+        query.field("jobId").equal(request.getTaskId());
 
         UpdateOperations<TaskPo> operations = template.createUpdateOperations(TaskPo.class);
-        addUpdateField(operations, "cronExpression", request.getCronExpression());
-        addUpdateField(operations, "needFeedback", request.getNeedFeedback());
-        addUpdateField(operations, "extParams", request.getExtParams());
+        addUpdateField(operations, "cron", request.getCronExpression());
+        addUpdateField(operations, "params", request.getExtParams());
         addUpdateField(operations, "triggerTime", request.getTriggerTime() == null ? null : request.getTriggerTime().getTime());
         addUpdateField(operations, "priority", request.getPriority());
         addUpdateField(operations, "maxRetryTimes", request.getMaxRetryTimes());
-        addUpdateField(operations, "submitNodeGroup", request.getSubmitNodeGroup());
-        addUpdateField(operations, "taskTrackerNodeGroup", request.getTaskTrackerNodeGroup());
+        addUpdateField(operations, "submitNode", request.getSubmitNode());
         addUpdateField(operations, "repeatCount", request.getRepeatCount());
         addUpdateField(operations, "repeatInterval", request.getRepeatInterval());
 

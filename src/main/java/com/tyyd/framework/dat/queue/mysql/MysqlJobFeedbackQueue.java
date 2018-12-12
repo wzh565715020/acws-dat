@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.queue.mysql;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.json.JSON;
-import com.tyyd.framework.dat.core.support.JobQueueUtils;
+import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.queue.TaskFeedbackQueue;
 import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
@@ -18,8 +18,8 @@ public class MysqlJobFeedbackQueue extends JdbcAbstractAccess implements TaskFee
         super(config);
     }
 
-    private String getTableName(String jobClientNodeGroup) {
-        return JobQueueUtils.getFeedbackQueueName(jobClientNodeGroup);
+    private String getTableName() {
+        return TaskQueueUtils.getFeedbackQueueName();
     }
 
     @Override
@@ -29,9 +29,8 @@ public class MysqlJobFeedbackQueue extends JdbcAbstractAccess implements TaskFee
         }
         // insert ignore duplicate record
         for (JobFeedbackPo jobFeedbackPo : jobFeedbackPos) {
-            String jobClientNodeGroup = jobFeedbackPo.getJobRunResult().getTaskMeta().getJob().getSubmitNodeGroup();
             new InsertSql(getSqlTemplate())
-                    .insertIgnore(getTableName(jobClientNodeGroup))
+                    .insertIgnore(getTableName())
                     .columns("gmt_created", "job_result")
                     .values(jobFeedbackPo.getGmtCreated(), JSON.toJSONString(jobFeedbackPo.getJobRunResult()))
                     .doInsert();
@@ -40,33 +39,33 @@ public class MysqlJobFeedbackQueue extends JdbcAbstractAccess implements TaskFee
     }
 
     @Override
-    public boolean remove(String jobClientNodeGroup, String id) {
+    public boolean remove(String id) {
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
-                .table(getTableName(jobClientNodeGroup))
+                .table(getTableName())
                 .where("id = ?", id)
                 .doDelete() == 1;
     }
 
     @Override
-    public long getCount(String jobClientNodeGroup) {
+    public long getCount() {
         return ((Long) new SelectSql(getSqlTemplate())
                 .select()
                 .columns("count(1)")
                 .from()
-                .table(getTableName(jobClientNodeGroup))
+                .table(getTableName())
                 .single()).intValue();
     }
 
     @Override
-    public List<JobFeedbackPo> fetchTop(String jobClientNodeGroup, int top) {
+    public List<JobFeedbackPo> fetchTop(int top) {
 
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
-                .table(getTableName(jobClientNodeGroup))
+                .table(getTableName())
                 .orderBy()
                 .column("gmt_created", OrderByType.ASC)
                 .limit(0, top)

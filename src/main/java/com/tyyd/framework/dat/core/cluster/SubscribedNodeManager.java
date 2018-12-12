@@ -115,4 +115,9 @@ public class SubscribedNodeManager implements NodeChangeListener {
             removeNode(node);
         }
     }
+
+	@Override
+	public void updateNodes(List<Node> nodes) {
+		
+	}
 }

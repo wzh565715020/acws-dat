@@ -10,11 +10,11 @@ public class TaskRunnerHolder {
 
     private static final Map<String, TaskRunner> TASK_RUNNER_MAP = new ConcurrentHashMap<String, TaskRunner>();
 
-    static void add(String shardValue, TaskRunner taskRunner) {
-        TASK_RUNNER_MAP.put(shardValue, taskRunner);
+    static void add(String annotation, TaskRunner taskRunner) {
+        TASK_RUNNER_MAP.put(annotation, taskRunner);
     }
 
-    public static TaskRunner getTaskRunner(String shardValue) {
-        return TASK_RUNNER_MAP.get(shardValue);
+    public static TaskRunner getTaskRunner(String annotation) {
+        return TASK_RUNNER_MAP.get(annotation);
     }
 }

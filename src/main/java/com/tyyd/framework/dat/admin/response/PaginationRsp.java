@@ -3,9 +3,6 @@ package com.tyyd.framework.dat.admin.response;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Robert HG (254963746@qq.com) on 6/7/15.
- */
 public class PaginationRsp<T> {
 
     private int results = 0;

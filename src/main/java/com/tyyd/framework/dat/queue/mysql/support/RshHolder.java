@@ -2,14 +2,13 @@ package com.tyyd.framework.dat.queue.mysql.support;
 
 import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
-import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.json.TypeReference;
 import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
+import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
-import com.tyyd.framework.dat.queue.domain.NodeGroupPo;
 import com.tyyd.framework.dat.store.jdbc.dbutils.ResultSetHandler;
 
 import java.sql.ResultSet;
@@ -19,12 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Robert HG (254963746@qq.com) on 5/31/15.
- */
 public class RshHolder {
 
-    public static final ResultSetHandler<TaskPo> JOB_PO_RSH = new ResultSetHandler<TaskPo>() {
+    public static final ResultSetHandler<TaskPo> TASK_PO_RSH = new ResultSetHandler<TaskPo>() {
         @Override
         public TaskPo handle(ResultSet rs) throws SQLException {
             if (!rs.next()) {
@@ -34,34 +30,64 @@ public class RshHolder {
         }
     };
 
-    public static final ResultSetHandler<List<TaskPo>> JOB_PO_LIST_RSH = new ResultSetHandler<List<TaskPo>>() {
+    public static final ResultSetHandler<List<TaskPo>> TASK_PO_LIST_RSH = new ResultSetHandler<List<TaskPo>>() {
         @Override
         public List<TaskPo> handle(ResultSet rs) throws SQLException {
-            List<TaskPo> jobPos = new ArrayList<TaskPo>();
+            List<TaskPo> taskPos = new ArrayList<TaskPo>();
             while (rs.next()) {
-                jobPos.add(getTaskPo(rs));
+                taskPos.add(getTaskPo(rs));
             }
-            return jobPos;
+            return taskPos;
         }
     };
-
+    public static final ResultSetHandler<PoolPo> POOL_PO_RSH = new ResultSetHandler<PoolPo>() {
+        @Override
+        public PoolPo handle(ResultSet rs) throws SQLException {
+            if (!rs.next()) {
+                return null;
+            }
+            return getPoolPo(rs);
+        }
+		
+    };
+    public static final ResultSetHandler<List<PoolPo>> POOL_PO_LIST_RSH = new ResultSetHandler<List<PoolPo>>() {
+        @Override
+        public List<PoolPo> handle(ResultSet rs) throws SQLException {
+            List<PoolPo> poolPos = new ArrayList<PoolPo>();
+            while (rs.next()) {
+                poolPos.add(getPoolPo(rs));
+            }
+            return poolPos;
+        }
+    };
+    private static PoolPo getPoolPo(ResultSet rs) throws SQLException {
+    	PoolPo poolPo = new PoolPo();
+    	poolPo.setPoolId(rs.getString("pool_id"));
+    	poolPo.setPoolName(rs.getString("pool_name"));
+    	poolPo.setMaxCount(rs.getInt("max_count"));
+    	poolPo.setTaskIds(rs.getString("task_ids"));
+    	poolPo.setMemo(rs.getString("memo"));
+    	poolPo.setCreateDate(rs.getLong("create_date"));
+    	poolPo.setUpdateDate(rs.getLong("update_date"));
+    	poolPo.setCreateUserId(rs.getString("create_userid"));
+    	poolPo.setUpdateUserId(rs.getString("update_userid"));
+		return poolPo;
+	}
     private static TaskPo getTaskPo(ResultSet rs) throws SQLException {
         TaskPo jobPo = new TaskPo();
-        jobPo.setPriority(rs.getInt("priority"));
         jobPo.setRetryTimes(rs.getInt("retry_times"));
         jobPo.setMaxRetryTimes(rs.getInt("max_retry_times"));
-        jobPo.setInternalExtParams(JSON.parse(rs.getString("internal_ext_params"), new TypeReference<HashMap<String, String>>(){}));
         jobPo.setTaskId(rs.getString("task_id"));
-        jobPo.setGmtCreated(rs.getLong("gmt_created"));
-        jobPo.setGmtModified(rs.getLong("gmt_modified"));
-        jobPo.setSubmitNodeGroup(rs.getString("submit_node_group"));
-        jobPo.setTaskTrackerNodeGroup(rs.getString("task_tracker_node_group"));
-        jobPo.setExtParams(JSON.parse(rs.getString("ext_params"), new TypeReference<HashMap<String, String>>() {
-        }));
-        jobPo.setIsRunning(rs.getBoolean("is_running"));
-        jobPo.setTaskTrackerIdentity(rs.getString("task_tracker_identity"));
-        jobPo.setCronExpression(rs.getString("cron_expression"));
-        jobPo.setNeedFeedback(rs.getBoolean("need_feedback"));
+        jobPo.setTaskName(rs.getString("task_name"));
+        jobPo.setTaskType(rs.getString("task_type"));
+        jobPo.setTaskClass(rs.getString("task_class"));
+        jobPo.setTaskExecType(rs.getString("task_exec_type"));
+        jobPo.setCreateDate(rs.getLong("create_date"));
+        jobPo.setUpdateDate(rs.getLong("update_date"));
+        jobPo.setSubmitNode(rs.getString("submit_node"));
+        jobPo.setTaskExecuteNode(rs.getString("task_execute_node"));
+        jobPo.setParams(rs.getString("params"));
+        jobPo.setCron(rs.getString("cron"));
         jobPo.setTriggerTime(rs.getLong("trigger_time"));
         jobPo.setRepeatCount(rs.getInt("repeat_count"));
         jobPo.setRepeatedCount(rs.getInt("repeated_count"));
@@ -85,20 +111,6 @@ public class RshHolder {
         }
     };
 
-    public static final ResultSetHandler<List<NodeGroupPo>> NODE_GROUP_LIST_RSH = new ResultSetHandler<List<NodeGroupPo>>() {
-        @Override
-        public List<NodeGroupPo> handle(ResultSet rs) throws SQLException {
-            List<NodeGroupPo> list = new ArrayList<NodeGroupPo>();
-            while (rs.next()) {
-                NodeGroupPo nodeGroupPo = new NodeGroupPo();
-                nodeGroupPo.setNodeType(NodeType.valueOf(rs.getString("node_type")));
-                nodeGroupPo.setName(rs.getString("name"));
-                nodeGroupPo.setGmtCreated(rs.getLong("gmt_created"));
-                list.add(nodeGroupPo);
-            }
-            return list;
-        }
-    };
 
     public static final ResultSetHandler<List<JobLogPo>> JOB_LOGGER_LIST_RSH = new ResultSetHandler<List<JobLogPo>>() {
         @Override

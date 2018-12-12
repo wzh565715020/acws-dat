@@ -1,12 +1,9 @@
 package com.tyyd.framework.dat.core.support;
 
 
-/**
- * @author Robert HG (254963746@qq.com) on 5/28/15.
- */
-public class JobQueueUtils {
+public class TaskQueueUtils {
 
-    private JobQueueUtils() {
+    private TaskQueueUtils() {
     }
 
     /**
@@ -19,7 +16,7 @@ public class JobQueueUtils {
     /**
      * 在数据库中就是表名, jobClientNodeGroup 是 JobClient 的 nodeGroup
      */
-    public static String getFeedbackQueueName(String jobClientNodeGroup) {
+    public static String getFeedbackQueueName() {
         return "dat_feedback_job_queue";
     }
 
@@ -29,7 +26,7 @@ public class JobQueueUtils {
 
     public static final String EXECUTING_JOB_QUEUE = "dat_executing_job_queue";
 
-    public static final String NODE_GROUP_STORE = "dat_node_group_store";
-
 	public static final String SUSPEND_JOB_QUEUE = "dat_suspend_job_queue";
+	
+	public static final String TASK_POOL = "dat_task_pool";
 }

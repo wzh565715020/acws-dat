@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tyyd.framework.dat.admin.request.JobQueueReq;
+import com.tyyd.framework.dat.admin.request.TaskQueueReq;
 import com.tyyd.framework.dat.admin.response.PaginationRsp;
 import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.JobLoggerRequest;
@@ -25,7 +25,7 @@ import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.CronExpression;
-import com.tyyd.framework.dat.core.support.JobUtils;
+import com.tyyd.framework.dat.core.support.TaskUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.management.cluster.BackendAppContext;
 import com.tyyd.framework.dat.management.support.AppConfigurer;
@@ -49,7 +49,7 @@ public class TaskQueueController extends AbstractMVC {
     private BackendAppContext appContext;
 
     @RequestMapping("/job-queue/repeat-job-get")
-    public RestfulResponse repeatJobGet(JobQueueReq request) {
+    public RestfulResponse repeatJobGet(TaskQueueReq request) {
         PaginationRsp<TaskPo> paginationRsp = appContext.getTaskQueue().pageSelect(request);
         RestfulResponse response = new RestfulResponse();
         response.setSuccess(true);
@@ -59,10 +59,10 @@ public class TaskQueueController extends AbstractMVC {
     }
 
     @RequestMapping("/job-queue/repeat-job-update")
-    public RestfulResponse repeatJobUpdate(JobQueueReq request) {
+    public RestfulResponse repeatJobUpdate(TaskQueueReq request) {
         // 检查参数
         try {
-            Assert.hasLength(request.getJobId(), "jobId不能为空!");
+            Assert.hasLength(request.getTaskId(), "jobId不能为空!");
             Assert.notNull(request.getRepeatInterval(), "repeatInterval不能为空!");
             Assert.isTrue(request.getRepeatInterval() > 0, "repeatInterval必须大于0");
             Assert.isTrue(request.getRepeatCount() >= -1, "repeatCount必须>= -1");
@@ -70,13 +70,13 @@ public class TaskQueueController extends AbstractMVC {
             return Builder.build(false, e.getMessage());
         }
         request.setCronExpression(null);
-        TaskPo jobPo = appContext.getTaskQueue().getJob(request.getJobId());
+        TaskPo jobPo = appContext.getTaskQueue().getTask(request.getTaskId());
         boolean success = appContext.getTaskQueue().selectiveUpdate(request);
         if (success) {
             try {
                 // 如果repeatInterval有修改,需要把triggerTime也要修改下
                 if (!request.getRepeatInterval().equals(jobPo.getRepeatInterval())) {
-                    long nextTriggerTime = JobUtils.getRepeatNextTriggerTime(jobPo);
+                    long nextTriggerTime = TaskUtils.getRepeatNextTriggerTime(jobPo);
                     request.setTriggerTime(new Date(nextTriggerTime));
                 }
                 // 把等待执行的队列也更新一下
@@ -91,14 +91,14 @@ public class TaskQueueController extends AbstractMVC {
     }
 
     @RequestMapping("/job-queue/repeat-job-delete")
-    public RestfulResponse repeatJobDelete(JobQueueReq request) {
-        if (StringUtils.isEmpty(request.getJobId())) {
+    public RestfulResponse repeatJobDelete(TaskQueueReq request) {
+        if (StringUtils.isEmpty(request.getTaskId())) {
             return Builder.build(false, "JobId 必须传!");
         }
-        boolean success = appContext.getTaskQueue().remove(request.getJobId());
+        boolean success = appContext.getTaskQueue().remove(request.getTaskId());
         if (success) {
             try {
-                appContext.getExecutableJobQueue().remove(request.getTaskTrackerNodeGroup(), request.getJobId());
+                appContext.getExecutableJobQueue().remove(request.getTaskId());
             } catch (Exception e) {
                 return Builder.build(false, "删除等待执行的任务失败，请手动删除! error:{}" + e.getMessage());
             }
@@ -107,16 +107,16 @@ public class TaskQueueController extends AbstractMVC {
     }
 
     @RequestMapping("/job-queue/repeat-job-suspend")
-    public RestfulResponse repeatJobSuspend(JobQueueReq request) {
-        if (StringUtils.isEmpty(request.getJobId())) {
+    public RestfulResponse repeatJobSuspend(TaskQueueReq request) {
+        if (StringUtils.isEmpty(request.getTaskId())) {
             return Builder.build(false, "JobId 必须传!");
         }
-        TaskPo jobPo = appContext.getTaskQueue().getJob(request.getJobId());
+        TaskPo jobPo = appContext.getTaskQueue().getTask(request.getTaskId());
         if (jobPo == null) {
             return Builder.build(false, "任务不存在，或者已经删除");
         }
         try {
-            jobPo.setGmtModified(SystemClock.now());
+            jobPo.setUpdateDate(SystemClock.now());
             appContext.getSuspendJobQueue().add(jobPo);
         } catch (DupEntryException e) {
             return Builder.build(false, "该任务已经被暂停, 请检查暂停队列");
@@ -124,12 +124,12 @@ public class TaskQueueController extends AbstractMVC {
             return Builder.build(false, "移动任务到暂停队列失败, error:" + e.getMessage());
         }
         try {
-            appContext.getTaskQueue().remove(request.getJobId());
+            appContext.getTaskQueue().remove(request.getTaskId());
         } catch (Exception e) {
             return Builder.build(false, "删除Repeat任务失败，请手动删除! error:" + e.getMessage());
         }
         try {
-            appContext.getExecutableJobQueue().remove(request.getTaskTrackerNodeGroup(), request.getJobId());
+            appContext.getExecutableJobQueue().remove(request.getTaskId());
         } catch (Exception e) {
             return Builder.build(false, "删除等待执行的任务失败，请手动删除! error:" + e.getMessage());
         }
@@ -145,7 +145,7 @@ public class TaskQueueController extends AbstractMVC {
         return Builder.build(true);
     }
     @RequestMapping("/job-queue/executable-job-get")
-    public RestfulResponse executableJobGet(JobQueueReq request) {
+    public RestfulResponse executableJobGet(TaskQueueReq request) {
         PaginationRsp<TaskPo> paginationRsp = appContext.getExecutableJobQueue().pageSelect(request);
 
         boolean needClear = Boolean.valueOf(AppConfigurer.getProperty("lts.admin.remove.running.job.on.executable.search", "false"));
@@ -169,7 +169,7 @@ public class TaskQueueController extends AbstractMVC {
         PaginationRsp<TaskPo> rsp = new PaginationRsp<TaskPo>();
         List<TaskPo> rows = new ArrayList<TaskPo>();
         for (TaskPo jobPo : paginationRsp.getRows()) {
-            if (appContext.getExecutingJobQueue().getJob(jobPo.getTaskTrackerNodeGroup(), jobPo.getTaskId()) == null) {
+            if (appContext.getExecutingJobQueue().getJob(jobPo.getTaskExecuteNode(), jobPo.getTaskId()) == null) {
                 // 没有正在执行, 则显示在等待执行列表中
                 rows.add(jobPo);
             }
@@ -180,7 +180,7 @@ public class TaskQueueController extends AbstractMVC {
     }
 
     @RequestMapping("/job-queue/executing-job-get")
-    public RestfulResponse executingJobGet(JobQueueReq request) {
+    public RestfulResponse executingJobGet(TaskQueueReq request) {
         PaginationRsp<TaskPo> paginationRsp = appContext.getExecutingJobQueue().pageSelect(request);
         RestfulResponse response = new RestfulResponse();
         response.setSuccess(true);
@@ -190,7 +190,7 @@ public class TaskQueueController extends AbstractMVC {
     }
 
     @RequestMapping("/job-queue/executable-job-update")
-    public RestfulResponse executableJobUpdate(JobQueueReq request) {
+    public RestfulResponse executableJobUpdate(TaskQueueReq request) {
         // 检查参数
         // 1. 检测 cronExpression是否是正确的
         if (StringUtils.isNotEmpty(request.getCronExpression())) {
@@ -204,7 +204,7 @@ public class TaskQueueController extends AbstractMVC {
             }
         }
         try {
-            Assert.hasLength(request.getJobId(), "jobId不能为空!");
+            Assert.hasLength(request.getTaskId(), "jobId不能为空!");
             Assert.hasLength(request.getTaskTrackerNodeGroup(), "taskTrackerNodeGroup不能为空!");
         } catch (IllegalArgumentException e) {
             return Builder.build(false, e.getMessage());
@@ -221,20 +221,20 @@ public class TaskQueueController extends AbstractMVC {
     }
 
     @RequestMapping("/job-queue/executable-job-delete")
-    public RestfulResponse executableJobDelete(JobQueueReq request) {
+    public RestfulResponse executableJobDelete(TaskQueueReq request) {
         try {
-            Assert.hasLength(request.getJobId(), "jobId不能为空!");
+            Assert.hasLength(request.getTaskId(), "jobId不能为空!");
             Assert.hasLength(request.getTaskTrackerNodeGroup(), "taskTrackerNodeGroup不能为空!");
         } catch (IllegalArgumentException e) {
             return Builder.build(false, e.getMessage());
         }
 
-        boolean success = appContext.getExecutableJobQueue().remove(request.getTaskTrackerNodeGroup(), request.getJobId());
+        boolean success = appContext.getExecutableJobQueue().remove(request.getTaskId());
         if (success) {
             if (StringUtils.isNotEmpty(request.getCronExpression())) {
                 // 是Cron任务, Cron任务队列的也要被删除
                 try {
-                    appContext.getTaskQueue().remove(request.getJobId());
+                    appContext.getTaskQueue().remove(request.getTaskId());
                 } catch (Exception e) {
                     return Builder.build(false, "在Cron任务队列中删除该任务失败，请手动更新! error:" + e.getMessage());
                 }
@@ -261,7 +261,7 @@ public class TaskQueueController extends AbstractMVC {
      * 给JobTracker发消息 加载任务到内存
      */
     @RequestMapping("/job-queue/load-add")
-    public RestfulResponse loadJob(JobQueueReq request) {
+    public RestfulResponse loadJob(TaskQueueReq request) {
         RestfulResponse response = new RestfulResponse();
 
         String nodeGroup = request.getTaskTrackerNodeGroup();
@@ -297,14 +297,14 @@ public class TaskQueueController extends AbstractMVC {
     }
 
     @RequestMapping("/job-queue/job-add")
-    public RestfulResponse jobAdd(String jobType, JobQueueReq request) {
+    public RestfulResponse jobAdd(String jobType, TaskQueueReq request) {
         // 表单check
 
         try {
             Assert.hasLength(request.getTaskId(), "taskId不能为空!");
             Assert.hasLength(request.getTaskTrackerNodeGroup(), "taskTrackerNodeGroup不能为空!");
             if (request.getNeedFeedback()) {
-                Assert.hasLength(request.getSubmitNodeGroup(), "submitNodeGroup不能为空!");
+                Assert.hasLength(request.getSubmitNode(), "submitNodeGroup不能为空!");
             }
 
             if (StringUtils.isNotEmpty(request.getCronExpression())) {
@@ -329,47 +329,39 @@ public class TaskQueueController extends AbstractMVC {
         return Builder.build(pair.getKey(), pair.getValue());
     }
 
-    private Pair<Boolean, String> addJob(String jobType, JobQueueReq request) {
+    private Pair<Boolean, String> addJob(String jobType, TaskQueueReq request) {
 
         Task job = new Task();
         job.setTaskId(request.getTaskId());
         if (CollectionUtils.isNotEmpty(request.getExtParams())) {
-            for (Map.Entry<String, String> entry : request.getExtParams().entrySet()) {
-                job.setParam(entry.getKey(), entry.getValue());
-            }
+            job.setParams(JSON.toJSONString(request.getExtParams()));
         }
         // 执行节点的group名称
-        job.setTaskTrackerNodeGroup(request.getTaskTrackerNodeGroup());
-        job.setSubmitNodeGroup(request.getSubmitNodeGroup());
-
-        job.setNeedFeedback(request.getNeedFeedback());
-        job.setReplaceOnExist(true);
-
+        job.setSubmitNode(request.getSubmitNode());
         // 这个是 cron expression 和 quartz 一样，可选
-        job.setCronExpression(request.getCronExpression());
+        job.setCron(request.getCronExpression());
         if (request.getTriggerTime() != null) {
             job.setTriggerTime(request.getTriggerTime().getTime());
         }
         job.setRepeatCount(request.getRepeatCount() == null ? 0 : request.getRepeatCount());
         job.setRepeatInterval(request.getRepeatInterval());
 
-        job.setPriority(request.getPriority());
         job.setMaxRetryTimes(request.getMaxRetryTimes() == null ? 0 : request.getMaxRetryTimes());
 
         if ("REAL_TIME_JOB".equals(jobType)) {
-            job.setCronExpression(null);
+            job.setCron(null);
             job.setTriggerTime(null);
             job.setRepeatInterval(null);
             job.setRepeatCount(0);
         } else if ("TRIGGER_TIME_JOB".equals(jobType)) {
-            job.setCronExpression(null);
+            job.setCron(null);
             job.setRepeatInterval(null);
             job.setRepeatCount(0);
         } else if ("CRON_JOB".equals(jobType)) {
             job.setRepeatInterval(null);
             job.setRepeatCount(0);
         } else if ("REPEAT_JOB".equals(jobType)) {
-            job.setCronExpression(null);
+            job.setCron(null);
         }
         return addJob(job);
     }
@@ -407,7 +399,7 @@ public class TaskQueueController extends AbstractMVC {
             return Builder.build(false, "该任务已经执行完成或者被删除");
         }
 
-        String taskTrackerIdentity = jobPo.getTaskTrackerIdentity();
+        String taskTrackerIdentity = jobPo.getTaskExecuteNode();
 
         Node node = appContext.getNodeMemCacheAccess().getNodeByIdentity(taskTrackerIdentity);
         if (node == null) {

@@ -1,28 +1,24 @@
 package com.tyyd.framework.dat.queue;
 
-import com.tyyd.framework.dat.queue.domain.TaskPo;
+import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 
-public interface TaskQueue extends QueueInterface{
+public interface PoolQueue extends QueueInterface{
     /**
      * 添加任务
      *
      * @throws DupEntryException
      */
-    boolean add(TaskPo taskPo);
+    boolean add(PoolPo poolPo);
 
     /**
      * 完成某一次执行，返回队列中的这条记录
      */
-    TaskPo getTask(String taskId);
+    PoolPo getPool(String poolId);
 
     /**
      * 移除Cron Job
      */
-    boolean remove(String taskId);
+    boolean remove(String poolId);
 
-    /**
-     * 增加重复次数
-     */
-    int incRepeatedCount(String taskId);
 }

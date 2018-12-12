@@ -2,254 +2,239 @@ package com.tyyd.framework.dat.queue.domain;
 
 import com.tyyd.framework.dat.core.json.JSON;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- *         存储的task对象
+ * 存储的task对象
  */
 public class TaskPo {
+	private String id;
+	private String taskId;
+	private String taskName;
+	private String taskClass;
+	private String taskType;
+	private String taskExecType;
+	/**
+	 * 执行时间表达式 (和 quartz 表达式一样)
+	 */
+	private String cron;
 
-    /**
-     * 优先级 (数值越大 优先级越低)
-     */
-    private Integer priority;
-    
-    private String taskId;
-    // 创建时间
-    private Long gmtCreated;
-    // 修改时间
-    private Long gmtModified;
-    /**
-     * 提交客户端的节点组
-     */
-    private String submitNodeGroup;
-    /**
-     * 执行job 的任务节点
-     */
-    private String taskTrackerNodeGroup;
-    /**
-     * 额外的参数, 需要传给taskTracker的
-     */
-    private Map<String, String> extParams;
-    /**
-     * 内部使用的扩展参数
-     */
-    private Map<String, String> internalExtParams;
-    /**
-     * 是否正在执行
-     */
-    private boolean isRunning = false;
-    /**
-     * 执行的taskTracker
-     * identity
-     */
-    private String taskTrackerIdentity;
+	private String params;
 
-    // 是否需要反馈给客户端
-    private boolean needFeedback;
+	private Integer status;
+	private Long triggerTime;
+	/**
+	 * 重复次数
+	 */
+	private Integer repeatCount = 0;
 
-    /**
-     * 执行时间表达式 (和 quartz 表达式一样)
-     */
-    private String cronExpression;
-    /**
-     * 下一次执行时间
-     */
-    private Long triggerTime;
+	private String memo;
+	/**
+	 * 提交客户端的节点组
+	 */
+	private String submitNode;
+	private String taskExecuteNode;
+	/**
+	 * 已经重复的次数
+	 */
+	private Integer repeatedCount = 0;
+	private Long repeatInterval;
+	// 创建时间
+	private Long createDate;
+	// 修改时间
+	private Long updateDate;
+	private String createUserid;
+	private String updateUserid;
+	private Integer retryTimes = 0;
+	private Integer maxRetryTimes = 0;
 
-    /**
-     * 重试次数
-     */
-    private Integer retryTimes = 0;
+	public Integer getRetryTimes() {
+		return retryTimes;
+	}
 
-    private Integer maxRetryTimes = 0;
+	public void setRetryTimes(Integer retryTimes) {
+		this.retryTimes = retryTimes;
+	}
 
-    /**
-     * 重复次数
-     */
-    private Integer repeatCount = 0;
-    /**
-     * 已经重复的次数
-     */
-    private Integer repeatedCount = 0;
-    /**
-     * 重复interval
-     */
-    private Long repeatInterval;
+	public Integer getMaxRetryTimes() {
+		return maxRetryTimes;
+	}
 
-    public Integer getRetryTimes() {
-        return retryTimes;
-    }
+	public void setMaxRetryTimes(Integer maxRetryTimes) {
+		this.maxRetryTimes = maxRetryTimes;
+	}
 
-    public void setRetryTimes(Integer retryTimes) {
-        this.retryTimes = retryTimes;
-    }
+	public String getTaskId() {
+		return taskId;
+	}
 
-    public String getCronExpression() {
-        return cronExpression;
-    }
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
 
-    public void setCronExpression(String cronExpression) {
-        this.cronExpression = cronExpression;
-    }
+	public String getTaskName() {
+		return taskName;
+	}
 
-    public Long getTriggerTime() {
-        return triggerTime;
-    }
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
+	}
 
-    public void setTriggerTime(Long triggerTime) {
-        this.triggerTime = triggerTime;
-    }
+	public String getTaskClass() {
+		return taskClass;
+	}
 
-    public Integer getPriority() {
-        return priority;
-    }
+	public void setTaskClass(String taskClass) {
+		this.taskClass = taskClass;
+	}
 
-    public void setPriority(Integer priority) {
-        this.priority = priority;
-    }
+	public String getTaskType() {
+		return taskType;
+	}
 
-    public String getTaskId() {
-        return taskId;
-    }
+	public void setTaskType(String taskType) {
+		this.taskType = taskType;
+	}
 
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-    }
+	public String getTaskExecType() {
+		return taskExecType;
+	}
 
-    public Long getGmtCreated() {
-        return gmtCreated;
-    }
+	public void setTaskExecType(String taskExecType) {
+		this.taskExecType = taskExecType;
+	}
 
-    public void setGmtCreated(Long gmtCreated) {
-        this.gmtCreated = gmtCreated;
-    }
+	public String getCron() {
+		return cron;
+	}
 
-    public Long getGmtModified() {
-        return gmtModified;
-    }
+	public void setCron(String cron) {
+		this.cron = cron;
+	}
 
-    public void setGmtModified(Long gmtModified) {
-        this.gmtModified = gmtModified;
-    }
+	public String getParams() {
+		return params;
+	}
 
-    public Map<String, String> getExtParams() {
-        return extParams;
-    }
+	public void setParams(String params) {
+		this.params = params;
+	}
 
-    public void setExtParams(Map<String, String> extParams) {
-        this.extParams = extParams;
-    }
+	public Integer getStatus() {
+		return status;
+	}
 
-    public boolean isRunning() {
-        return isRunning;
-    }
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
 
-    public String getTaskTrackerNodeGroup() {
-        return taskTrackerNodeGroup;
-    }
+	public Integer getRepeatCount() {
+		return repeatCount;
+	}
 
-    public void setTaskTrackerNodeGroup(String taskTrackerNodeGroup) {
-        this.taskTrackerNodeGroup = taskTrackerNodeGroup;
-    }
+	public void setRepeatCount(Integer repeatCount) {
+		this.repeatCount = repeatCount;
+	}
 
-    public void setIsRunning(boolean isRunning) {
-        this.isRunning = isRunning;
-    }
+	public String getMemo() {
+		return memo;
+	}
 
-    public boolean isNeedFeedback() {
-        return needFeedback;
-    }
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
 
-    public void setNeedFeedback(boolean needFeedback) {
-        this.needFeedback = needFeedback;
-    }
+	public String getSubmitNode() {
+		return submitNode;
+	}
 
-    public String getSubmitNodeGroup() {
-        return submitNodeGroup;
-    }
+	public void setSubmitNode(String submitNode) {
+		this.submitNode = submitNode;
+	}
 
-    public void setSubmitNodeGroup(String submitNodeGroup) {
-        this.submitNodeGroup = submitNodeGroup;
-    }
+	public String getTaskExecuteNode() {
+		return taskExecuteNode;
+	}
 
-    public String getTaskTrackerIdentity() {
-        return taskTrackerIdentity;
-    }
+	public void setTaskExecuteNode(String taskExecuteNode) {
+		this.taskExecuteNode = taskExecuteNode;
+	}
 
-    public void setTaskTrackerIdentity(String taskTrackerIdentity) {
-        this.taskTrackerIdentity = taskTrackerIdentity;
-    }
+	public Integer getRepeatedCount() {
+		return repeatedCount;
+	}
 
-    public boolean isCron() {
-        return this.cronExpression != null && !"".equals(this.cronExpression.trim());
-    }
+	public void setRepeatedCount(Integer repeatedCount) {
+		this.repeatedCount = repeatedCount;
+	}
 
-    public boolean isRepeatable() {
-        return (this.repeatInterval != null && this.repeatInterval > 0) && (this.repeatCount >= -1 && this.repeatCount != 0);
-    }
+	public Long getCreateDate() {
+		return createDate;
+	}
 
-    public Integer getMaxRetryTimes() {
-        return maxRetryTimes;
-    }
+	public void setCreateDate(Long createDate) {
+		this.createDate = createDate;
+	}
 
-    public void setMaxRetryTimes(Integer maxRetryTimes) {
-        this.maxRetryTimes = maxRetryTimes;
-    }
+	public Long getUpdateDate() {
+		return updateDate;
+	}
 
-    public Integer getRepeatCount() {
-        return repeatCount;
-    }
+	public void setUpdateDate(Long updateDate) {
+		this.updateDate = updateDate;
+	}
 
-    public void setRepeatCount(Integer repeatCount) {
-        this.repeatCount = repeatCount;
-    }
+	public String getCreateUserid() {
+		return createUserid;
+	}
 
-    public Long getRepeatInterval() {
-        return repeatInterval;
-    }
+	public void setCreateUserid(String createUserid) {
+		this.createUserid = createUserid;
+	}
 
-    public void setRepeatInterval(Long repeatInterval) {
-        this.repeatInterval = repeatInterval;
-    }
+	public String getUpdateUserid() {
+		return updateUserid;
+	}
 
-    public Integer getRepeatedCount() {
-        return repeatedCount;
-    }
+	public void setUpdateUserid(String updateUserid) {
+		this.updateUserid = updateUserid;
+	}
 
-    public void setRepeatedCount(Integer repeatedCount) {
-        this.repeatedCount = repeatedCount;
-    }
+	@Override
+	public String toString() {
+		return JSON.toJSONString(this);
+	}
 
-    public Map<String, String> getInternalExtParams() {
-        return internalExtParams;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setInternalExtParams(Map<String, String> internalExtParams) {
-        this.internalExtParams = internalExtParams;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public String getInternalExtParam(String key) {
-        if (internalExtParams == null) {
-            return null;
-        }
-        return internalExtParams.get(key);
-    }
+	public Long getTriggerTime() {
+		return triggerTime;
+	}
 
-    public void setInternalExtParam(String key, String value) {
-        if (internalExtParams == null) {
-            internalExtParams = new HashMap<String, String>();
-        }
-        internalExtParams.put(key, value);
-    }
+	public void setTriggerTime(Long triggerTime) {
+		this.triggerTime = triggerTime;
+	}
 
-    public void setRunning(boolean running) {
-        isRunning = running;
-    }
+	public boolean isRepeatable() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public String toString() {
-        return JSON.toJSONString(this);
-    }
+	public boolean isCron() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public Long getRepeatInterval() {
+		return repeatInterval;
+	}
+
+	public void setRepeatInterval(Long repeatInterval) {
+		this.repeatInterval = repeatInterval;
+	}
+
 }

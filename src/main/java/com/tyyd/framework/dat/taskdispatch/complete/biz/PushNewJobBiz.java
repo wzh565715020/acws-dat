@@ -41,7 +41,7 @@ public class PushNewJobBiz implements TaskCompletedBiz {
      */
     private TaskPushRequest getNewJob(String taskTrackerNodeGroup, String taskTrackerIdentity) {
 
-        TaskSender.SendResult sendResult = appContext.getJobSender().send(taskTrackerNodeGroup, taskTrackerIdentity, new TaskSender.SendInvoker() {
+        TaskSender.SendResult sendResult = appContext.getJobSender().send(taskTrackerIdentity, new TaskSender.SendInvoker() {
             @Override
             public TaskSender.SendResult invoke(TaskPo jobPo) {
 

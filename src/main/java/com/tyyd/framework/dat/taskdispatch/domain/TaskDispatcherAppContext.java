@@ -6,7 +6,6 @@ import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
 import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
 import com.tyyd.framework.dat.queue.TaskFeedbackQueue;
-import com.tyyd.framework.dat.queue.NodeGroupStore;
 import com.tyyd.framework.dat.queue.PreLoader;
 import com.tyyd.framework.dat.queue.TaskQueue;
 import com.tyyd.framework.dat.queue.SuspendTaskQueue;
@@ -17,7 +16,6 @@ import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
 import com.tyyd.framework.dat.taskdispatch.support.OldDataHandler;
 import com.tyyd.framework.dat.taskdispatch.support.TaskPushMachine;
 import com.tyyd.framework.dat.taskdispatch.support.checker.ExecutingDeadTaskChecker;
-import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskClientManager;
 import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
 
 /**
@@ -25,11 +23,9 @@ import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
  */
 public class TaskDispatcherAppContext extends AppContext {
 
-    private RemotingClientDelegate remotingClientDelegate;
+    private RemotingClientDelegate remotingClient;
     // channel manager
     private ChannelManager channelManager;
-    // JobClient manager for job tracker
-    private TaskClientManager taskClientManager;
     // TaskTracker manager for job tracker
     private TaskExecuterManager taskExecuterManager;
     // dead job checker
@@ -38,7 +34,7 @@ public class TaskDispatcherAppContext extends AppContext {
     private OldDataHandler oldDataHandler;
     // biz logger
     private JobLogger jobLogger;
-
+    
     // executable job queue（waiting for exec）
     private ExecutableTaskQueue executableTaskQueue;
     // executing job queue
@@ -98,11 +94,11 @@ public class TaskDispatcherAppContext extends AppContext {
     }
 
     public RemotingClientDelegate getRemotingServer() {
-        return remotingClientDelegate;
+        return remotingClient;
     }
 
     public void setRemotingServer(RemotingClientDelegate remotingClientDelegate) {
-        this.remotingClientDelegate = remotingClientDelegate;
+        this.remotingClient = remotingClientDelegate;
     }
 
     public ChannelManager getChannelManager() {
@@ -111,14 +107,6 @@ public class TaskDispatcherAppContext extends AppContext {
 
     public void setChannelManager(ChannelManager channelManager) {
         this.channelManager = channelManager;
-    }
-
-    public TaskClientManager getJobClientManager() {
-        return taskClientManager;
-    }
-
-    public void setTaskClientManager(TaskClientManager jobClientManager) {
-        this.taskClientManager = jobClientManager;
     }
 
     public TaskExecuterManager getTaskExecuterManager() {
@@ -193,4 +181,6 @@ public class TaskDispatcherAppContext extends AppContext {
 	public TaskPushMachine getTaskPushMachine() {
 		return taskPushMachine;
 	}
+
+
 }

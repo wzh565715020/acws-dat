@@ -1,7 +1,6 @@
 package com.tyyd.framework.dat.taskdispatch.support.cluster;
 
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.commons.concurrent.ConcurrentHashSet;
+import com.tyyd.framework.dat.core.factory.NodeFactory;
+import com.tyyd.framework.dat.core.registry.RegistryFactory;
 import com.tyyd.framework.dat.taskdispatch.channel.ChannelWrapper;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskExecuterNode;
@@ -17,10 +18,9 @@ import com.tyyd.framework.dat.taskdispatch.domain.TaskExecuterNode;
  * TaskExecuter 管理器 (对 TaskExecuter 节点的记录 和 可用线程的记录)
  */
 public class TaskExecuterManager {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaskExecuterManager.class);
-	// 单例
-	private final ConcurrentHashMap<String, Set<TaskExecuterNode>> NODE_MAP = new ConcurrentHashMap<String, Set<TaskExecuterNode>>();
-	
+	private Set<TaskExecuterNode> taskExecuterNodes = new ConcurrentHashSet<TaskExecuterNode>();
 	private TaskDispatcherAppContext appContext;
 
 	public TaskExecuterManager(TaskDispatcherAppContext appContext) {
@@ -28,40 +28,15 @@ public class TaskExecuterManager {
 	}
 
 	/**
-	 * get all connected node group
-	 */
-	public Set<String> getNodeGroups() {
-		return NODE_MAP.keySet();
-	}
-
-	/**
 	 * 添加节点
 	 */
 	public void addNode(Node node) {
-		// channel 可能为 null
-		ChannelWrapper channel = appContext.getChannelManager().getChannel(node.getGroup(), node.getNodeType(),
-				node.getIdentity());
-		Set<TaskExecuterNode> taskTrackerNodes = NODE_MAP.get(node.getGroup());
-
-		if (taskTrackerNodes == null) {
-			taskTrackerNodes = new ConcurrentHashSet<TaskExecuterNode>();
-			Set<TaskExecuterNode> oldSet = NODE_MAP.putIfAbsent(node.getGroup(), taskTrackerNodes);
-			if (oldSet != null) {
-				taskTrackerNodes = oldSet;
-			}
-		}
-
-		TaskExecuterNode taskTrackerNode = new TaskExecuterNode(node.getGroup(), node.getThreads(), node.getIdentity(),
-				channel);
+		ChannelWrapper channel = appContext.getChannelManager().getChannel(node.getNodeType(), node.getIdentity());
+		TaskExecuterNode taskTrackerNode = new TaskExecuterNode(node.getThreads(), node.getIdentity(), channel);
 		taskTrackerNode.setIp(node.getIp());
 		taskTrackerNode.setPort(node.getPort());
 		LOGGER.info("Add TaskTracker node:{}", taskTrackerNode);
-		taskTrackerNodes.add(taskTrackerNode);
-
-		// create executable queue
-		// appContext.getExecutableJobQueue().createQueue(node.getGroup());
-		// appContext.getNodeGroupStore().addNodeGroup(NodeType.TASK_TRACKER,
-		// node.getGroup());
+		taskExecuterNodes.add(taskTrackerNode);
 	}
 
 	/**
@@ -70,17 +45,29 @@ public class TaskExecuterManager {
 	 * @param node
 	 */
 	public void removeNode(Node node) {
-		Set<TaskExecuterNode> taskTrackerNodes = NODE_MAP.get(node.getGroup());
-		if (taskTrackerNodes != null && taskTrackerNodes.size() != 0) {
+		if (taskExecuterNodes != null && taskExecuterNodes.size() != 0) {
 			TaskExecuterNode taskTrackerNode = new TaskExecuterNode(node.getIdentity());
-			taskTrackerNode.setNodeGroup(node.getGroup());
 			LOGGER.info("Remove TaskTracker node:{}", taskTrackerNode);
-			taskTrackerNodes.remove(taskTrackerNode);
+			taskExecuterNodes.remove(taskTrackerNode);
 		}
 	}
 
-	public TaskExecuterNode getTaskTrackerNode(String nodeGroup) {
-		Set<TaskExecuterNode> taskExecuterNodes = NODE_MAP.get(nodeGroup);
+	/**
+	 * 删除节点
+	 *
+	 * @param node
+	 */
+	public void updateNode(Node node) {
+		if (taskExecuterNodes != null && taskExecuterNodes.size() != 0) {
+			for (TaskExecuterNode taskExecuterNode : taskExecuterNodes) {
+				if (taskExecuterNode.getIdentity().equals(node.getIdentity())) {
+					taskExecuterNode.setAvailableThread(node.getAvailableThreads());
+				}
+			}
+		}
+	}
+
+	public TaskExecuterNode getTaskExecuterNode() {
 		if (taskExecuterNodes == null || taskExecuterNodes.size() == 0) {
 			return null;
 		}
@@ -99,39 +86,40 @@ public class TaskExecuterManager {
 			return returnTaskExecuterNode;
 		}
 		// 如果 channel 已经关闭, 更新channel, 如果没有channel, 略过
-		ChannelWrapper channel = appContext.getChannelManager().getChannel(returnTaskExecuterNode.getNodeGroup(),
-				NodeType.TASK_EXECUTER, returnTaskExecuterNode.getIdentity());
+		ChannelWrapper channel = appContext.getChannelManager().getChannel(NodeType.TASK_EXECUTER,
+				returnTaskExecuterNode.getIdentity());
 		if (channel == null) {
 
 		} else {
 			try {
-				channel = new ChannelWrapper(appContext.getRemotingServer().getRemotingClient()
-						.getAndCreateChannel(returnTaskExecuterNode.getIp() + ":" + returnTaskExecuterNode.getPort()), NodeType.TASK_EXECUTER, returnTaskExecuterNode.getNodeGroup(), returnTaskExecuterNode.getIdentity());
+				channel = new ChannelWrapper(
+						appContext.getRemotingServer().getRemotingClient().getAndCreateChannel(
+								returnTaskExecuterNode.getIp() + ":" + returnTaskExecuterNode.getPort()),
+						NodeType.TASK_EXECUTER, returnTaskExecuterNode.getIdentity());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			appContext.getChannelManager().offerChannel(channel);
 		}
 		// 更新channel
-		
+
 		returnTaskExecuterNode.setChannel(channel);
 		taskExecuterNodes.add(returnTaskExecuterNode);
 		LOGGER.info("update node channel , taskTackerNode={}", returnTaskExecuterNode);
 		return returnTaskExecuterNode;
 	}
 
-	public TaskExecuterNode getTaskTrackerNode(String nodeGroup, String identity) {
-		Set<TaskExecuterNode> taskTrackerNodes = NODE_MAP.get(nodeGroup);
-		if (taskTrackerNodes == null || taskTrackerNodes.size() == 0) {
+	public TaskExecuterNode getTaskTrackerNode(String identity) {
+		if (taskExecuterNodes == null || taskExecuterNodes.size() == 0) {
 			return null;
 		}
 
-		for (TaskExecuterNode taskTrackerNode : taskTrackerNodes) {
+		for (TaskExecuterNode taskTrackerNode : taskExecuterNodes) {
 			if (taskTrackerNode.getIdentity().equals(identity)) {
 				if (taskTrackerNode.getChannel() == null || taskTrackerNode.getChannel().isClosed()) {
 					// 如果 channel 已经关闭, 更新channel, 如果没有channel, 略过
-					ChannelWrapper channel = appContext.getChannelManager().getChannel(taskTrackerNode.getNodeGroup(),
-							NodeType.TASK_EXECUTER, taskTrackerNode.getIdentity());
+					ChannelWrapper channel = appContext.getChannelManager().getChannel(NodeType.TASK_EXECUTER,
+							taskTrackerNode.getIdentity());
 					if (channel != null) {
 						// 更新channel
 						taskTrackerNode.setChannel(channel);
@@ -156,14 +144,17 @@ public class TaskExecuterManager {
 	public void updateTaskTrackerAvailableThreads(String nodeGroup, String identity, Integer availableThreads,
 			Long timestamp) {
 
-		Set<TaskExecuterNode> taskTrackerNodes = NODE_MAP.get(nodeGroup);
-
-		if (taskTrackerNodes != null && taskTrackerNodes.size() != 0) {
-			for (TaskExecuterNode trackerNode : taskTrackerNodes) {
+		if (taskExecuterNodes != null && taskExecuterNodes.size() != 0) {
+			for (TaskExecuterNode trackerNode : taskExecuterNodes) {
 				if (trackerNode.getIdentity().equals(identity)
 						&& (trackerNode.getTimestamp() == null || trackerNode.getTimestamp() <= timestamp)) {
 					trackerNode.setAvailableThread(availableThreads);
 					trackerNode.setTimestamp(timestamp);
+					Node newNode = NodeFactory.deepCopy(appContext.getNode());
+					newNode.setAvailableThreads(availableThreads);
+					RegistryFactory.getRegistry(appContext).updateRegister(appContext.getNode().toFullString(),
+							newNode);
+					;
 					if (LOGGER.isDebugEnabled()) {
 						LOGGER.debug("更新节点线程数: {}", trackerNode);
 					}

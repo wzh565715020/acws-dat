@@ -52,7 +52,9 @@ public class NodeRegistryUtils {
                 node.setGroup(value);
             } else if ("threads".equals(key)) {
                 node.setThreads(Integer.valueOf(value));
-            } else if ("identity".equals(key)) {
+            } else if("availableThreads".equals(key)) {
+            	node.setAvailableThreads(Integer.valueOf(value));
+            }else if ("identity".equals(key)) {
                 node.setIdentity(value);
             } else if ("createTime".equals(key)) {
                 node.setCreateTime(Long.valueOf(value));
@@ -91,7 +93,10 @@ public class NodeRegistryUtils {
             path.append("&threads=")
                     .append(node.getThreads());
         }
-
+        if (node.getAvailableThreads() != 0) {
+            path.append("&availableThreads=")
+                    .append(node.getAvailableThreads());
+        }
         path.append("&identity=")
                 .append(node.getIdentity())
                 .append("&createTime=")

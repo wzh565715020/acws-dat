@@ -149,7 +149,7 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
         }
         node = NodeFactory.create(getNodeClass(), config);
         config.setNodeType(node.getNodeType());
-
+        appContext.setNode(node);
         LOGGER.info("Current Node config :{}", config);
 
        // 订阅的node管理
@@ -211,6 +211,15 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
                         for (NodeChangeListener listener : nodeChangeListeners) {
                             try {
                                 listener.removeNodes(nodes);
+                            } catch (Throwable t) {
+                                NOTIFY_LOGGER.error("{} remove nodes failed , cause: {}", listener.getClass().getName(), t.getMessage(), t);
+                            }
+                        }
+                        break;
+                    case UPDATE:
+                        for (NodeChangeListener listener : nodeChangeListeners) {
+                            try {
+                                listener.updateNodes(nodes);
                             } catch (Throwable t) {
                                 NOTIFY_LOGGER.error("{} remove nodes failed , cause: {}", listener.getClass().getName(), t.getMessage(), t);
                             }

@@ -10,8 +10,6 @@ import com.tyyd.framework.dat.taskdispatch.channel.ChannelWrapper;
  * TaskExecuterNode状态对象
  */
 public class TaskExecuterNode{
-    // 节点组名称
-    public String nodeGroup;
     // 可用线程数
     public AtomicInteger availableThread;
     // 唯一标识
@@ -25,8 +23,7 @@ public class TaskExecuterNode{
     
     private Integer port = 0;
     
-    public TaskExecuterNode(String nodeGroup, int availableThread, String identity, ChannelWrapper channel) {
-        this.nodeGroup = nodeGroup;
+    public TaskExecuterNode(int availableThread, String identity, ChannelWrapper channel) {
         this.availableThread = new AtomicInteger(availableThread);
         this.identity = identity;
         this.channel = channel;
@@ -36,10 +33,6 @@ public class TaskExecuterNode{
         this.identity = identity;
     }
 
-    public TaskExecuterNode(String identity, String nodeGroup) {
-        this.nodeGroup = nodeGroup;
-        this.identity = identity;
-    }
     public String getIp() {
 		return ip;
 	}
@@ -55,18 +48,6 @@ public class TaskExecuterNode{
 	public void setPort(Integer port) {
 		this.port = port;
 	}
-
-	
-
-
-
-    public String getNodeGroup() {
-        return nodeGroup;
-    }
-
-    public void setNodeGroup(String nodeGroup) {
-        this.nodeGroup = nodeGroup;
-    }
 
     public AtomicInteger getAvailableThread() {
         return availableThread;
@@ -122,7 +103,6 @@ public class TaskExecuterNode{
     @Override
     public String toString() {
         return "TaskTrackerNode{" +
-                "nodeGroup='" + nodeGroup + '\'' +
                 ", availableThread=" + (availableThread == null ? 0 : availableThread.get()) +
                 ", identity='" + identity + '\'' +
                 ", channel=" + channel +

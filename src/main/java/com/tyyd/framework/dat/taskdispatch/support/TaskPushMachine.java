@@ -35,11 +35,11 @@ public class TaskPushMachine {
 	private int taskPushFrequency;
 	// 是否启用机器资源检查
 	private boolean machineResCheckEnable = true;
-	
+
 	private TaskPusher taskPusher;
 
 	public TaskPushMachine(final TaskDispatcherAppContext appContext) {
-		
+
 		this.appContext = appContext;
 		taskPusher = new TaskPusher(appContext);
 		this.taskPushFrequency = appContext.getConfig().getParameter(Constants.TASK_PUSH_FREQUENCY,
@@ -80,7 +80,7 @@ public class TaskPushMachine {
 
 	public void start() {
 		try {
-			if (start.compareAndSet(false, true)) {
+			if (appContext.getMasterElector().isCurrentMaster() && start.compareAndSet(false, true)) {
 				if (scheduledFuture == null) {
 					scheduledFuture = SCHEDULED_CHECKER.scheduleWithFixedDelay(worker, 1, taskPushFrequency,
 							TimeUnit.SECONDS);

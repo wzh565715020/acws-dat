@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.commons.utils.DateUtils;
 import com.tyyd.framework.dat.management.cluster.BackendAppContext;
-import com.tyyd.framework.dat.queue.domain.NodeGroupPo;
 
 import java.util.Date;
 import java.util.List;
@@ -112,10 +111,6 @@ public class CommonView {
 	}
 
     private void setAttr(Model model) {
-        List<NodeGroupPo> jobClientNodeGroups = appContext.getNodeGroupStore().getNodeGroup(NodeType.TASK_CLIENT);
-        model.addAttribute("jobClientNodeGroups", jobClientNodeGroups);
-        List<NodeGroupPo> taskTrackerNodeGroups = appContext.getNodeGroupStore().getNodeGroup(NodeType.TASK_EXECUTER);
-        model.addAttribute("taskTrackerNodeGroups", taskTrackerNodeGroups);
     }
 
 }

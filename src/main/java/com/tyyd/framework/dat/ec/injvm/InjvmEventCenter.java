@@ -18,7 +18,6 @@ import java.util.concurrent.Executors;
 /**
  * 在一个jvm中的pub sub 简易实现
  *
- * @author Robert HG (254963746@qq.com) on 5/12/15.
  */
 public class InjvmEventCenter implements EventCenter {
 
