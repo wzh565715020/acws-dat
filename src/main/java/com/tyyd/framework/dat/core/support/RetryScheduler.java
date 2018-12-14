@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/19/14.
  *         重试定时器 (用来发送 给 客户端的反馈信息等)
  */
 public abstract class RetryScheduler<T> {
@@ -82,10 +81,6 @@ public abstract class RetryScheduler<T> {
                     }
                 });
         appContext.getEventCenter().subscribe(subscriber, EcTopic.MASTER_CHANGED);
-
-        if (appContext.getMasterElector().isCurrentMaster()) {
-            startMasterCheck();
-        }
     }
 
     public RetryScheduler(AppContext appContext, String storePath, int batchSize) {

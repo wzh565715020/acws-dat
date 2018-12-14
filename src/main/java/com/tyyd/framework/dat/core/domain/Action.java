@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.domain;
 
-/**
- * @author Robert HG (254963746@qq.com) on 6/13/15.
- */
 public enum Action {
 
     EXECUTE_SUCCESS,    // 执行成功,这种情况 直接反馈客户端

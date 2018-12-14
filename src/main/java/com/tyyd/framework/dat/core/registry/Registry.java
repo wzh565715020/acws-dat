@@ -1,6 +1,7 @@
 package com.tyyd.framework.dat.core.registry;
 
 import com.tyyd.framework.dat.core.cluster.Node;
+import com.tyyd.framework.dat.zookeeper.DataListener;
 
 /**
  *         节点注册接口
@@ -35,4 +36,6 @@ public interface Registry {
      * 节点更新
      */
     void updateRegister(String path,Node node);
+
+	void addDataListener(String path, DataListener listener);
 }

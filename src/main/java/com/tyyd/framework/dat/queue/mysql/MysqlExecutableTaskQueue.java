@@ -39,15 +39,15 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskQueue implements 
     }
 
     @Override
-    public void resume(TaskPo jobPo) {
+    public void resume(TaskPo taskPo) {
 
         new UpdateSql(getSqlTemplate())
                 .update()
                 .table(getTableName())
                 .set("is_running", false)
                 .set("task_tracker_identity", null)
-                .set("gmt_modified", SystemClock.now())
-                .where("task_id=?", jobPo.getTaskId())
+                .set("update_date", SystemClock.now())
+                .where("id = ?", taskPo.getId())
                 .doUpdate();
     }
 
@@ -60,7 +60,7 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskQueue implements 
                 .from()
                 .table(getTableName())
                 .where("is_running = ?", true)
-                .and("gmt_modified < ?", deadline)
+                .and("update_date < ?", deadline)
                 .list(RshHolder.TASK_PO_LIST_RSH);
     }
 

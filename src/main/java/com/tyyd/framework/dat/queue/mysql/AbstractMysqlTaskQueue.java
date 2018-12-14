@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CharacterUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.json.JSON;
-import com.tyyd.framework.dat.queue.QueueInterface;
+import com.tyyd.framework.dat.queue.TaskQueueInterface;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
 import com.tyyd.framework.dat.store.jdbc.JdbcAbstractAccess;
@@ -16,7 +16,7 @@ import com.tyyd.framework.dat.admin.response.PaginationRsp;
 
 import java.util.List;
 
-public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implements QueueInterface {
+public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implements TaskQueueInterface {
 
     public AbstractMysqlTaskQueue(Config config) {
         super(config);

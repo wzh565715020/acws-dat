@@ -6,7 +6,6 @@ import com.tyyd.framework.dat.remoting.annotation.NotNull;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 7/24/14.
  *         任务传递信息
  */
 public class TaskSubmitRequest extends AbstractRemotingCommandBody {
@@ -14,14 +13,14 @@ public class TaskSubmitRequest extends AbstractRemotingCommandBody {
 	private static final long serialVersionUID = 7229438891247265777L;
 	
 	@NotNull
-    private List<Task> jobs;
+    private List<Task> tasks;
 
-    public List<Task> getJobs() {
-        return jobs;
+    public List<Task> getTasks() {
+        return tasks;
     }
 
-    public void setJobs(List<Task> jobs) {
-        this.jobs = jobs;
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
 }

@@ -16,11 +16,7 @@ public interface TaskQueueFactory {
     ExecutableTaskQueue getExecutableJobQueue(Config config);
 
     ExecutingTaskQueue getExecutingJobQueue(Config config);
-
-    TaskFeedbackQueue getTaskFeedbackQueue(Config config);
-
-    SuspendTaskQueue getSuspendTaskQueue(Config config);
-
+    
     PreLoader getPreLoader(AppContext appContext);
 }
 

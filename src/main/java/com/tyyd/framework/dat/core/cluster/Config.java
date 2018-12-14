@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/20/14.
  *         任务节点配置
  */
 public class Config implements Serializable {
@@ -17,8 +16,6 @@ public class Config implements Serializable {
     private static final long serialVersionUID = -8283382582968938472L;
     // 节点是否可用
     private boolean available = true;
-    // 应用节点组
-    private String nodeGroup;
     // 唯一标识
     private String identity;
     // 工作线程, 目前只对 TaskTracker 有效
@@ -50,14 +47,6 @@ public class Config implements Serializable {
 
     public void setClusterName(String clusterName) {
         this.clusterName = clusterName;
-    }
-
-    public String getNodeGroup() {
-        return nodeGroup;
-    }
-
-    public void setNodeGroup(String nodeGroup) {
-        this.nodeGroup = nodeGroup;
     }
 
     public String getIdentity() {
@@ -117,7 +106,7 @@ public class Config implements Serializable {
     }
 
     public String getFailStorePath() {
-        return dataPath + "/.lts" + "/" + nodeType + "/" + nodeGroup + "/failstore/";
+        return dataPath + "/.dat" + "/" + nodeType  + "/failstore/";
     }
 
     public String getDataPath() {

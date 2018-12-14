@@ -4,7 +4,7 @@ package com.tyyd.framework.dat.taskdispatch.processor;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.tyyd.framework.dat.core.protocol.command.JobCompletedRequest;
+import com.tyyd.framework.dat.core.protocol.command.TaskCompletedRequest;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
@@ -34,7 +34,7 @@ public class TaskCompletedProcessor extends AbstractRemotingProcessor {
     public RemotingCommand processRequest(Channel channel, RemotingCommand request)
             throws RemotingCommandException {
 
-        JobCompletedRequest requestBody = request.getBody();
+        TaskCompletedRequest requestBody = request.getBody();
 
         for (TaskCompletedBiz biz : bizChain) {
             RemotingCommand remotingCommand = biz.doBiz(requestBody);

@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.management.cluster;
 
-import com.tyyd.framework.dat.biz.logger.JobLogger;
+import com.tyyd.framework.dat.biz.logger.TaskLogger;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.management.access.face.BackendJVMGCAccess;
@@ -13,18 +13,14 @@ import com.tyyd.framework.dat.management.access.face.BackendTaskTrackerMAccess;
 import com.tyyd.framework.dat.management.access.memory.NodeMemCacheAccess;
 import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
 import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
-import com.tyyd.framework.dat.queue.TaskFeedbackQueue;
 import com.tyyd.framework.dat.queue.TaskQueue;
-import com.tyyd.framework.dat.queue.SuspendTaskQueue;
 
 public class BackendAppContext extends AppContext {
 
     private TaskQueue taskQueue;
     private ExecutableTaskQueue executableJobQueue;
     private ExecutingTaskQueue executingJobQueue;
-    private TaskFeedbackQueue jobFeedbackQueue;
-	private SuspendTaskQueue suspendJobQueue;
-    private JobLogger jobLogger;
+    private TaskLogger jobLogger;
     private Node node;
 
     private BackendJobClientMAccess backendJobClientMAccess;
@@ -69,27 +65,11 @@ public class BackendAppContext extends AppContext {
         this.executingJobQueue = executingJobQueue;
     }
 
-	public SuspendTaskQueue getSuspendJobQueue() {
-		return suspendJobQueue;
-	}
-
-	public void setSuspendJobQueue(SuspendTaskQueue suspendJobQueue) {
-		this.suspendJobQueue = suspendJobQueue;
-	}
-
-    public TaskFeedbackQueue getJobFeedbackQueue() {
-        return jobFeedbackQueue;
-    }
-
-    public void setJobFeedbackQueue(TaskFeedbackQueue jobFeedbackQueue) {
-        this.jobFeedbackQueue = jobFeedbackQueue;
-    }
-
-    public JobLogger getJobLogger() {
+    public TaskLogger getJobLogger() {
         return jobLogger;
     }
 
-    public void setJobLogger(JobLogger jobLogger) {
+    public void setJobLogger(TaskLogger jobLogger) {
         this.jobLogger = jobLogger;
     }
 

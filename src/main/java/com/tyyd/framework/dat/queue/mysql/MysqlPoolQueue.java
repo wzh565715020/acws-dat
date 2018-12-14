@@ -8,7 +8,8 @@ import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
 import com.tyyd.framework.dat.store.jdbc.builder.DeleteSql;
 import com.tyyd.framework.dat.store.jdbc.builder.SelectSql;
 
-public class MysqlPoolQueue extends AbstractMysqlPoolQueue implements PoolQueue {
+
+public  class MysqlPoolQueue extends AbstractMysqlPoolQueue implements PoolQueue {
 
     public MysqlPoolQueue(Config config) {
         super(config);
@@ -20,13 +21,13 @@ public class MysqlPoolQueue extends AbstractMysqlPoolQueue implements PoolQueue 
     }
 
     @Override
-    public PoolPo getPool(String jobId) {
+    public PoolPo getPool(String poolId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
-                .where("pool_id = ?", jobId)
+                .where("pool_id = ?", poolId)
                 .single(RshHolder.POOL_PO_RSH);
     }
 

@@ -17,12 +17,6 @@ public class AbstractRemotingCommandBody implements RemotingCommandBody {
 
 	private static final long serialVersionUID = -8184979792935677160L;
 
-	/**
-     * 节点组 当前节点的 group(统一类型, 具有相同功能的节点group相同)
-     */
-    @NotNull
-    private String nodeGroup;
-
     /**
      * NodeType 的字符串表示, 节点类型
      */
@@ -47,14 +41,6 @@ public class AbstractRemotingCommandBody implements RemotingCommandBody {
 
     public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public String getNodeGroup() {
-        return nodeGroup;
-    }
-
-    public void setNodeGroup(String nodeGroup) {
-        this.nodeGroup = nodeGroup;
     }
 
     public Map<String, Object> getExtParams() {

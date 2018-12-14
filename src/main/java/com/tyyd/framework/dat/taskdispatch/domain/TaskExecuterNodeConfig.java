@@ -9,13 +9,13 @@ import com.tyyd.framework.dat.taskdispatch.channel.ChannelWrapper;
 /**
  * TaskExecuterNode状态对象
  */
-public class TaskExecuterNode{
+public class TaskExecuterNodeConfig{
     // 可用线程数
     public AtomicInteger availableThread;
     // 唯一标识
     public String identity;
     // 该节点的channel
-    public ChannelWrapper channel;
+    public ChannelWrapper channelWrapper;
 
     public Long timestamp = null;
     
@@ -23,13 +23,13 @@ public class TaskExecuterNode{
     
     private Integer port = 0;
     
-    public TaskExecuterNode(int availableThread, String identity, ChannelWrapper channel) {
+    public TaskExecuterNodeConfig(int availableThread, String identity, ChannelWrapper channel) {
         this.availableThread = new AtomicInteger(availableThread);
         this.identity = identity;
-        this.channel = channel;
+        this.channelWrapper = channel;
     }
 
-    public TaskExecuterNode(String identity) {
+    public TaskExecuterNodeConfig(String identity) {
         this.identity = identity;
     }
 
@@ -67,12 +67,12 @@ public class TaskExecuterNode{
         this.identity = identity;
     }
 
-    public ChannelWrapper getChannel() {
-        return channel;
+    public ChannelWrapper getChannelWrapper() {
+        return channelWrapper;
     }
 
-    public void setChannel(ChannelWrapper channel) {
-        this.channel = channel;
+    public void setChannelWrapper(ChannelWrapper channelWrapper) {
+        this.channelWrapper = channelWrapper;
     }
 
     public Long getTimestamp() {
@@ -86,9 +86,9 @@ public class TaskExecuterNode{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TaskExecuterNode)) return false;
+        if (!(o instanceof TaskExecuterNodeConfig)) return false;
 
-        TaskExecuterNode that = (TaskExecuterNode) o;
+        TaskExecuterNodeConfig that = (TaskExecuterNodeConfig) o;
 
         if (identity != null ? !identity.equals(that.identity) : that.identity != null) return false;
 
@@ -105,7 +105,7 @@ public class TaskExecuterNode{
         return "TaskTrackerNode{" +
                 ", availableThread=" + (availableThread == null ? 0 : availableThread.get()) +
                 ", identity='" + identity + '\'' +
-                ", channel=" + channel +
+                ", channel=" + channelWrapper +
                 '}';
     }
 }

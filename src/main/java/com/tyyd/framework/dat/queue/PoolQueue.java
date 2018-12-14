@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.queue;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 
-public interface PoolQueue extends QueueInterface{
+public interface PoolQueue extends PoolQueueInterface{
     /**
      * 添加任务
      *

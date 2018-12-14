@@ -4,9 +4,6 @@ import com.tyyd.framework.dat.core.constant.Level;
 
 import java.io.Serializable;
 
-/**
- * @author Robert HG (254963746@qq.com) on 6/12/15.
- */
 public class BizLog implements Serializable {
 
 	private static final long serialVersionUID = -7770486329649514754L;

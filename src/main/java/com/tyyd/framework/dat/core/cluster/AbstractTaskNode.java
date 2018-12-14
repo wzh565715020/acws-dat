@@ -40,7 +40,6 @@ public abstract class AbstractTaskNode<T extends Node, Context extends AppContex
     protected Registry registry;
     protected T node;
     protected Config config;
-    protected String nodeGroup;
     protected Context appContext;
     private List<NodeChangeListener> nodeChangeListeners;
     private List<MasterChangeListener> masterChangeListeners;
@@ -140,8 +139,6 @@ public abstract class AbstractTaskNode<T extends Node, Context extends AppContex
         appContext.setEventCenter(ServiceLoader.load(EventCenter.class, config));
 
         appContext.setCommandBodyWrapper(new CommandBodyWrapper(config));
-        appContext.setMasterElector(new MasterElector(appContext));
-        appContext.getMasterElector().addMasterChangeListener(masterChangeListeners);
         appContext.setRegistryStatMonitor(new RegistryStatMonitor(appContext));
 
         if (StringUtils.isEmpty(config.getIp())) {
@@ -325,12 +322,5 @@ public abstract class AbstractTaskNode<T extends Node, Context extends AppContex
         config.setParameter(key, value);
     }
 
-	public String getNodeGroup() {
-		return nodeGroup;
-	}
-
-	public void setNodeGroup(String nodeGroup) {
-		this.nodeGroup = nodeGroup;
-	}
     
 }

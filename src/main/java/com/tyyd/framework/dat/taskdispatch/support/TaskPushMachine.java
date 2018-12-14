@@ -2,12 +2,15 @@ package com.tyyd.framework.dat.taskdispatch.support;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.tyyd.framework.dat.admin.request.PoolQueueReq;
 import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.constant.EcTopic;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
@@ -18,6 +21,7 @@ import com.tyyd.framework.dat.ec.EventSubscriber;
 import com.tyyd.framework.dat.ec.Observer;
 import com.tyyd.framework.dat.jvmmonitor.JVMConstants;
 import com.tyyd.framework.dat.jvmmonitor.JVMMonitor;
+import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandFieldCheckException;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
@@ -25,9 +29,9 @@ public class TaskPushMachine {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaskPushMachine.class.getSimpleName());
 
-	// 定时检查TaskTracker是否有空闲的线程，如果有，那么向JobTracker发起任务pull请求
+	// 定时检查TaskExecuter是否有空闲的线程，如果有，那么发出任务请求
 	private final ScheduledExecutorService SCHEDULED_CHECKER = Executors.newScheduledThreadPool(1,
-			new NamedThreadFactory("dat-JobPushMachine-Executor", true));
+			new NamedThreadFactory("dat-TaskPushMachine-Executor", true));
 	private ScheduledFuture<?> scheduledFuture;
 	private AtomicBoolean start = new AtomicBoolean(false);
 	private TaskDispatcherAppContext appContext;
@@ -35,7 +39,7 @@ public class TaskPushMachine {
 	private int taskPushFrequency;
 	// 是否启用机器资源检查
 	private boolean machineResCheckEnable = true;
-
+    
 	private TaskPusher taskPusher;
 
 	public TaskPushMachine(final TaskDispatcherAppContext appContext) {
@@ -80,7 +84,10 @@ public class TaskPushMachine {
 
 	public void start() {
 		try {
-			if (appContext.getMasterElector().isCurrentMaster() && start.compareAndSet(false, true)) {
+			if (appContext.getConfig().getIdentity().equals(appContext.getMasterNode().getIdentity()) && start.compareAndSet(false, true)) {
+				PoolQueueReq request = new PoolQueueReq();
+				request.setLimit(Integer.MAX_VALUE);
+				appContext.setPoolPoList(new CopyOnWriteArrayList<PoolPo>(appContext.getPoolQueue().pageSelect(request).getRows()));
 				if (scheduledFuture == null) {
 					scheduledFuture = SCHEDULED_CHECKER.scheduleWithFixedDelay(worker, 1, taskPushFrequency,
 							TimeUnit.SECONDS);
@@ -95,20 +102,20 @@ public class TaskPushMachine {
 	private void stop() {
 		try {
 			if (start.compareAndSet(true, false)) {
-				// scheduledFuture.cancel(true);
+				scheduledFuture.cancel(true);
 				// SCHEDULED_CHECKER.shutdown();
-				LOGGER.info("Stop Job pull machine success!");
+				LOGGER.info("Stop task push  machine success!");
 			}
 		} catch (Throwable t) {
-			LOGGER.error("Stop Job pull machine failed!", t);
+			LOGGER.error("Stop task push machine failed!", t);
 		}
 	}
 
 	/**
-	 * 发送Job pull 请求
+	 * 发送task push 请求
 	 */
 	private void sendRequest() throws RemotingCommandFieldCheckException {
-		taskPusher.concurrentPush();
+		taskPusher.push();
 	}
 
 	/**

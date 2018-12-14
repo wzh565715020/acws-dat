@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Robert HG (254963746@qq.com) on 6/22/14.
  *         节点管理 (主要用于管理自己关注的节点)
  */
 public class SubscribedNodeManager implements NodeChangeListener {
@@ -35,17 +34,6 @@ public class SubscribedNodeManager implements NodeChangeListener {
      */
     private void addNode(Node node) {
         _addNode(node);
-//        if ((NodeType.JOB_TRACKER.equals(node.getNodeType()))) {
-//            // 如果增加的JobTracker节点，那么直接添加，因为所有节点都需要监听
-//            _addNode(node);
-//        } else if (NodeType.JOB_TRACKER.equals(appContext.getConfig().getNodeType())) {
-//            // 如果当天节点是JobTracker节点，那么直接添加，因为JobTracker节点要监听三种节点
-//            _addNode(node);
-//        } else if (appContext.getConfig().getNodeType().equals(node.getNodeType())
-//                && appContext.getConfig().getNodeGroup().equals(node.getGroup())) {
-//            // 剩下这种情况是JobClient和TaskTracker都只监听和自己同一个group的节点
-//            _addNode(node);
-//        }
     }
 
     private void _addNode(Node node) {

@@ -22,17 +22,6 @@ public class MongoTaskQueueFactory implements TaskQueueFactory {
     }
 
     @Override
-    public TaskFeedbackQueue getTaskFeedbackQueue(Config config) {
-        return new MongoTaskFeedbackQueue(config);
-    }
-
-
-    @Override
-    public SuspendTaskQueue getSuspendTaskQueue(Config config) {
-        return new MongoSuspendTaskQueue(config);
-    }
-
-    @Override
     public PreLoader getPreLoader(AppContext appContext) {
         return new MongoPreLoader(appContext);
     }

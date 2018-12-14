@@ -62,25 +62,15 @@ public abstract class AbstractPreLoader implements PreLoader {
 		}
 	}
 
-	public TaskPo take(String taskTrackerIdentity) {
-		while (true) {
-			TaskPo taskPo = queue.poll();
-			if (taskPo == null) {
-				continue;
-			}
-			// update taskPo
-			if (lockTask(taskPo.getId(), taskTrackerIdentity, taskPo.getTriggerTime(), taskPo.getUpdateDate())) {
-				taskPo.setTaskExecuteNode(taskTrackerIdentity);
-				taskPo.setUpdateDate(SystemClock.now());
-				return taskPo;
-			}
-		}
+	public TaskPo take(String taskExecuterIdentity) {
+		TaskPo taskPo = queue.poll();
+		return taskPo;
 	}
 
 	/**
 	 * 锁定任务
 	 */
-	protected abstract boolean lockTask(String id, String taskTrackerIdentity, Long triggerTime, Long gmtModified);
+	public abstract boolean lockTask(String id, String taskTrackerIdentity, Long triggerTime, Long gmtModified);
 
 	/**
 	 * 加载任务

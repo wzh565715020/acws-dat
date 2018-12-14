@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentNavigableMap;
 /**
  * see http://www.mapdb.org/
  *
- * @author Robert HG (254963746@qq.com) on 11/10/15.
  */
 public class MapdbFailStore extends AbstractFailStore {
 

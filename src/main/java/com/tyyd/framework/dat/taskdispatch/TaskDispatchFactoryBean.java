@@ -6,8 +6,6 @@ import org.springframework.beans.factory.InitializingBean;
 
 import com.tyyd.framework.dat.core.commons.utils.Assert;
 import com.tyyd.framework.dat.core.listener.MasterChangeListener;
-import com.tyyd.framework.dat.taskdispatch.support.OldDataHandler;
-import com.tyyd.framework.dat.taskdispatch.support.policy.OldDataDeletePolicy;
 
 import java.util.Map;
 import java.util.Properties;
@@ -36,10 +34,6 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
      * 额外参数配置
      */
     private Properties configs = new Properties();
-    /**
-     * 老数据处理接口
-     */
-    private OldDataHandler oldDataHandler;
 
     @Override
     public TaskDispatcher getObject() throws Exception {
@@ -70,12 +64,6 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
 
         taskDispatcher.setClusterName(clusterName);
         taskDispatcher.setRegistryAddress(registryAddress);
-
-        if (oldDataHandler == null) {
-            taskDispatcher.setOldDataHandler(new OldDataDeletePolicy());
-        } else {
-            taskDispatcher.setOldDataHandler(oldDataHandler);
-        }
 
         // 设置config
         for (Map.Entry<Object, Object> entry : configs.entrySet()) {
@@ -118,9 +106,5 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
 
     public void setConfigs(Properties configs) {
         this.configs = configs;
-    }
-
-    public void setOldDataHandler(OldDataHandler oldDataHandler) {
-        this.oldDataHandler = oldDataHandler;
     }
 }

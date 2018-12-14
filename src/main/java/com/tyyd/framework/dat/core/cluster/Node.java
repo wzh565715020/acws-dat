@@ -37,14 +37,14 @@ public class Node {
 
     private String fullString;
 
-    private Task job;
+    private Task task;
 
-    public Task getJob() {
-        return job;
+    public Task getTask() {
+        return task;
     }
 
-    public void setJob(Task job) {
-        this.job = job;
+    public void setTask(Task task) {
+        this.task = task;
     }
 
     public Integer getHttpCmdPort() {

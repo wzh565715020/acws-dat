@@ -59,7 +59,6 @@ public class MDataSrv {
             BeanUtils.copyProperties(po, mData);
             po.setNodeType(mNode.getNodeType());
             po.setIdentity(mNode.getIdentity());
-            po.setNodeGroup(mNode.getNodeGroup());
             po.setGmtCreated(SystemClock.now());
             pos.add(po);
         }
@@ -78,7 +77,6 @@ public class MDataSrv {
             BeanUtils.copyProperties(po, mData);
             po.setNodeType(mNode.getNodeType());
             po.setIdentity(mNode.getIdentity());
-            po.setNodeGroup(mNode.getNodeGroup());
             po.setGmtCreated(SystemClock.now());
             pos.add(po);
         }
@@ -97,7 +95,6 @@ public class MDataSrv {
             BeanUtils.copyProperties(po, mData);
             po.setNodeType(mNode.getNodeType());
             po.setIdentity(mNode.getIdentity());
-            po.setNodeGroup(mNode.getNodeGroup());
             po.setGmtCreated(SystemClock.now());
             pos.add(po);
         }
@@ -188,7 +185,6 @@ public class MDataSrv {
             }
 
             data.setNodeType(mNode.getNodeType());
-            data.setNodeGroup(mNode.getNodeGroup());
             data.setIdentity(mNode.getIdentity());
             data.setGmtCreated(SystemClock.now());
             data.setTimestamp(timestamp);

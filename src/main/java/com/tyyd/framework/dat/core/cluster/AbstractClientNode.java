@@ -44,13 +44,6 @@ public abstract class AbstractClientNode<T extends Node, Context extends AppCont
         remotingClient.shutdown();
     }
 
-    /**
-     * 设置节点组名
-     */
-    public void setNodeGroup(String nodeGroup) {
-        config.setNodeGroup(nodeGroup);
-    }
-
     public boolean isServerEnable() {
         return remotingClient.isServerEnable();
     }

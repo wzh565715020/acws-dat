@@ -36,11 +36,11 @@ public class TaskTerminateCmd implements HttpCmdProc {
             return HttpCmdResponse.newResponse(false, "jobId can't be empty");
         }
 
-        if (!appContext.getRunnerPool().getRunningJobManager().running(jobId)) {
+        if (!appContext.getRunnerPool().getRunningTaskManager().running(jobId)) {
             return HttpCmdResponse.newResponse(false, "jobId dose not running in this TaskTracker now");
         }
 
-        appContext.getRunnerPool().getRunningJobManager().terminateJob(jobId);
+        appContext.getRunnerPool().getRunningTaskManager().terminateJob(jobId);
 
         return HttpCmdResponse.newResponse(true, "Execute terminate Command success");
     }

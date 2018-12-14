@@ -1,5 +1,7 @@
 package com.tyyd.framework.dat.queue.domain;
 
+import com.tyyd.framework.dat.core.domain.TaskExecType;
+import com.tyyd.framework.dat.core.domain.TaskType;
 import com.tyyd.framework.dat.core.json.JSON;
 
 /**
@@ -12,6 +14,7 @@ public class TaskPo {
 	private String taskClass;
 	private String taskType;
 	private String taskExecType;
+	private String poolId;
 	/**
 	 * 执行时间表达式 (和 quartz 表达式一样)
 	 */
@@ -220,13 +223,11 @@ public class TaskPo {
 	}
 
 	public boolean isRepeatable() {
-		// TODO Auto-generated method stub
-		return false;
+		return TaskType.LOOP.getCode().equals(taskType);
 	}
 
 	public boolean isCron() {
-		// TODO Auto-generated method stub
-		return false;
+		return TaskType.SINGLE.getCode().equals(taskType) && TaskExecType.SCHEDULETIME.getCode().equals(taskExecType);
 	}
 
 	public Long getRepeatInterval() {
@@ -235,6 +236,14 @@ public class TaskPo {
 
 	public void setRepeatInterval(Long repeatInterval) {
 		this.repeatInterval = repeatInterval;
+	}
+
+	public String getPoolId() {
+		return poolId;
+	}
+
+	public void setPoolId(String poolId) {
+		this.poolId = poolId;
 	}
 
 }

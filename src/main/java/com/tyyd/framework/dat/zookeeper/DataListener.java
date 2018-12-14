@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.zookeeper;
 
-/**
- * @author Robert HG (254963746@qq.com) on 2/24/16.
- */
 public interface DataListener {
 
     void dataChange(String dataPath, Object data) throws Exception;

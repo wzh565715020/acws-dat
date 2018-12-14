@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.core.loadbalance;
 
 import com.tyyd.framework.dat.core.cluster.Node;
-import com.tyyd.framework.dat.taskdispatch.domain.TaskExecuterNode;
+import com.tyyd.framework.dat.taskdispatch.domain.TaskExecuterNodeConfig;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,11 +15,11 @@ public class MostFreeLoadBalance extends AbstractLoadBalance {
 
     @Override
     protected <S> S doSelect(List<S> shards, String seed) {
-		if (shards.get(0) instanceof TaskExecuterNode) {
+		if (shards.get(0) instanceof TaskExecuterNodeConfig) {
 			Collections.sort(shards, new Comparator<S>() {
                 @Override
                 public int compare(S left, S right) {
-                    return ((TaskExecuterNode) left).getAvailableThreadInteger().compareTo(((TaskExecuterNode) right).getAvailableThreadInteger());
+                    return ((TaskExecuterNodeConfig) left).getAvailableThreadInteger().compareTo(((TaskExecuterNodeConfig) right).getAvailableThreadInteger());
                 }
             });
 		}else if (shards.get(0) instanceof Node) {

@@ -24,7 +24,7 @@ public class MongoPreLoader extends AbstractPreLoader {
                 (AdvancedDatastore) DataStoreProvider.getDataStore(appContext.getConfig()));
     }
 
-    protected boolean lockTask(String id, String taskTrackerIdentity, Long triggerTime, Long gmtModified) {
+    public boolean lockTask(String id, String taskTrackerIdentity, Long triggerTime, Long gmtModified) {
         UpdateOperations<TaskPo> operations =
                 template.createUpdateOperations(TaskPo.class)
                         .set("isRunning", true)

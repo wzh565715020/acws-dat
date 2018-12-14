@@ -64,7 +64,7 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
     /**
      * spring中jobRunner的bean name
      */
-    private String jobRunnerBeanName;
+    private String taskRunnerBeanName;
     /**
      * master节点变化监听器
      */
@@ -116,7 +116,6 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
         taskTracker.setClusterName(clusterName);
         taskTracker.setDataPath(dataPath);
         taskTracker.setWorkThreads(workThreads);
-        taskTracker.setNodeGroup(nodeGroup);
         taskTracker.setRegistryAddress(registryAddress);
         taskTracker.setJobRunnerClass(jobRunnerClass);
 
@@ -134,7 +133,7 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
         taskTracker.setRunnerFactory(new RunnerFactory() {
             @Override
             public TaskRunner newRunner() {
-                return (TaskRunner) applicationContext.getBean(jobRunnerBeanName);
+                return (TaskRunner) applicationContext.getBean(taskRunnerBeanName);
             }
         });
 
@@ -153,8 +152,8 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
     private void registerRunnerBeanDefinition() {
         DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory)
                 ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
-        jobRunnerBeanName = "LTS_".concat(jobRunnerClass.getName());
-        if (!beanFactory.containsBean(jobRunnerBeanName)) {
+        taskRunnerBeanName = "LTS_".concat(jobRunnerClass.getName());
+        if (!beanFactory.containsBean(taskRunnerBeanName)) {
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(jobRunnerClass);
             if (jobRunnerClass == TaskExecuterDispatcher.class) {
                 builder.setScope("singleton");
@@ -163,7 +162,7 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
             } else {
                 builder.setScope("prototype");
             }
-            beanFactory.registerBeanDefinition(jobRunnerBeanName, builder.getBeanDefinition());
+            beanFactory.registerBeanDefinition(taskRunnerBeanName, builder.getBeanDefinition());
         }
     }
 

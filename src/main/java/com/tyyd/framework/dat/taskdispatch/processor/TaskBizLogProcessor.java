@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.taskdispatch.processor;
 
 import java.util.List;
 
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.domain.BizLog;
@@ -29,7 +29,7 @@ public class TaskBizLogProcessor extends AbstractRemotingProcessor {
         List<BizLog> bizLogs = requestBody.getBizLogs();
         if (CollectionUtils.isNotEmpty(bizLogs)) {
             for (BizLog bizLog : bizLogs) {
-                JobLogPo jobLogPo = new JobLogPo();
+                TaskLogPo jobLogPo = new TaskLogPo();
                 jobLogPo.setGmtCreated(SystemClock.now());
                 jobLogPo.setLogTime(bizLog.getLogTime());
                 jobLogPo.setTaskTrackerNodeGroup(bizLog.getTaskTrackerNodeGroup());
@@ -40,7 +40,7 @@ public class TaskBizLogProcessor extends AbstractRemotingProcessor {
                 jobLogPo.setSuccess(true);
                 jobLogPo.setLevel(bizLog.getLevel());
                 jobLogPo.setLogType(LogType.BIZ);
-                appContext.getJobLogger().log(jobLogPo);
+                appContext.getTaskLogger().log(jobLogPo);
             }
         }
 

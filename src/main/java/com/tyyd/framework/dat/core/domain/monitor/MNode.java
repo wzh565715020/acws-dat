@@ -9,10 +9,6 @@ public class MNode {
 
     private NodeType nodeType;
     /**
-     * NodeGroup
-     */
-    private String nodeGroup;
-    /**
      * TaskTracker 节点标识
      */
     private String identity;
@@ -23,14 +19,6 @@ public class MNode {
 
     public void setNodeType(NodeType nodeType) {
         this.nodeType = nodeType;
-    }
-
-    public String getNodeGroup() {
-        return nodeGroup;
-    }
-
-    public void setNodeGroup(String nodeGroup) {
-        this.nodeGroup = nodeGroup;
     }
 
     public String getIdentity() {

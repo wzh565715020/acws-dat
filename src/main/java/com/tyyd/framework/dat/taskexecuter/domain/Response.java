@@ -13,10 +13,6 @@ public class Response {
     private TaskMeta taskMeta;
     
     private Channel channel;
-    /**
-     * 是否接收新任务
-     */
-    private boolean receiveNewJob = true;
 
     public String getMsg() {
         return msg;
@@ -32,14 +28,6 @@ public class Response {
 
     public void setJobMeta(TaskMeta jobMeta) {
         this.taskMeta = jobMeta;
-    }
-
-    public boolean isReceiveNewJob() {
-        return receiveNewJob;
-    }
-
-    public void setReceiveNewJob(boolean receiveNewJob) {
-        this.receiveNewJob = receiveNewJob;
     }
 
     public Action getAction() {

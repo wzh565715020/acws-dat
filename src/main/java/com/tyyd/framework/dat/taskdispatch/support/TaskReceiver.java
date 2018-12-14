@@ -2,13 +2,14 @@ package com.tyyd.framework.dat.taskdispatch.support;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
+import com.tyyd.framework.dat.admin.request.TaskQueueReq;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
-import com.tyyd.framework.dat.core.commons.utils.Assert;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.constant.Level;
@@ -35,19 +36,16 @@ public class TaskReceiver {
     private TaskDispatcherAppContext appContext;
     private IdGenerator idGenerator;
     private TaskDispatcherMStatReporter stat;
-
+    protected AtomicBoolean started = new AtomicBoolean(false);
     public TaskReceiver(TaskDispatcherAppContext appContext) {
         this.appContext = appContext;
         this.stat = (TaskDispatcherMStatReporter) appContext.getMStatReporter();
         this.idGenerator = ServiceLoader.load(IdGenerator.class, appContext.getConfig());
     }
 
-    /**
-     * jobTracker 接受任务
-     */
     public void receive(TaskSubmitRequest request) throws JobReceiveException {
 
-        List<Task> tasks = request.getJobs();
+        List<Task> tasks = request.getTasks();
         if (CollectionUtils.isEmpty(tasks)) {
             return;
         }
@@ -72,7 +70,6 @@ public class TaskReceiver {
 
         TaskPo taskPo = null;
         boolean success = false;
-        BizLogCode code = null;
         try {
             taskPo = TaskDomainConverter.convert(task);
             if (taskPo == null) {
@@ -80,160 +77,70 @@ public class TaskReceiver {
                 return null;
             }
             if (StringUtils.isEmpty(taskPo.getSubmitNode())) {
-                taskPo.setSubmitNode(request.getNodeGroup());
+                taskPo.setSubmitNode(request.getIdentity());
             }
             // 设置 jobId
-            taskPo.setTaskId(idGenerator.generate(taskPo));
+            taskPo.setId(idGenerator.generate(taskPo));
 
             // 添加任务
-            addJob(task, taskPo);
+            addJob(taskPo);
 
             success = true;
-            code = BizLogCode.SUCCESS;
 
         } catch (DupEntryException e) {
             // 已经存在
-                LOGGER.info("Job already exist. nodeGroup={}, {}", request.getNodeGroup(), task);
+                LOGGER.info("task already exist {}", task);
         } finally {
             if (success) {
                 stat.incReceiveJobNum();
             }
         }
-
-        // 记录日志
-        jobBizLog(taskPo, code);
-
         return taskPo;
     }
 
     /**
      * 添加任务
      */
-    private void addJob(Task job, TaskPo taskPo) throws DupEntryException {
-        if (job.isCron()) {
+    private void addJob(TaskPo taskPo) throws DupEntryException {
+        if (taskPo.isCron()) {
             addCronJob(taskPo);
-        } else if (job.isRepeatable()) {
-            addRepeatJob(taskPo);
-        } else {
-            appContext.getExecutableJobQueue().add(taskPo);
-        }
-        LOGGER.info("Receive Job success. {}", job);
+        } else if (taskPo.isRepeatable()) {
+            addRepeatTask(taskPo);
+        } 
     }
-
-    /**
-     * 更新任务
-     **/
-    private boolean replaceOnExist(Task job, TaskPo jobPo) {
-
-        // 得到老的jobId
-        TaskPo oldJobPo;
-        if (job.isCron()) {
-            oldJobPo = appContext.getTaskQueue().getTask(job.getTaskId());
-        } else if (job.isRepeatable()) {
-            oldJobPo = appContext.getTaskQueue().getTask(job.getTaskId());
-        } else {
-            oldJobPo = appContext.getExecutableJobQueue().getTask(job.getTaskId());
-        }
-        if (oldJobPo != null) {
-            String jobId = oldJobPo.getTaskId();
-            // 1. 删除任务
-            appContext.getExecutableJobQueue().remove(jobId);
-            if (job.isCron()) {
-                appContext.getTaskQueue().remove(jobId);
-            } else if (job.isRepeatable()) {
-                appContext.getTaskQueue().remove(jobId);
-            }
-            jobPo.setTaskId(jobId);
-        }
-
-        // 2. 重新添加任务
-        try {
-            addJob(job, jobPo);
-        } catch (DupEntryException e) {
-            // 一般不会走到这里
-            LOGGER.warn("Job already exist twice. {}", job);
-            return false;
-        }
-        return true;
-    }
-
     /**
      * 添加Cron 任务
      */
-    private void addCronJob(TaskPo jobPo) throws DupEntryException {
-        Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(jobPo.getCron());
+    private void addCronJob(TaskPo taskPo) throws DupEntryException {
+        Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(taskPo.getCron());
         if (nextTriggerTime != null) {
-            // 1.add to cron job queue
-            appContext.getTaskQueue().add(jobPo);
-
             // 没有正在执行, 则添加
-            if (appContext.getExecutingJobQueue().getJob(jobPo.getTaskId()) == null) {
+            if (appContext.getExecutableTaskQueue().getTask(taskPo.getTaskId()) == null) {
                 // 2. add to executable queue
-                jobPo.setTriggerTime(nextTriggerTime.getTime());
-                appContext.getExecutableJobQueue().add(jobPo);
+                taskPo.setTriggerTime(nextTriggerTime.getTime());
+                appContext.getExecutableTaskQueue().add(taskPo);
             }
         }
     }
-
     /**
      * 添加Repeat 任务
      */
-    private void addRepeatJob(TaskPo jobPo) throws DupEntryException {
-        // 1.add to repeat job queue
-        appContext.getTaskQueue().add(jobPo);
-
+    private void addRepeatTask(TaskPo taskPo) throws DupEntryException {
         // 没有正在执行, 则添加
-        if (appContext.getExecutingJobQueue().getJob(jobPo.getTaskId()) == null) {
+        if (appContext.getExecutableTaskQueue().getTask(taskPo.getTaskId()) == null) {
             // 2. add to executable queue
-            appContext.getExecutableJobQueue().add(jobPo);
+            appContext.getExecutableTaskQueue().add(taskPo);
         }
     }
-
-    /**
-     * 记录任务日志
-     */
-    private void jobBizLog(TaskPo jobPo, BizLogCode code) {
-        if (jobPo == null) {
-            return;
-        }
-
-        try {
-            // 记录日志
-            JobLogPo jobLogPo = TaskDomainConverter.convertJobLog(jobPo);
-            jobLogPo.setSuccess(true);
-            jobLogPo.setLogType(LogType.RECEIVE);
-            jobLogPo.setLogTime(SystemClock.now());
-
-            switch (code) {
-                case SUCCESS:
-                    jobLogPo.setLevel(Level.INFO);
-                    jobLogPo.setMsg("Receive Success");
-                    break;
-                case DUP_IGNORE:
-                    jobLogPo.setLevel(Level.WARN);
-                    jobLogPo.setMsg("Already Exist And Ignored");
-                    break;
-                case DUP_FAILED:
-                    jobLogPo.setLevel(Level.ERROR);
-                    jobLogPo.setMsg("Already Exist And Update Failed");
-                    break;
-                case DUP_REPLACE:
-                    jobLogPo.setLevel(Level.INFO);
-                    jobLogPo.setMsg("Already Exist And Update Success");
-                    break;
-            }
-
-            appContext.getJobLogger().log(jobLogPo);
-        } catch (Throwable t) {     // 日志记录失败不影响正常运行
-            LOGGER.error("Receive Job Log error ", t);
-        }
-    }
-
-    private enum BizLogCode {
-        DUP_IGNORE,     // 添加重复并忽略
-        DUP_REPLACE,    // 添加时重复并覆盖更新
-        DUP_FAILED,     // 添加时重复再次添加失败
-        SUCCESS,     // 添加成功
-    }
+	public void start() {
+		if (started.compareAndSet(false, true)) {
+			TaskQueueReq taskQueueReq = new TaskQueueReq();
+			taskQueueReq.setLimit(Integer.MAX_VALUE);
+			List<TaskPo> taskPos = appContext.getTaskQueue().pageSelect(taskQueueReq).getRows();
+			for (TaskPo taskPo : taskPos) {
+				addJob(taskPo);
+			}
+		}
+	}
 
 }

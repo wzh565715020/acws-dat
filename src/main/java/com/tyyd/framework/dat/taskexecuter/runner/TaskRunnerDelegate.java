@@ -38,12 +38,12 @@ public class TaskRunnerDelegate implements Runnable {
 	private Thread thread;
 	private Channel channel;
 
-	public TaskRunnerDelegate(TaskExecuterAppContext appContext, TaskMeta jobMeta, RunnerCallback callback,
+	public TaskRunnerDelegate(TaskExecuterAppContext appContext, TaskMeta taskMeta, RunnerCallback callback,
 			Channel channel) {
 		this.appContext = appContext;
 		this.callback = callback;
-		this.taskMeta = jobMeta;
-
+		this.taskMeta = taskMeta;
+        this.channel = channel;
 		this.logger = (BizLoggerAdapter) BizLoggerFactory.getLogger(appContext.getBizLogLevel(),
 				appContext.getRemotingServer(), appContext);
 		stat = (TaskExecuterMStatReporter) appContext.getMStatReporter();
@@ -70,14 +70,14 @@ public class TaskRunnerDelegate implements Runnable {
 
 			long startTime = SystemClock.now();
 			// 设置当前context中的jobId
-			logger.setId(taskMeta.getTaskId(), taskMeta.getJob().getTaskId());
+			logger.setId(taskMeta.getId(), taskMeta.getTask().getTaskId());
 			Response response = new Response();
 			response.setJobMeta(taskMeta);
 			response.setChannel(this.channel);
 			try {
-				appContext.getRunnerPool().getRunningJobManager().in(taskMeta.getTaskId(), this);
+				appContext.getRunnerPool().getRunningTaskManager().in(taskMeta.getId(), this);
 				this.curTaskRunner = appContext.getRunnerPool().getRunnerFactory().newRunner();
-				Result result = this.curTaskRunner.run(taskMeta.getJob());
+				Result result = this.curTaskRunner.run(taskMeta.getTask());
 
 				if (result == null) {
 					response.setAction(Action.EXECUTE_SUCCESS);
@@ -92,7 +92,7 @@ public class TaskRunnerDelegate implements Runnable {
 
 				long time = SystemClock.now() - startTime;
 				stat.addRunningTime(time);
-				LOGGER.info("Job execute completed : {}, time:{} ms.", taskMeta.getJob(), time);
+				LOGGER.info("Job execute completed : {}, time:{} ms.", taskMeta.getTask(), time);
 			} catch (Throwable t) {
 				StringWriter sw = new StringWriter();
 				t.printStackTrace(new PrintWriter(sw));
@@ -100,18 +100,14 @@ public class TaskRunnerDelegate implements Runnable {
 				response.setMsg(sw.toString());
 				long time = SystemClock.now() - startTime;
 				stat.addRunningTime(time);
-				LOGGER.info("Job execute error : {}, time: {}, {}", taskMeta.getJob(), time, t.getMessage(), t);
+				LOGGER.info("Job execute error : {}, time: {}, {}", taskMeta.getTask(), time, t.getMessage(), t);
 			} finally {
 				checkInterrupted();
 				logger.removeId();
-				appContext.getRunnerPool().getRunningJobManager().out(taskMeta.getTaskId());
+				appContext.getRunnerPool().getRunningTaskManager().out(taskMeta.getId());
 			}
 			// 统计数据
 			stat(response.getAction());
-
-			if (isStopToGetNewJob()) {
-				response.setReceiveNewJob(false);
-			}
 			callback.runComplete(response);
 
 		} finally {

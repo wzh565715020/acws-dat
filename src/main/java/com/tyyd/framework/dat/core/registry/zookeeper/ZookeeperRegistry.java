@@ -10,6 +10,7 @@ import com.tyyd.framework.dat.core.registry.NotifyEvent;
 import com.tyyd.framework.dat.core.registry.NotifyListener;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.zookeeper.ChildListener;
+import com.tyyd.framework.dat.zookeeper.DataListener;
 import com.tyyd.framework.dat.zookeeper.StateListener;
 import com.tyyd.framework.dat.zookeeper.ZkClient;
 import com.tyyd.framework.dat.zookeeper.ZookeeperTransporter;
@@ -187,5 +188,10 @@ public class ZookeeperRegistry extends FailbackRegistry {
 	@Override
 	public void updateRegister(String path, Node data) {
 		zkClient.setData(path, data);
+		
+	}
+	@Override
+	public void addDataListener(String path, DataListener listener) {
+		zkClient.addDataListener(path, listener);
 	}
 }

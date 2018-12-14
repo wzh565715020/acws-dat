@@ -13,7 +13,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/23/14.
  *         Master 选举
  *         选举思想:
  *         选出每种节点中的master, 通过每个节点的创建时间来决定 （创建时间最小的便是master, 即最早创建的是master）
@@ -97,7 +96,7 @@ public class MasterElector {
                 if (masterRemoved) {
                     // 如果挂掉的是master, 需要重新选举
                     List<Node> nodes = appContext.getSubscribedNodeManager().
-                            getNodeList(appContext.getConfig().getNodeType(), appContext.getConfig().getNodeGroup());
+                            getNodeList(appContext.getConfig().getNodeType());
                     if (CollectionUtils.isNotEmpty(nodes)) {
                         Node newMaster = null;
                         for (Node node : nodes) {

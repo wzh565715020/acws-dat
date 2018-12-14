@@ -1,6 +1,7 @@
 package com.tyyd.framework.dat.taskexecuter.processor;
 
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -11,12 +12,17 @@ import com.tyyd.framework.dat.core.exception.RequestTimeoutException;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.protocol.JobProtos;
-import com.tyyd.framework.dat.core.protocol.command.JobCompletedRequest;
+import com.tyyd.framework.dat.core.protocol.command.TaskCompletedRequest;
 import com.tyyd.framework.dat.core.protocol.command.TaskPushRequest;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
+import com.tyyd.framework.dat.core.spi.ServiceLoader;
+import com.tyyd.framework.dat.core.support.RetryScheduler;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
 import com.tyyd.framework.dat.remoting.Channel;
+import com.tyyd.framework.dat.remoting.RemotingClient;
+import com.tyyd.framework.dat.remoting.RemotingClientConfig;
+import com.tyyd.framework.dat.remoting.RemotingTransporter;
 import com.tyyd.framework.dat.remoting.ResponseFuture;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
@@ -35,12 +41,26 @@ public class TaskProcessor extends AbstractProcessor {
 
     private TaskRunnerCallback taskRunnerCallback;
     private RemotingServerDelegate remotingServer;
+    private RetryScheduler<TaskRunResult> retryScheduler;
 
     protected TaskProcessor(TaskExecuterAppContext appContext) {
         super(appContext);
         this.remotingServer = appContext.getRemotingServer();
         // 线程安全的
         taskRunnerCallback = new TaskRunnerCallback();
+        retryScheduler = new RetryScheduler<TaskRunResult>(appContext, 3) {
+            @Override
+            protected boolean isRemotingEnable() {
+                return remotingServer.isServerEnable();
+            }
+
+            @Override
+            protected boolean retry(List<TaskRunResult> results) {
+                return retrySendJobResults(results);
+            }
+        };
+        retryScheduler.setName("TaskPushMassage");
+        retryScheduler.start();
     }
 
     @Override
@@ -50,19 +70,19 @@ public class TaskProcessor extends AbstractProcessor {
         TaskPushRequest requestBody = request.getBody();
 
         // JobTracker 分发来的 job
-        final TaskMeta taskMeta = requestBody.getJobMeta();
+        final TaskMeta taskMeta = requestBody.getTaskMeta();
 
         try {
             appContext.getRunnerPool().execute(channel,taskMeta, taskRunnerCallback);
         } catch (NoAvailableTaskRunnerException e) {
             // 任务推送失败
             return RemotingCommand.createResponseCommand(JobProtos.ResponseCode.NO_AVAILABLE_JOB_RUNNER.code(),
-                    "job push failure , no available job runner!");
+                    "job push failure , no available task runner!");
         }
 
         // 任务推送成功
         return RemotingCommand.createResponseCommand(JobProtos
-                .ResponseCode.TASK_PUSH_SUCCESS.code(), "job push success!");
+                .ResponseCode.TASK_PUSH_SUCCESS.code(), "task push success!");
     }
 
     /**
@@ -77,9 +97,8 @@ public class TaskProcessor extends AbstractProcessor {
             taskRunResult.setTaskMeta(response.getTaskMeta());
             taskRunResult.setAction(response.getAction());
             taskRunResult.setMsg(response.getMsg());
-            JobCompletedRequest requestBody = appContext.getCommandBodyWrapper().wrapper(new JobCompletedRequest());
+            TaskCompletedRequest requestBody = appContext.getCommandBodyWrapper().wrapper(new TaskCompletedRequest());
             requestBody.addJobResult(taskRunResult);
-            requestBody.setReceiveNewJob(response.isReceiveNewJob());     // 设置可以接受新任务
 
             int requestCode = JobProtos.RequestCode.TASK_COMPLETED.code();
 
@@ -98,8 +117,17 @@ public class TaskProcessor extends AbstractProcessor {
                             if (commandResponse != null && commandResponse.getCode() == RemotingProtos.ResponseCode.SUCCESS.code()) {
                                 TaskPushRequest jobPushRequest = commandResponse.getBody();
                                 if (jobPushRequest != null) {
-                                    LOGGER.info("Get new job :{}", jobPushRequest.getJobMeta());
-                                    returnResponse.setJobMeta(jobPushRequest.getJobMeta());
+                                    LOGGER.info("Get new job :{}", jobPushRequest.getTaskMeta());
+                                    returnResponse.setJobMeta(jobPushRequest.getTaskMeta());
+                                }
+                            }else {
+                                LOGGER.info("Job feedback failed, save local files。{}", taskRunResult);
+                                try {
+                                    retryScheduler.inSchedule(
+                                    		taskRunResult.getTaskMeta().getId().concat("_") + SystemClock.now(),
+                                    		taskRunResult);
+                                } catch (Exception e) {
+                                    LOGGER.error("Job feedback failed", e);
                                 }
                             }
                         } finally {
@@ -118,5 +146,34 @@ public class TaskProcessor extends AbstractProcessor {
             }
 
         }
+    }
+    /**
+     * 发送JobResults
+     */
+    private boolean retrySendJobResults(List<TaskRunResult> results) {
+        // 发送消息给taskDispatch
+    	TaskCompletedRequest requestBody = appContext.getCommandBodyWrapper().wrapper(new TaskCompletedRequest());
+        requestBody.setTaskRunResults(results);
+        requestBody.setReSend(true);
+
+        int requestCode = JobProtos.RequestCode.TASK_COMPLETED.code();
+        RemotingCommand request = RemotingCommand.createRequestCommand(requestCode, requestBody);
+
+        try {
+        	appContext.getMasterNode();
+            // 这里一定要用同步，不然异步会发生文件锁，死锁
+        	RemotingClient remotingClient = ServiceLoader.load(RemotingTransporter.class, appContext.getConfig()).getRemotingClient(appContext, new RemotingClientConfig());
+        	Channel channel = remotingClient.getAndCreateChannel(appContext.getMasterNode().getAddress());
+            RemotingCommand commandResponse = remotingServer.invokeSync(channel,request);
+            if (commandResponse != null && commandResponse.getCode() == RemotingProtos.ResponseCode.SUCCESS.code()) {
+                return true;
+            } else {
+                LOGGER.warn("Send job failed, {}", commandResponse);
+                return false;
+            }
+        } catch (Exception e) {
+            LOGGER.error("Retry send job result failed! taskResults={}", results, e);
+        }
+        return false;
     }
 }

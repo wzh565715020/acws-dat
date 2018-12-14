@@ -18,7 +18,6 @@ public class NodeFactory {
 			node.setCreateTime(SystemClock.now());
 			node.setIp(IpPortUtil.getLocalIP());
 			node.setHostName(NetUtils.getLocalHostName());
-			node.setGroup(config.getNodeGroup());
 			node.setThreads(config.getWorkThreads());
 			int listenPort = config.getListenPort();
 			try {
@@ -47,7 +46,7 @@ public class NodeFactory {
 		newNode.setHttpCmdPort(node.getHttpCmdPort());
 		newNode.setIdentity(node.getIdentity());
 		newNode.setIp(node.getIp());
-		newNode.setJob(node.getJob());
+		newNode.setTask(node.getTask());
 		newNode.setListenNodeTypes(node.getListenNodeTypes());
 		newNode.setNodeType(node.getNodeType());
 		newNode.setPort(node.getPort());

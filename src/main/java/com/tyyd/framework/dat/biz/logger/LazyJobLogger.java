@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.biz.logger;
 
 import com.tyyd.framework.dat.admin.response.PaginationRsp;
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.JobLoggerRequest;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.cluster.Config;
@@ -25,12 +25,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * @author Robert HG (254963746@qq.com) on 10/2/15.
  */
-public class LazyJobLogger implements JobLogger {
+public class LazyJobLogger implements TaskLogger {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SmartJobLogger.class);
-    private JobLogger delegate;
+    private TaskLogger delegate;
     // 无界Queue
-    private BlockingQueue<JobLogPo> memoryQueue = new LinkedBlockingQueue<JobLogPo>();
+    private BlockingQueue<TaskLogPo> memoryQueue = new LinkedBlockingQueue<TaskLogPo>();
     // 日志批量刷盘数量
     private int batchFlushSize;
     private int overflowSize;
@@ -38,7 +38,7 @@ public class LazyJobLogger implements JobLogger {
     private int maxMemoryLogSize;
     private AtomicBoolean flushing = new AtomicBoolean(false);
 
-    public LazyJobLogger(AppContext appContext, JobLogger delegate) {
+    public LazyJobLogger(AppContext appContext, TaskLogger delegate) {
         this.delegate = delegate;
 
         Config config = appContext.getConfig();
@@ -79,9 +79,9 @@ public class LazyJobLogger implements JobLogger {
             if (nowSize == 0) {
                 return;
             }
-            List<JobLogPo> batch = new ArrayList<JobLogPo>();
+            List<TaskLogPo> batch = new ArrayList<TaskLogPo>();
             for (int i = 0; i < nowSize; i++) {
-                JobLogPo jobLogPo = memoryQueue.poll();
+                TaskLogPo jobLogPo = memoryQueue.poll();
                 batch.add(jobLogPo);
 
                 if (batch.size() >= batchFlushSize) {
@@ -104,7 +104,7 @@ public class LazyJobLogger implements JobLogger {
         }
     }
 
-    private void flush(List<JobLogPo> batch) {
+    private void flush(List<TaskLogPo> batch) {
         boolean flushSuccess = false;
         try {
             delegate.log(batch);
@@ -140,7 +140,7 @@ public class LazyJobLogger implements JobLogger {
     }
 
     @Override
-    public void log(JobLogPo jobLogPo) {
+    public void log(TaskLogPo jobLogPo) {
         if (jobLogPo == null) {
             return;
         }
@@ -150,12 +150,12 @@ public class LazyJobLogger implements JobLogger {
     }
 
     @Override
-    public void log(List<JobLogPo> jobLogPos) {
+    public void log(List<TaskLogPo> jobLogPos) {
         if (CollectionUtils.isEmpty(jobLogPos)) {
             return;
         }
         checkOverflowSize();
-        for (JobLogPo jobLogPo : jobLogPos) {
+        for (TaskLogPo jobLogPo : jobLogPos) {
             memoryQueue.offer(jobLogPo);
         }
         // checkCapacity
@@ -163,7 +163,7 @@ public class LazyJobLogger implements JobLogger {
     }
 
     @Override
-    public PaginationRsp<JobLogPo> search(JobLoggerRequest request) {
+    public PaginationRsp<TaskLogPo> search(JobLoggerRequest request) {
         return delegate.search(request);
     }
 

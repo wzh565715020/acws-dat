@@ -1,6 +1,5 @@
 package com.tyyd.framework.dat.queue.mysql;
 
-import com.tyyd.framework.dat.admin.request.TaskQueueReq;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
@@ -31,7 +30,7 @@ public class MysqlExecutingJobQueue extends AbstractMysqlTaskQueue implements Ex
                 .delete()
                 .from()
                 .table(getTableName())
-                .where("job_id = ?", jobId)
+                .where("id = ?", jobId)
                 .doDelete() == 1;
     }
 

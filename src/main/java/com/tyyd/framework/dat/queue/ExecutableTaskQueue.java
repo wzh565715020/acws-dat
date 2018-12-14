@@ -8,7 +8,7 @@ import java.util.List;
  * 等待执行的任务队列 (可以有多个)
  *
  */
-public interface ExecutableTaskQueue extends QueueInterface{
+public interface ExecutableTaskQueue extends TaskQueueInterface{
 
     /**
      * 入队列

@@ -1,8 +1,8 @@
 package com.tyyd.framework.dat.biz.logger.mongo;
 
 
-import com.tyyd.framework.dat.biz.logger.JobLogger;
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.TaskLogger;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.JobLoggerRequest;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author Robert HG (254963746@qq.com) on 3/27/15.
  */
-public class MongoJobLogger extends MongoRepository implements JobLogger {
+public class MongoJobLogger extends MongoRepository implements TaskLogger {
 
     public MongoJobLogger(Config config) {
         super(config);
@@ -36,19 +36,19 @@ public class MongoJobLogger extends MongoRepository implements JobLogger {
     }
 
     @Override
-    public void log(JobLogPo jobLogPo) {
+    public void log(TaskLogPo jobLogPo) {
         template.save(jobLogPo);
     }
 
     @Override
-    public void log(List<JobLogPo> jobLogPos) {
+    public void log(List<TaskLogPo> jobLogPos) {
         template.save(jobLogPos);
     }
 
     @Override
-    public PaginationRsp<JobLogPo> search(JobLoggerRequest request) {
+    public PaginationRsp<TaskLogPo> search(JobLoggerRequest request) {
 
-        Query<JobLogPo> query = template.createQuery(JobLogPo.class);
+        Query<TaskLogPo> query = template.createQuery(TaskLogPo.class);
         if(StringUtils.isNotEmpty(request.getTaskId())){
             query.field("taskId").equal(request.getTaskId());
         }
@@ -61,7 +61,7 @@ public class MongoJobLogger extends MongoRepository implements JobLogger {
         if (request.getEndLogTime() != null) {
             query.filter("logTime <= ", getTimestamp(request.getEndLogTime()));
         }
-        PaginationRsp<JobLogPo> paginationRsp = new PaginationRsp<JobLogPo>();
+        PaginationRsp<TaskLogPo> paginationRsp = new PaginationRsp<TaskLogPo>();
         Long results = template.getCount(query);
         paginationRsp.setResults(results.intValue());
         if (results == 0) {

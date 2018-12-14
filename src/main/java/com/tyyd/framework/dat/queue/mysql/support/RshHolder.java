@@ -1,12 +1,11 @@
 package com.tyyd.framework.dat.queue.mysql.support;
 
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.json.TypeReference;
-import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.dbutils.ResultSetHandler;
@@ -65,6 +64,7 @@ public class RshHolder {
     	poolPo.setPoolId(rs.getString("pool_id"));
     	poolPo.setPoolName(rs.getString("pool_name"));
     	poolPo.setMaxCount(rs.getInt("max_count"));
+    	poolPo.setAvailableCount(rs.getInt("available_count"));
     	poolPo.setTaskIds(rs.getString("task_ids"));
     	poolPo.setMemo(rs.getString("memo"));
     	poolPo.setCreateDate(rs.getLong("create_date"));
@@ -95,29 +95,12 @@ public class RshHolder {
         return jobPo;
     }
 
-    public static final ResultSetHandler<List<JobFeedbackPo>> JOB_FEED_BACK_LIST_RSH = new ResultSetHandler<List<JobFeedbackPo>>() {
+    public static final ResultSetHandler<List<TaskLogPo>> JOB_LOGGER_LIST_RSH = new ResultSetHandler<List<TaskLogPo>>() {
         @Override
-        public List<JobFeedbackPo> handle(ResultSet rs) throws SQLException {
-            List<JobFeedbackPo> jobFeedbackPos = new ArrayList<JobFeedbackPo>();
+        public List<TaskLogPo> handle(ResultSet rs) throws SQLException {
+            List<TaskLogPo> result = new ArrayList<TaskLogPo>();
             while (rs.next()) {
-                JobFeedbackPo jobFeedbackPo = new JobFeedbackPo();
-                jobFeedbackPo.setId(rs.getString("id"));
-                jobFeedbackPo.setJobRunResult(JSON.parse(rs.getString("job_result"), new TypeReference<TaskRunResult>() {
-                }));
-                jobFeedbackPo.setGmtCreated(rs.getLong("gmt_created"));
-                jobFeedbackPos.add(jobFeedbackPo);
-            }
-            return jobFeedbackPos;
-        }
-    };
-
-
-    public static final ResultSetHandler<List<JobLogPo>> JOB_LOGGER_LIST_RSH = new ResultSetHandler<List<JobLogPo>>() {
-        @Override
-        public List<JobLogPo> handle(ResultSet rs) throws SQLException {
-            List<JobLogPo> result = new ArrayList<JobLogPo>();
-            while (rs.next()) {
-                JobLogPo jobLogPo = new JobLogPo();
+                TaskLogPo jobLogPo = new TaskLogPo();
                 jobLogPo.setLogTime(rs.getLong("log_time"));
                 jobLogPo.setGmtCreated(rs.getLong("gmt_created"));
                 jobLogPo.setLogType(LogType.valueOf(rs.getString("log_type")));

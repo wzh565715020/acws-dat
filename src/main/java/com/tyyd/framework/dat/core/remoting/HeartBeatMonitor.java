@@ -40,12 +40,12 @@ public class HeartBeatMonitor {
 
     private RemotingClientDelegate remotingClient;
     private AppContext appContext;
-    private EventSubscriber jobTrackerUnavailableEventSubscriber;
+    private EventSubscriber taskExecuterUnavailableEventSubscriber;
 
     public HeartBeatMonitor(RemotingClientDelegate remotingClient, AppContext appContext) {
         this.remotingClient = remotingClient;
         this.appContext = appContext;
-        this.jobTrackerUnavailableEventSubscriber = new EventSubscriber(HeartBeatMonitor.class.getName()
+        this.taskExecuterUnavailableEventSubscriber = new EventSubscriber(HeartBeatMonitor.class.getName()
                 + "_PING_" + appContext.getConfig().getIdentity(),
                 new Observer() {
                     @Override
@@ -59,7 +59,7 @@ public class HeartBeatMonitor {
             @Override
             public void onObserved(EventInfo eventInfo) {
                 Node node = (Node) eventInfo.getParam("node");
-                if (node == null || NodeType.TASK_DISPATCH != node.getNodeType()) {
+                if (node == null || NodeType.TASK_EXECUTER != node.getNodeType()) {
                     return;
                 }
                 try {
@@ -86,7 +86,7 @@ public class HeartBeatMonitor {
         try {
             if (pingStart.compareAndSet(false, true)) {
                 // 用来监听 JobTracker不可用的消息，然后马上启动 快速检查定时器
-                appContext.getEventCenter().subscribe(jobTrackerUnavailableEventSubscriber, EcTopic.NO_TASK_EXECUTER_AVAILABLE);
+                appContext.getEventCenter().subscribe(taskExecuterUnavailableEventSubscriber, EcTopic.NO_TASK_EXECUTER_AVAILABLE);
                 if (pingScheduledFuture == null) {
                     pingScheduledFuture = PING_EXECUTOR_SERVICE.scheduleWithFixedDelay(
                             new Runnable() {
@@ -110,7 +110,7 @@ public class HeartBeatMonitor {
             if (pingStart.compareAndSet(true, false)) {
 //                pingScheduledFuture.cancel(true);
 //                PING_EXECUTOR_SERVICE.shutdown();
-                appContext.getEventCenter().unSubscribe(EcTopic.NO_TASK_EXECUTER_AVAILABLE, jobTrackerUnavailableEventSubscriber);
+                appContext.getEventCenter().unSubscribe(EcTopic.NO_TASK_EXECUTER_AVAILABLE, taskExecuterUnavailableEventSubscriber);
                 LOGGER.debug("Stop slow ping success.");
             }
         } catch (Throwable t) {
@@ -170,19 +170,19 @@ public class HeartBeatMonitor {
     }
 
     private void check() {
-        List<Node> jobTrackers = appContext.getSubscribedNodeManager().getNodeList(NodeType.TASK_DISPATCH);
-        if (CollectionUtils.isEmpty(jobTrackers)) {
+        List<Node> taskExecuters = appContext.getSubscribedNodeManager().getNodeList(NodeType.TASK_EXECUTER);
+        if (CollectionUtils.isEmpty(taskExecuters)) {
             return;
         }
-        for (Node jobTracker : jobTrackers) {
-            check(jobTracker);
+        for (Node taskExecuter : taskExecuters) {
+            check(taskExecuter);
         }
     }
 
-    private void check(Node jobTracker) {
-        // 每个JobTracker 都要发送心跳
-        if (beat(remotingClient, jobTracker.getAddress())) {
-            remotingClient.addJobTracker(jobTracker);
+    private void check(Node taskExecuter) {
+        // 每个taskExecuter 都要发送心跳
+        if (beat(remotingClient, taskExecuter.getAddress())) {
+            remotingClient.addTaskExecuter(taskExecuter);
             if (!remotingClient.isServerEnable()) {
                 remotingClient.setServerEnable(true);
                 appContext.getEventCenter().publishAsync(new EventInfo(EcTopic.TASK_EXECUTER_AVAILABLE));
@@ -192,7 +192,7 @@ public class HeartBeatMonitor {
             stopFastPing();
             startPing();
         } else {
-            remotingClient.removeJobTracker(jobTracker);
+            remotingClient.removeTaskExecuter(taskExecuter);
         }
     }
 

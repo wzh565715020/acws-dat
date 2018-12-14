@@ -21,13 +21,13 @@ public class MysqlTaskQueue extends AbstractMysqlTaskQueue implements TaskQueue 
     }
 
     @Override
-    public TaskPo getTask(String jobId) {
+    public TaskPo getTask(String id) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
-                .where("task_id = ?", jobId)
+                .where("task_id = ?", id)
                 .single(RshHolder.TASK_PO_RSH);
     }
 

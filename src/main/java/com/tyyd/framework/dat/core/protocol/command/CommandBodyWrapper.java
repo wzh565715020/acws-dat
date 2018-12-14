@@ -16,7 +16,6 @@ public class CommandBodyWrapper {
     }
 
     public <T extends AbstractRemotingCommandBody> T wrapper(T commandBody) {
-        commandBody.setNodeGroup(config.getNodeGroup());
         commandBody.setNodeType(config.getNodeType().name());
         commandBody.setIdentity(config.getIdentity());
         return commandBody;

@@ -4,8 +4,8 @@ package com.tyyd.framework.dat.taskexecuter.processor;
 import java.util.List;
 
 import com.tyyd.framework.dat.core.protocol.command.CommandBodyWrapper;
-import com.tyyd.framework.dat.core.protocol.command.JobAskRequest;
-import com.tyyd.framework.dat.core.protocol.command.JobAskResponse;
+import com.tyyd.framework.dat.core.protocol.command.TaskAskRequest;
+import com.tyyd.framework.dat.core.protocol.command.TaskAskResponse;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
@@ -22,16 +22,16 @@ public class TaskAskProcessor extends AbstractProcessor {
     public RemotingCommand processRequest(Channel channel,
                                           RemotingCommand request) throws RemotingCommandException {
 
-        JobAskRequest requestBody = request.getBody();
+        TaskAskRequest requestBody = request.getBody();
 
-        List<String> jobIds = requestBody.getJobIds();
+        List<String> ids = requestBody.getIds();
 
         List<String> notExistJobIds = appContext.getRunnerPool()
-                .getRunningJobManager().getNotExists(jobIds);
+                .getRunningTaskManager().getNotExists(ids);
 
-        JobAskResponse responseBody = CommandBodyWrapper.wrapper(appContext, new JobAskResponse());
+        TaskAskResponse responseBody = CommandBodyWrapper.wrapper(appContext, new TaskAskResponse());
 
-        responseBody.setJobIds(notExistJobIds);
+        responseBody.setIds(notExistJobIds);
 
         return RemotingCommand.createResponseCommand(
                 RemotingProtos.ResponseCode.SUCCESS.code(), "查询成功", responseBody);

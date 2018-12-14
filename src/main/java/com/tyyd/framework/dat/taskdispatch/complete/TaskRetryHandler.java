@@ -38,8 +38,8 @@ public class TaskRetryHandler {
 
             TaskMeta jobMeta = result.getTaskMeta();
             // 1. 加入到重试队列
-            TaskPo jobPo = appContext.getExecutingJobQueue().getJob(jobMeta.getTaskId());
-            if (jobPo == null) {    // 表示已经被删除了
+            TaskPo taskPo = appContext.getExecutingTaskQueue().getJob(jobMeta.getId());
+            if (taskPo == null) {    // 表示已经被删除了
                 continue;
             }
 
@@ -47,27 +47,27 @@ public class TaskRetryHandler {
             // 1 分钟重试一次吧
             Long nextRetryTriggerTime = SystemClock.now() + retryInterval;
 
-            if (jobPo.isCron()) {
+            if (taskPo.isCron()) {
                 // 如果是 cron Job, 判断任务下一次执行时间和重试时间的比较
-                TaskPo cronJobPo = appContext.getTaskQueue().getTask(jobMeta.getTaskId());
+                TaskPo cronJobPo = appContext.getTaskQueue().getTask(jobMeta.getTask().getTaskId());
                 if (cronJobPo != null) {
                     Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(cronJobPo.getCron());
                     if (nextTriggerTime != null && nextTriggerTime.getTime() < nextRetryTriggerTime) {
                         // 表示下次还要执行, 并且下次执行时间比下次重试时间要早, 那么不重试，直接使用下次的执行时间
                         nextRetryTriggerTime = nextTriggerTime.getTime();
-                        jobPo = cronJobPo;
+                        taskPo = cronJobPo;
                     } 
                 }
-            } else if (jobPo.isRepeatable()) {
-                TaskPo repeatJobPo = appContext.getTaskQueue().getTask(jobMeta.getTaskId());
+            } else if (taskPo.isRepeatable()) {
+                TaskPo repeatJobPo = appContext.getTaskQueue().getTask(jobMeta.getTask().getTaskId());
                 if (repeatJobPo != null) {
                     // 比较下一次重复时间和重试时间
                     if (repeatJobPo.getRepeatCount() == -1 || (repeatJobPo.getRepeatedCount() < repeatJobPo.getRepeatCount())) {
-                        long nexTriggerTime = TaskUtils.getRepeatNextTriggerTime(jobPo);
+                        long nexTriggerTime = TaskUtils.getRepeatNextTriggerTime(taskPo);
                         if (nexTriggerTime < nextRetryTriggerTime) {
                             // 表示下次还要执行, 并且下次执行时间比下次重试时间要早, 那么不重试，直接使用下次的执行时间
                             nextRetryTriggerTime = nexTriggerTime;
-                            jobPo = repeatJobPo;
+                            taskPo = repeatJobPo;
                         }
                     }
                 }
@@ -75,17 +75,17 @@ public class TaskRetryHandler {
             }
 
             // 加入到队列, 重试
-            jobPo.setTaskExecuteNode(null);
-            jobPo.setUpdateDate(SystemClock.now());
+            taskPo.setTaskExecuteNode(null);
+            taskPo.setUpdateDate(SystemClock.now());
             // 延迟重试时间就等于重试次数(分钟)
-            jobPo.setTriggerTime(nextRetryTriggerTime);
+            taskPo.setTriggerTime(nextRetryTriggerTime);
             try {
-                appContext.getExecutableJobQueue().add(jobPo);
+                appContext.getExecutableTaskQueue().add(taskPo);
             } catch (DupEntryException e) {
-                LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(jobPo));
+                LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(taskPo));
             }
             // 从正在执行的队列中移除
-            appContext.getExecutingJobQueue().remove(jobPo.getTaskId());
+            appContext.getExecutingTaskQueue().remove(taskPo.getId());
         }
     }
 }

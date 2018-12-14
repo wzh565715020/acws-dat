@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.biz.logger;
 
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.JobLoggerRequest;
 import com.tyyd.framework.dat.admin.response.PaginationRsp;
 
@@ -11,11 +11,11 @@ import java.util.List;
  *
  * @author Robert HG (254963746@qq.com) on 3/24/15.
  */
-public interface JobLogger {
+public interface TaskLogger {
 
-    public void log(JobLogPo jobLogPo);
+    public void log(TaskLogPo jobLogPo);
 
-    public void log(List<JobLogPo> jobLogPos);
+    public void log(List<TaskLogPo> jobLogPos);
 
-    public PaginationRsp<JobLogPo> search(JobLoggerRequest request);
+    public PaginationRsp<TaskLogPo> search(JobLoggerRequest request);
 }

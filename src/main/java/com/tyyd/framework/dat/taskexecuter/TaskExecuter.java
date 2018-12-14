@@ -1,8 +1,11 @@
 package com.tyyd.framework.dat.taskexecuter;
 
 import com.tyyd.framework.dat.core.cluster.AbstractServerNode;
+import com.tyyd.framework.dat.core.cluster.Node;
+import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.constant.Level;
+import com.tyyd.framework.dat.core.registry.NodeRegistryUtils;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
 import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
 import com.tyyd.framework.dat.taskexecuter.cmd.TaskTerminateCmd;
@@ -12,6 +15,7 @@ import com.tyyd.framework.dat.taskexecuter.monitor.StopWorkingMonitor;
 import com.tyyd.framework.dat.taskexecuter.monitor.TaskExecuterMStatReporter;
 import com.tyyd.framework.dat.taskexecuter.processor.RemotingDispatcher;
 import com.tyyd.framework.dat.taskexecuter.runner.TaskRunner;
+import com.tyyd.framework.dat.zookeeper.DataListener;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerFactory;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerPool;
 
@@ -19,9 +23,10 @@ import com.tyyd.framework.dat.taskexecuter.runner.RunnerPool;
  *         任务执行节点
  */
 public class TaskExecuter extends AbstractServerNode<TaskExecuterNode, TaskExecuterAppContext> {
-
+	private static String MASTER = "";
     public TaskExecuter() {
         appContext.setMStatReporter(new TaskExecuterMStatReporter(appContext));
+        MASTER =  NodeRegistryUtils.getNodeTypePath("MASTER", NodeType.TASK_DISPATCH) + "/MASTER";
     }
 
     @Override
@@ -50,6 +55,20 @@ public class TaskExecuter extends AbstractServerNode<TaskExecuterNode, TaskExecu
         appContext.getMStatReporter().stop();
         appContext.getStopWorkingMonitor().stop();
         appContext.getRunnerPool().shutDown();
+        registry.addDataListener(MASTER, new DataListener() {
+			
+			@Override
+			public void dataDeleted(String dataPath) throws Exception {
+				
+			}
+			
+			@Override
+			public void dataChange(String dataPath, Object data) throws Exception {
+				if (data instanceof Node) {
+					appContext.setMasterNode((Node)data);
+				} 
+			}
+		});
     }
 
     @Override

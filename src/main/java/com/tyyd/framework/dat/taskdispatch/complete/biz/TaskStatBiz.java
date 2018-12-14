@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.taskdispatch.complete.biz;
 
 import java.util.List;
 
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.constant.Level;
@@ -11,7 +11,7 @@ import com.tyyd.framework.dat.core.domain.Action;
 import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
-import com.tyyd.framework.dat.core.protocol.command.JobCompletedRequest;
+import com.tyyd.framework.dat.core.protocol.command.TaskCompletedRequest;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.remoting.protocol.RemotingProtos;
@@ -35,9 +35,9 @@ public class TaskStatBiz implements TaskCompletedBiz {
     }
 
     @Override
-    public RemotingCommand doBiz(JobCompletedRequest request) {
+    public RemotingCommand doBiz(TaskCompletedRequest request) {
 
-        List<TaskRunResult> results = request.getJobRunResults();
+        List<TaskRunResult> results = request.getTaskRunResults();
 
         if (CollectionUtils.isEmpty(results)) {
             return RemotingCommand.createResponseCommand(RemotingProtos
@@ -52,14 +52,14 @@ public class TaskStatBiz implements TaskCompletedBiz {
         for (TaskRunResult result : results) {
 
             // 记录日志
-            JobLogPo jobLogPo = TaskDomainConverter.convertJobLog(result.getTaskMeta());
+            TaskLogPo jobLogPo = TaskDomainConverter.convertJobLog(result.getTaskMeta());
             jobLogPo.setMsg(result.getMsg());
             jobLogPo.setLogType(logType);
             jobLogPo.setSuccess(Action.EXECUTE_SUCCESS.equals(result.getAction()));
             jobLogPo.setTaskTrackerIdentity(request.getIdentity());
             jobLogPo.setLevel(Level.INFO);
             jobLogPo.setLogTime(result.getTime());
-            appContext.getJobLogger().log(jobLogPo);
+            appContext.getTaskLogger().log(jobLogPo);
 
             // 监控数据统计
             if (result.getAction() != null) {

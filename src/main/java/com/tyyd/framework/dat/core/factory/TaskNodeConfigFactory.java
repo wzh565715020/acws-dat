@@ -11,7 +11,6 @@ public class TaskNodeConfigFactory {
         Config config = new Config();
         config.setIdentity(StringUtils.generateUUID());
         config.setWorkThreads(Constants.AVAILABLE_PROCESSOR);
-        config.setNodeGroup("lts");
         config.setRegistryAddress("zookeeper://127.0.0.1:2181");
         config.setInvokeTimeoutMillis(1000 * 60);
 //        config.setListenPort(Constants.JOB_TRACKER_DEFAULT_LISTEN_PORT);

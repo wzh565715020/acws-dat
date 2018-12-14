@@ -10,6 +10,6 @@ import com.tyyd.framework.dat.core.spi.SpiExtensionKey;
 @SPI(key = SpiExtensionKey.TASK_LOGGER, dftValue = "mysql")
 public interface JobLoggerFactory {
 
-    JobLogger getJobLogger(Config config);
+    TaskLogger getJobLogger(Config config);
 
 }

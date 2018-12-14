@@ -176,7 +176,6 @@ public class MStatReportWorker implements Runnable {
     private MNode buildMNode() {
         MNode mNode = new MNode();
         mNode.setNodeType(reporter.getNodeType());
-        mNode.setNodeGroup(appContext.getConfig().getNodeGroup());
         mNode.setIdentity(appContext.getConfig().getIdentity());
         return mNode;
     }

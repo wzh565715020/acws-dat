@@ -10,7 +10,7 @@ public class TaskMeta implements Serializable {
 
     private static final long serialVersionUID = 1476984243004969158L;
 
-    private String taskId;
+    private String id;
     private Map<String, String> internalExtParams;
 
     private Task task;
@@ -18,19 +18,19 @@ public class TaskMeta implements Serializable {
     public TaskMeta() {
     }
 
-    public String getTaskId() {
-        return taskId;
+    public String getId() {
+        return id;
     }
 
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public Task getJob() {
+    public Task getTask() {
         return task;
     }
 
-    public void setJob(Task job) {
+    public void setTask(Task job) {
         this.task = job;
     }
 

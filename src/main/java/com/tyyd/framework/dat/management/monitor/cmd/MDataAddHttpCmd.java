@@ -103,9 +103,6 @@ public class MDataAddHttpCmd implements HttpCmdProc {
         if (nodeType == null || !(nodeType == NodeType.TASK_CLIENT || nodeType == NodeType.TASK_EXECUTER || nodeType == NodeType.TASK_DISPATCH)) {
             return HttpCmdResponse.newResponse(false, "nodeType error");
         }
-        if (StringUtils.isEmpty(mNode.getNodeGroup())) {
-            return HttpCmdResponse.newResponse(false, "nodeGroup is empty");
-        }
         if (StringUtils.isEmpty(mNode.getIdentity())) {
             return HttpCmdResponse.newResponse(false, "identity is empty");
         }

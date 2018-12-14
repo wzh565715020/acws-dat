@@ -61,8 +61,8 @@ public class AddTaskHttpCmd implements HttpCmdProc {
             job.checkField();
 
             TaskSubmitRequest jobSubmitRequest = new TaskSubmitRequest();
-            jobSubmitRequest.setJobs(Collections.singletonList(job));
-            appContext.getJobReceiver().receive(jobSubmitRequest);
+            jobSubmitRequest.setTasks(Collections.singletonList(job));
+            appContext.getTaskReceiver().receive(jobSubmitRequest);
 
             LOGGER.info("add job succeed, {}", job);
 

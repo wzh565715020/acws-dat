@@ -21,16 +21,6 @@ public class MysqlTaskQueueFactory implements TaskQueueFactory {
         return new MysqlExecutingJobQueue(config);
     }
 
-    @Override
-    public TaskFeedbackQueue getTaskFeedbackQueue(Config config) {
-        return new MysqlJobFeedbackQueue(config);
-    }
-
-
-    @Override
-    public SuspendTaskQueue getSuspendTaskQueue(Config config) {
-        return new MysqlSuspendJobQueue(config);
-    }
 
     @Override
     public PreLoader getPreLoader(AppContext appContext) {

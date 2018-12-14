@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * 保证一个DataSource对应一个SqlTemplate
- * @author Robert HG (254963746@qq.com) on 3/8/16.
  */
 public class SqlTemplateFactory {
 

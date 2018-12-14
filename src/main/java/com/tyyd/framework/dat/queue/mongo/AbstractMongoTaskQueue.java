@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.admin.request.TaskQueueReq;
 import com.tyyd.framework.dat.admin.response.PaginationRsp;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.queue.QueueInterface;
+import com.tyyd.framework.dat.queue.TaskQueueInterface;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.JdbcException;
 import com.tyyd.framework.dat.store.mongo.MongoRepository;
@@ -15,7 +15,7 @@ import org.mongodb.morphia.query.UpdateResults;
 import java.util.Date;
 import java.util.HashMap;
 
-public abstract class AbstractMongoTaskQueue extends MongoRepository implements QueueInterface {
+public abstract class AbstractMongoTaskQueue extends MongoRepository implements TaskQueueInterface {
 
     public AbstractMongoTaskQueue(Config config) {
         super(config);

@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * TaskTracker Spring Bean 工厂类
+ * taskExecuter Spring Bean 工厂类
  * 如果用这个工厂类，那么JobRunner中引用SpringBean的话,只有通过xml的方式注入
  */
 public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExecuter>,
@@ -29,15 +29,11 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
      */
     private String clusterName;
     /**
-     * 节点组名称
-     */
-    private String nodeGroup;
-    /**
      * zookeeper地址
      */
     private String registryAddress;
     /**
-     * 提交失败任务存储路径 , 默认用户木邻居
+     * 提交失败任务存储路径 
      */
     private String dataPath;
     /**
@@ -75,7 +71,6 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
 
     public void checkProperties() {
         Assert.hasText(clusterName, "clusterName must have value.");
-        Assert.hasText(nodeGroup, "nodeGroup must have value.");
         Assert.hasText(registryAddress, "registryAddress must have value.");
         Assert.isTrue(workThreads > 0, "workThreads must > 0.");
     }
@@ -90,7 +85,6 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
         taskExecuter.setClusterName(clusterName);
         taskExecuter.setDataPath(dataPath);
         taskExecuter.setWorkThreads(workThreads);
-        taskExecuter.setNodeGroup(nodeGroup);
         taskExecuter.setRegistryAddress(registryAddress);
 
         if (bizLoggerLevel != null) {
@@ -105,7 +99,7 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
         taskExecuter.setRunnerFactory(new RunnerFactory() {
             @Override
             public TaskRunner newRunner() {
-                return createJobRunner();
+                return createTaskRunner();
             }
         });
 
@@ -127,7 +121,7 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
         }
     }
 
-    protected abstract TaskRunner createJobRunner();
+    protected abstract TaskRunner createTaskRunner();
 
     @Override
     public void destroy() throws Exception {
@@ -138,9 +132,6 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
         this.clusterName = clusterName;
     }
 
-    public void setNodeGroup(String nodeGroup) {
-        this.nodeGroup = nodeGroup;
-    }
 
     public void setRegistryAddress(String registryAddress) {
         this.registryAddress = registryAddress;

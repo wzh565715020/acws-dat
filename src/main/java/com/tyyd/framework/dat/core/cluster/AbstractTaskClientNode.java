@@ -13,7 +13,6 @@ import com.tyyd.framework.dat.core.factory.TaskNodeConfigFactory;
 import com.tyyd.framework.dat.core.factory.NodeFactory;
 import com.tyyd.framework.dat.core.json.JSONFactory;
 import com.tyyd.framework.dat.core.listener.MasterChangeListener;
-import com.tyyd.framework.dat.core.listener.MasterElectionListener;
 import com.tyyd.framework.dat.core.listener.NodeChangeListener;
 import com.tyyd.framework.dat.core.listener.SelfChangeListener;
 import com.tyyd.framework.dat.core.logger.Logger;
@@ -70,7 +69,7 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
                 afterRemotingStart();
 
                 initRegistry();
-
+                
                 registry.register(node);
 
                 AliveKeeping.start();
@@ -108,7 +107,7 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
                 if (registry != null) {
                     registry.unregister(node);
                 }
-
+                
                 beforeRemotingStop();
 
                 remotingStop();
@@ -140,8 +139,6 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
         appContext.setEventCenter(ServiceLoader.load(EventCenter.class, config));
 
         appContext.setCommandBodyWrapper(new CommandBodyWrapper(config));
-        appContext.setMasterElector(new MasterElector(appContext));
-        appContext.getMasterElector().addMasterChangeListener(masterChangeListeners);
         appContext.setRegistryStatMonitor(new RegistryStatMonitor(appContext));
 
         if (StringUtils.isEmpty(config.getIp())) {
@@ -156,8 +153,6 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
         SubscribedNodeManager subscribedNodeManager = new SubscribedNodeManager(appContext);
         appContext.setSubscribedNodeManager(subscribedNodeManager);
         nodeChangeListeners.add(subscribedNodeManager);
-        // 用于master选举的监听器
-        nodeChangeListeners.add(new MasterElectionListener(appContext));
         // 监听自己节点变化（如，当前节点被禁用了）
         nodeChangeListeners.add(new SelfChangeListener(appContext));
 
@@ -320,7 +315,12 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
             masterChangeListeners.add(masterChangeListener);
         }
     }
-
+    /**
+     * 添加 master 节点变化监听器
+     */
+    public List<MasterChangeListener> getMasterChangeListener() {
+           return masterChangeListeners;
+    }
     public void setDataPath(String path) {
         if (StringUtils.isNotEmpty(path)) {
             config.setDataPath(path);

@@ -19,8 +19,6 @@ public abstract class AppContext {
     private Config config;
     // 节点管理
     private SubscribedNodeManager subscribedNodeManager;
-    // master节点选举者
-    private MasterElector masterElector;
     // 节点通信CommandBody包装器
     private CommandBodyWrapper commandBodyWrapper;
     // 事件中心
@@ -33,6 +31,7 @@ public abstract class AppContext {
     private HttpCmdServer httpCmdServer;
     
     private Node node;
+    private Node masterNode;
     
     public MStatReporter getMStatReporter() {
         return mStatReporter;
@@ -74,13 +73,6 @@ public abstract class AppContext {
         this.subscribedNodeManager = subscribedNodeManager;
     }
 
-    public MasterElector getMasterElector() {
-        return masterElector;
-    }
-
-    public void setMasterElector(MasterElector masterElector) {
-        this.masterElector = masterElector;
-    }
 
     public RegistryStatMonitor getRegistryStatMonitor() {
         return registryStatMonitor;
@@ -104,4 +96,13 @@ public abstract class AppContext {
 	public void setNode(Node node) {
 		this.node = node;
 	}
+
+	public Node getMasterNode() {
+		return masterNode;
+	}
+
+	public void setMasterNode(Node masterNode) {
+		this.masterNode = masterNode;
+	}
+	
 }

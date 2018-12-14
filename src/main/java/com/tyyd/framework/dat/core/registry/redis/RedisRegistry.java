@@ -15,6 +15,8 @@ import com.tyyd.framework.dat.core.registry.NodeRegistryUtils;
 import com.tyyd.framework.dat.core.registry.NotifyEvent;
 import com.tyyd.framework.dat.core.registry.NotifyListener;
 import com.tyyd.framework.dat.core.support.SystemClock;
+import com.tyyd.framework.dat.zookeeper.DataListener;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -434,6 +436,11 @@ public class RedisRegistry extends FailbackRegistry {
 
 	@Override
 	public void updateRegister(String path, Node node) {
+		
+	}
+
+	@Override
+	public void addDataListener(String path, DataListener listener) {
 		
 	}
 

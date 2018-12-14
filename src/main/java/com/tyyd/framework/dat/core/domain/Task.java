@@ -18,6 +18,7 @@ public class Task implements Serializable {
 	private String taskClass;
 	private String taskType;
 	private String taskExecType;
+	private String poolId;
 	/**
 	 * 执行时间表达式 (和 quartz 表达式一样)
 	 */
@@ -175,7 +176,15 @@ public class Task implements Serializable {
 	}
 
 
-    public void checkField() throws JobSubmitException {
+    public String getPoolId() {
+		return poolId;
+	}
+
+	public void setPoolId(String poolId) {
+		this.poolId = poolId;
+	}
+
+	public void checkField() throws JobSubmitException {
         if (taskId == null) {
             throw new JobSubmitException("taskId can not be null! job is " + toString());
         }
@@ -187,13 +196,11 @@ public class Task implements Serializable {
         }
     }
 
-	public boolean isCron() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isRepeatable() {
+		return TaskType.LOOP.getCode().equals(taskType);
 	}
 
-	public boolean isRepeatable() {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean isCron() {
+		return TaskType.SINGLE.getCode().equals(taskType) && TaskExecType.SCHEDULETIME.getCode().equals(taskExecType);
 	}
 }

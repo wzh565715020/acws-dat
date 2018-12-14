@@ -8,7 +8,7 @@ import java.util.Map;
  * @author Robert HG (254963746@qq.com) on 8/20/14.
  *         任务执行 日志
  */
-public class JobLogPo {
+public class TaskLogPo {
 
     // 日志记录时间
     private Long logTime;

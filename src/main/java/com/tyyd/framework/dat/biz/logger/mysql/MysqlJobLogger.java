@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.biz.logger.mysql;
 
-import com.tyyd.framework.dat.biz.logger.JobLogger;
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.TaskLogger;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.JobLoggerRequest;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
@@ -20,14 +20,14 @@ import java.util.List;
 /**
  * @author Robert HG (254963746@qq.com) on 5/21/15.
  */
-public class MysqlJobLogger extends JdbcAbstractAccess implements JobLogger {
+public class MysqlJobLogger extends JdbcAbstractAccess implements TaskLogger {
 
     public MysqlJobLogger(Config config) {
         super(config);
     }
 
     @Override
-    public void log(JobLogPo jobLogPo) {
+    public void log(TaskLogPo jobLogPo) {
         if (jobLogPo == null) {
             return;
         }
@@ -37,14 +37,14 @@ public class MysqlJobLogger extends JdbcAbstractAccess implements JobLogger {
     }
 
     @Override
-    public void log(List<JobLogPo> jobLogPos) {
+    public void log(List<TaskLogPo> jobLogPos) {
         if (CollectionUtils.isEmpty(jobLogPos)) {
             return;
         }
 
         InsertSql insertSql = buildInsertSql();
 
-        for (JobLogPo jobLogPo : jobLogPos) {
+        for (TaskLogPo jobLogPo : jobLogPos) {
             setInsertSqlValues(insertSql, jobLogPo);
         }
         insertSql.doBatchInsert();
@@ -78,7 +78,7 @@ public class MysqlJobLogger extends JdbcAbstractAccess implements JobLogger {
                         );
     }
 
-    private InsertSql setInsertSqlValues(InsertSql insertSql, JobLogPo jobLogPo) {
+    private InsertSql setInsertSqlValues(InsertSql insertSql, TaskLogPo jobLogPo) {
         return insertSql.values(jobLogPo.getLogTime(),
                 jobLogPo.getGmtCreated(),
                 jobLogPo.getLogType().name(),
@@ -104,9 +104,9 @@ public class MysqlJobLogger extends JdbcAbstractAccess implements JobLogger {
     }
 
     @Override
-    public PaginationRsp<JobLogPo> search(JobLoggerRequest request) {
+    public PaginationRsp<TaskLogPo> search(JobLoggerRequest request) {
 
-        PaginationRsp<JobLogPo> response = new PaginationRsp<JobLogPo>();
+        PaginationRsp<TaskLogPo> response = new PaginationRsp<TaskLogPo>();
 
         Long results = new SelectSql(getSqlTemplate())
                 .select()
@@ -120,7 +120,7 @@ public class MysqlJobLogger extends JdbcAbstractAccess implements JobLogger {
             return response;
         }
         // 查询 rows
-        List<JobLogPo> rows = new SelectSql(getSqlTemplate())
+        List<TaskLogPo> rows = new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()

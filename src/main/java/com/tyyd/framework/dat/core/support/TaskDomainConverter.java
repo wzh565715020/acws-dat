@@ -1,11 +1,10 @@
 package com.tyyd.framework.dat.core.support;
 
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.domain.TaskMeta;
 import com.tyyd.framework.dat.core.domain.TaskRunResult;
-import com.tyyd.framework.dat.queue.domain.JobFeedbackPo;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 
 public class TaskDomainConverter {
@@ -14,53 +13,66 @@ public class TaskDomainConverter {
     }
 
     public static TaskPo convert(Task job) {
-        TaskPo jobPo = new TaskPo();
-        jobPo.setTaskId(job.getTaskId());
-        jobPo.setCreateDate(SystemClock.now());
-        jobPo.setUpdateDate(jobPo.getCreateDate());
-        jobPo.setSubmitNode(job.getSubmitNode());
-        jobPo.setCron(job.getCron());
-        jobPo.setRepeatCount(job.getRepeatCount());
-        if (!jobPo.isCron()) {
+        TaskPo taskPo = new TaskPo();
+        taskPo.setTaskId(job.getTaskId());
+        taskPo.setTaskClass(job.getTaskClass());
+        taskPo.setTaskExecType(job.getTaskExecType());
+        taskPo.setTaskName(job.getTaskName());
+        taskPo.setTaskType(job.getTaskType());
+        taskPo.setCreateDate(SystemClock.now());
+        taskPo.setUpdateDate(taskPo.getCreateDate());
+        taskPo.setSubmitNode(job.getSubmitNode());
+        taskPo.setCron(job.getCron());
+        taskPo.setRepeatCount(job.getRepeatCount());
+        taskPo.setCreateDate(SystemClock.now());
+        taskPo.setUpdateDate(SystemClock.now());
+        taskPo.setCreateUserid("");
+        taskPo.setUpdateUserid("");
+        if (!taskPo.isCron()) {
             if (job.getTriggerTime() == null) {
-                jobPo.setTriggerTime(SystemClock.now());
+                taskPo.setTriggerTime(SystemClock.now());
             } else {
-                jobPo.setTriggerTime(job.getTriggerTime());
+                taskPo.setTriggerTime(job.getTriggerTime());
             }
         }
         if (job.getRepeatCount() != 0) {
-            jobPo.setCron(null);
-            jobPo.setRepeatInterval(job.getRepeatInterval());
+            taskPo.setCron(null);
+            taskPo.setRepeatInterval(job.getRepeatInterval());
         }
-        return jobPo;
+        return taskPo;
     }
 
     /**
      * JobPo 转 Job
      */
-    public static TaskMeta convert(TaskPo jobPo) {
-        Task job = new Task();
-        job.setSubmitNode(jobPo.getSubmitNode());
-        job.setTaskId(jobPo.getTaskId());
-        job.setCron(jobPo.getCron());
-        job.setTriggerTime(jobPo.getTriggerTime());
-        job.setRepeatCount(jobPo.getRepeatCount());
-        job.setRepeatedCount(jobPo.getRepeatedCount());
-        job.setRepeatInterval(jobPo.getRepeatInterval());
-        TaskMeta jobMeta = new TaskMeta();
-        jobMeta.setTaskId(jobPo.getTaskId());
-        jobMeta.setJob(job);
-        return jobMeta;
+    public static TaskMeta convert(TaskPo taskPo) {
+        Task task = new Task();
+        task.setSubmitNode(taskPo.getSubmitNode());
+        task.setTaskId(taskPo.getTaskId());
+        task.setTaskClass(taskPo.getTaskClass());
+        task.setTaskExecType(taskPo.getTaskExecType());
+        task.setTaskName(taskPo.getTaskName());
+        task.setTaskType(taskPo.getTaskType());
+        task.setPoolId(taskPo.getPoolId());
+        task.setCron(taskPo.getCron());
+        task.setTriggerTime(taskPo.getTriggerTime());
+        task.setRepeatCount(taskPo.getRepeatCount());
+        task.setRepeatedCount(taskPo.getRepeatedCount());
+        task.setRepeatInterval(taskPo.getRepeatInterval());
+        TaskMeta taskMeta = new TaskMeta();
+        taskMeta.setId(taskPo.getId());
+        taskMeta.setTask(task);
+        return taskMeta;
     }
 
-    public static JobLogPo convertJobLog(TaskMeta jobMeta) {
-        JobLogPo jobLogPo = new JobLogPo();
+    public static TaskLogPo convertJobLog(TaskMeta jobMeta) {
+        TaskLogPo jobLogPo = new TaskLogPo();
         jobLogPo.setGmtCreated(SystemClock.now());
-        Task job = jobMeta.getJob();
+        Task job = jobMeta.getTask();
         jobLogPo.setInternalExtParams(jobMeta.getInternalExtParams());
         jobLogPo.setSubmitNodeGroup(job.getSubmitNode());
         jobLogPo.setTaskId(job.getTaskId());
-        jobLogPo.setJobId(jobMeta.getTaskId());
+        jobLogPo.setJobId(jobMeta.getId());
         jobLogPo.setCronExpression(job.getCron());
         jobLogPo.setTriggerTime(job.getTriggerTime());
 
@@ -70,8 +82,8 @@ public class TaskDomainConverter {
         return jobLogPo;
     }
 
-    public static JobLogPo convertJobLog(TaskPo jobPo) {
-        JobLogPo jobLogPo = new JobLogPo();
+    public static TaskLogPo convertJobLog(TaskPo jobPo) {
+        TaskLogPo jobLogPo = new TaskLogPo();
         jobLogPo.setGmtCreated(SystemClock.now());
         jobLogPo.setSubmitNodeGroup(jobPo.getSubmitNode());
         jobLogPo.setTaskId(jobPo.getTaskId());
@@ -83,14 +95,6 @@ public class TaskDomainConverter {
         jobLogPo.setRepeatedCount(jobPo.getRepeatedCount());
         jobLogPo.setRepeatInterval(jobPo.getRepeatInterval());
         return jobLogPo;
-    }
-
-    public static JobFeedbackPo convert(TaskRunResult result) {
-        JobFeedbackPo jobFeedbackPo = new JobFeedbackPo();
-        jobFeedbackPo.setJobRunResult(result);
-        jobFeedbackPo.setId(StringUtils.generateUUID());
-        jobFeedbackPo.setGmtCreated(SystemClock.now());
-        return jobFeedbackPo;
     }
 
 }

@@ -27,7 +27,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
     }
 
     @Override
-    protected boolean lockTask(String id,
+    public boolean lockTask(String id,
                               String taskTrackerIdentity,
                               Long triggerTime,
                               Long gmtModified) {
@@ -61,7 +61,6 @@ public class MysqlPreLoader extends AbstractPreLoader {
                     .and("trigger_time< ?", SystemClock.now())
                     .orderBy()
                     .column("trigger_time", OrderByType.ASC)
-                    .column("priority", OrderByType.ASC)
                     .limit(0, loadSize)
                     .list(RshHolder.TASK_PO_LIST_RSH);
         } catch (Exception e) {

@@ -95,8 +95,6 @@ public class BackendAppContextFactoryBean implements FactoryBean<BackendAppConte
         appContext.setExecutableJobQueue(factory.getExecutableJobQueue(config));
         appContext.setExecutingJobQueue(factory.getExecutingJobQueue(config));
         appContext.setTaskQueue(factory.getTaskQueue(config));
-        appContext.setSuspendJobQueue(factory.getSuspendTaskQueue(config));
-        appContext.setJobFeedbackQueue(factory.getTaskFeedbackQueue(config));
         appContext.setJobLogger(new SmartJobLogger(appContext));
     }
 

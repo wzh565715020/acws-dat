@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.queue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 
-public interface TaskQueue extends QueueInterface{
+public interface TaskQueue extends TaskQueueInterface{
     /**
      * 添加任务
      *

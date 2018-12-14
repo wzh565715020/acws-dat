@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.biz.logger;
 
 import com.tyyd.framework.dat.admin.response.PaginationRsp;
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.JobLoggerRequest;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.cluster.Config;
@@ -15,14 +15,14 @@ import java.util.List;
  *
  * @author Robert HG (254963746@qq.com) on 10/2/15.
  */
-public class SmartJobLogger implements JobLogger {
+public class SmartJobLogger implements TaskLogger {
 
-    private JobLogger delegate;
+    private TaskLogger delegate;
 
     public SmartJobLogger(AppContext appContext) {
         Config config = appContext.getConfig();
         JobLoggerFactory jobLoggerFactory = ServiceLoader.load(JobLoggerFactory.class, config);
-        JobLogger jobLogger = jobLoggerFactory.getJobLogger(config);
+        TaskLogger jobLogger = jobLoggerFactory.getJobLogger(config);
         if (config.getParameter(Constants.LAZY_TASK_LOGGER, false)) {
             this.delegate = new LazyJobLogger(appContext, jobLogger);
         } else {
@@ -31,17 +31,17 @@ public class SmartJobLogger implements JobLogger {
     }
 
     @Override
-    public void log(JobLogPo jobLogPo) {
+    public void log(TaskLogPo jobLogPo) {
         this.delegate.log(jobLogPo);
     }
 
     @Override
-    public void log(List<JobLogPo> jobLogPos) {
+    public void log(List<TaskLogPo> jobLogPos) {
         this.delegate.log(jobLogPos);
     }
 
     @Override
-    public PaginationRsp<JobLogPo> search(JobLoggerRequest request) {
+    public PaginationRsp<TaskLogPo> search(JobLoggerRequest request) {
         return this.delegate.search(request);
     }
 }

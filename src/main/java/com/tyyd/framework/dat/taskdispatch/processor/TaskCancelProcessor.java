@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.taskdispatch.processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tyyd.framework.dat.biz.logger.domain.JobLogPo;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.protocol.JobProtos;
@@ -33,21 +33,21 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
         String taskTrackerNodeGroup = jobCancelRequest.getTaskTrackerNodeGroup();
         TaskPo job = appContext.getTaskQueue().getTask(taskId);
         if (job == null) {
-            job = appContext.getExecutableJobQueue().getTask(taskId);
+            job = appContext.getExecutableTaskQueue().getTask(taskId);
         }
 
         if (job != null) {
-            appContext.getExecutableJobQueue().remove(job.getTaskId());
+            appContext.getExecutableTaskQueue().remove(job.getTaskId());
             if (job.isCron()) {
                 appContext.getTaskQueue().remove(job.getTaskId());
             }
             // 记录日志
-            JobLogPo jobLogPo = TaskDomainConverter.convertJobLog(job);
+            TaskLogPo jobLogPo = TaskDomainConverter.convertJobLog(job);
             jobLogPo.setSuccess(true);
             jobLogPo.setLogType(LogType.DEL);
             jobLogPo.setLogTime(SystemClock.now());
             jobLogPo.setLevel(Level.INFO);
-            appContext.getJobLogger().log(jobLogPo);
+            appContext.getTaskLogger().log(jobLogPo);
 
             LOGGER.info("Cancel Job success , jobId={}, taskId={}, taskTrackerNodeGroup={}", job.getTaskId(), taskId, taskTrackerNodeGroup);
             return RemotingCommand.createResponseCommand(JobProtos
