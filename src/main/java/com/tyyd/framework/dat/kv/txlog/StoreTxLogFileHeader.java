@@ -11,7 +11,7 @@ import java.nio.channels.FileChannel;
  * 3. firstRecordId 8 byte
  * <p/>
  *
- * @author Robert HG (254963746@qq.com) on 12/17/15.
+ * @author   on 12/17/15.
  */
 public class StoreTxLogFileHeader extends AbstractFileHeader {
 

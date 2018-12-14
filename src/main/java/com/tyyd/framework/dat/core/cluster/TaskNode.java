@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.core.cluster;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/14/14.
+ * @author   on 8/14/14.
  * 节点接口
  */
 public interface TaskNode {

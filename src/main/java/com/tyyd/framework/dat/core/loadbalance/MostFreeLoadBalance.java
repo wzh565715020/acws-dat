@@ -9,7 +9,6 @@ import java.util.List;
 
 /**
  * 连接剩余线程数最多的机器 或者接最老的一台TaskTrackerNode,从而达到主从模式的效果
- *
  */
 public class MostFreeLoadBalance extends AbstractLoadBalance {
 

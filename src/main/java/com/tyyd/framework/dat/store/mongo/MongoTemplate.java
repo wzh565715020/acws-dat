@@ -15,7 +15,7 @@ import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/28/15.
+ * @author   on 5/28/15.
  */
 public class MongoTemplate {
 

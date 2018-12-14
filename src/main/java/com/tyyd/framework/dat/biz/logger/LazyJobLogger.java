@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 1. 内存的日志量超过了设置的阀值
  * 2. 每3S检查一次内存中是否有日志,如果有就那么刷盘
  *
- * @author Robert HG (254963746@qq.com) on 10/2/15.
+ * @author   on 10/2/15.
  */
 public class LazyJobLogger implements TaskLogger {
 

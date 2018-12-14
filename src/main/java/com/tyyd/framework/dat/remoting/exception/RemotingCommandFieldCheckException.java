@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.remoting.exception;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/16/14.
+ * @author   on 8/16/14.
  */
 public class RemotingCommandFieldCheckException extends Exception{
 

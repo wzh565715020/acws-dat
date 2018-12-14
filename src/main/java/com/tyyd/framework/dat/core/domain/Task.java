@@ -2,7 +2,7 @@ package com.tyyd.framework.dat.core.domain;
 
 
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.exception.JobSubmitException;
+import com.tyyd.framework.dat.core.exception.TaskSubmitException;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.support.CronExpression;
 import com.tyyd.framework.dat.remoting.annotation.NotNull;
@@ -184,15 +184,15 @@ public class Task implements Serializable {
 		this.poolId = poolId;
 	}
 
-	public void checkField() throws JobSubmitException {
+	public void checkField() throws TaskSubmitException {
         if (taskId == null) {
-            throw new JobSubmitException("taskId can not be null! job is " + toString());
+            throw new TaskSubmitException("taskId can not be null! job is " + toString());
         }
         if (StringUtils.isNotEmpty(cron) && !CronExpression.isValidExpression(cron)) {
-            throw new JobSubmitException("cronExpression invalid! job is " + toString());
+            throw new TaskSubmitException("cronExpression invalid! job is " + toString());
         }
         if (repeatCount < -1) {
-            throw new JobSubmitException("repeatCount invalid, must be great than -1! job is " + toString());
+            throw new TaskSubmitException("repeatCount invalid, must be great than -1! job is " + toString());
         }
     }
 

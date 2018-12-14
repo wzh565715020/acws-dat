@@ -7,7 +7,7 @@ import com.tyyd.framework.dat.remoting.serialize.RemotingSerializable;
 import java.nio.ByteBuffer;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/5/15.
+ * @author   on 11/5/15.
  *
  * 协议格式
  *    | <length> | <serializable id> | <header length> | <header data> | <body length> | <body data> | <body class> |

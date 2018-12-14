@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.json.bean;
 import java.lang.reflect.Method;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/31/15.
+ * @author   on 12/31/15.
  */
 public class MethodInfo {
 

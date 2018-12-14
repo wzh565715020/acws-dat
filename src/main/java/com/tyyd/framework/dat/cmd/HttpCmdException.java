@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.cmd;
 
 /**
- * @author Robert HG (254963746@qq.com) on 10/28/15.
+ * @author   on 10/28/15.
  */
 public class HttpCmdException extends RuntimeException{
 

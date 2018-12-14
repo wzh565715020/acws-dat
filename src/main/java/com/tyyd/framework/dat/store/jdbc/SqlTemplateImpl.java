@@ -9,7 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/20/15.
+ * @author   on 5/20/15.
  */
 class SqlTemplateImpl implements SqlTemplate {
 

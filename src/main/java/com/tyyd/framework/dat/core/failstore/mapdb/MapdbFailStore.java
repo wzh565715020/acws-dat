@@ -15,10 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
 
-/**
- * see http://www.mapdb.org/
- *
- */
 public class MapdbFailStore extends AbstractFailStore {
 
     public static final String name = "mapdb";

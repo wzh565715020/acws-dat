@@ -11,9 +11,6 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Robert HG (254963746@qq.com) on 7/5/15.
- */
 public abstract class AbstractFailStore implements FailStore {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FailStore.class);

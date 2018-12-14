@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/9/15.
+ * @author   on 11/9/15.
  */
 public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 

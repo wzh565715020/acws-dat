@@ -10,9 +10,6 @@ import java.util.*;
 
 import static com.tyyd.framework.dat.core.json.TypeUtils.*;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/20/15.
- */
 public class JacksonJSONArray implements JSONArray {
 
     private List<Object> list;

@@ -7,9 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/19/15.
- */
 public interface JSONArray {
 
     public int size();

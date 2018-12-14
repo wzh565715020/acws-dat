@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.logger.Logger;
 import java.util.TimerTask;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/16/15.
+ * @author   on 12/16/15.
  */
 public class FutureTimerTask extends TimerTask {
 

@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
- * @author Robert HG (254963746@qq.com) on 7/23/14.
+ * @author   on 7/23/14.
  */
 public class NetUtils {
 

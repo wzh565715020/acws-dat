@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.store.jdbc.dbutils.ResultSetHandler;
 import java.sql.SQLException;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/8/16.
+ * @author   on 3/8/16.
  */
 public interface SqlTemplate {
 

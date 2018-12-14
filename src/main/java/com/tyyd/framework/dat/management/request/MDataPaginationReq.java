@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.admin.request.PaginationReq;
 import com.tyyd.framework.dat.core.cluster.NodeType;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/22/15.
+ * @author   on 8/22/15.
  */
 public class MDataPaginationReq extends PaginationReq {
 

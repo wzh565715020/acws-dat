@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.core.commons.utils;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/18/15.
+ * @author   on 5/18/15.
  */
 public class Holder<T> {
 

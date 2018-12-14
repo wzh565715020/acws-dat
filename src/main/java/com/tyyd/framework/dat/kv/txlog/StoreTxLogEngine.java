@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/13/15.
+ * @author   on 12/13/15.
  */
 public class StoreTxLogEngine<K, V> {
 

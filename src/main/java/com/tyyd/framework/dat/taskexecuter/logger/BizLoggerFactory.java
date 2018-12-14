@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.taskexecuter.logger;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.tyyd.framework.dat.core.cluster.LTSConfig;
+import com.tyyd.framework.dat.core.cluster.DATConfig;
 import com.tyyd.framework.dat.core.constant.Environment;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
@@ -19,7 +19,7 @@ public class BizLoggerFactory {
     public static BizLogger getLogger(Level level, RemotingServerDelegate remotingServer, TaskExecuterAppContext appContext) {
 
         // 单元测试的时候返回 Mock
-        if (Environment.UNIT_TEST == LTSConfig.getEnvironment()) {
+        if (Environment.UNIT_TEST == DATConfig.getEnvironment()) {
             return new MockBizLogger(level);
         }
 

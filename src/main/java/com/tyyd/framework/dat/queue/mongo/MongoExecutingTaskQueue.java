@@ -15,14 +15,14 @@ import org.mongodb.morphia.query.Query;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/28/15.
+ * @author   on 5/28/15.
  */
 public class MongoExecutingTaskQueue extends AbstractMongoTaskQueue implements ExecutingTaskQueue {
 
     public MongoExecutingTaskQueue(Config config) {
         super(config);
         // table name (Collection name) for single table
-        setTableName(TaskQueueUtils.EXECUTING_JOB_QUEUE);
+        setTableName(TaskQueueUtils.EXECUTING_TASK_QUEUE);
 
         // create table
         DBCollection dbCollection = template.getCollection();
@@ -38,7 +38,7 @@ public class MongoExecutingTaskQueue extends AbstractMongoTaskQueue implements E
 
     @Override
     protected String getTargetTable() {
-        return TaskQueueUtils.EXECUTING_JOB_QUEUE;
+        return TaskQueueUtils.EXECUTING_TASK_QUEUE;
     }
 
     @Override

@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-/**
- * @author Robert HG (254963746@qq.com) on 3/11/16.
- */
 public class MStatReportWorker implements Runnable {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(MStatReportWorker.class);

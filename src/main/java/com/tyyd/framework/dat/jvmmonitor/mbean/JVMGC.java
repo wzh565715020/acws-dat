@@ -4,7 +4,7 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 
 /**
- * @author Robert HG (254963746@qq.com) on 9/15/15.
+ * @author   on 9/15/15.
  */
 public class JVMGC implements JVMGCMBean {
 

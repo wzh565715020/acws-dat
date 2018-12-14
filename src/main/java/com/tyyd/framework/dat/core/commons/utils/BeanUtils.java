@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.core.commons.utils;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
-import com.tyyd.framework.dat.core.exception.LtsRuntimeException;
+import com.tyyd.framework.dat.core.exception.DatRuntimeException;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -82,7 +82,7 @@ public class BeanUtils {
             ObjectInputStream ois = new ObjectInputStream(bais);
             return ois.readObject();
         } catch (Exception e) {
-            throw new LtsRuntimeException(e.getMessage(), e);
+            throw new DatRuntimeException(e.getMessage(), e);
         }
     }
 

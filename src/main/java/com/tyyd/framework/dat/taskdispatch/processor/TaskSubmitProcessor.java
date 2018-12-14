@@ -1,11 +1,11 @@
 package com.tyyd.framework.dat.taskdispatch.processor;
 
-import com.tyyd.framework.dat.core.exception.JobReceiveException;
+import com.tyyd.framework.dat.core.exception.TaskReceiveException;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
-import com.tyyd.framework.dat.core.protocol.JobProtos;
+import com.tyyd.framework.dat.core.protocol.TaskProtos;
 import com.tyyd.framework.dat.core.protocol.command.TaskSubmitRequest;
-import com.tyyd.framework.dat.core.protocol.command.JobSubmitResponse;
+import com.tyyd.framework.dat.core.protocol.command.TaskSubmitResponse;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
@@ -27,21 +27,21 @@ public class TaskSubmitProcessor extends AbstractRemotingProcessor {
 
         TaskSubmitRequest jobSubmitRequest = request.getBody();
 
-        JobSubmitResponse jobSubmitResponse = appContext.getCommandBodyWrapper().wrapper(new JobSubmitResponse());
+        TaskSubmitResponse jobSubmitResponse = appContext.getCommandBodyWrapper().wrapper(new TaskSubmitResponse());
         RemotingCommand response;
         try {
             appContext.getTaskReceiver().receive(jobSubmitRequest);
 
             response = RemotingCommand.createResponseCommand(
-                    JobProtos.ResponseCode.TASK_RECEIVE_SUCCESS.code(), "job submit success!", jobSubmitResponse);
+                    TaskProtos.ResponseCode.TASK_RECEIVE_SUCCESS.code(), "job submit success!", jobSubmitResponse);
 
-        } catch (JobReceiveException e) {
+        } catch (TaskReceiveException e) {
             LOGGER.error("Receive job failed , jobs = " + jobSubmitRequest.getTasks(), e);
             jobSubmitResponse.setSuccess(false);
             jobSubmitResponse.setMsg(e.getMessage());
             jobSubmitResponse.setFailedJobs(e.getJobs());
             response = RemotingCommand.createResponseCommand(
-                    JobProtos.ResponseCode.TASK_RECEIVE_FAILED.code(), e.getMessage(), jobSubmitResponse);
+                    TaskProtos.ResponseCode.TASK_RECEIVE_FAILED.code(), e.getMessage(), jobSubmitResponse);
         }
 
         return response;

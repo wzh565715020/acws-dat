@@ -8,9 +8,6 @@ import java.lang.reflect.Constructor;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @author Robert HG (254963746@qq.com)on 12/23/15.
- */
 public final class ClassLoaderUtil {
 
     private static final ConstructorCache CONSTRUCTOR_CACHE = new ConstructorCache();

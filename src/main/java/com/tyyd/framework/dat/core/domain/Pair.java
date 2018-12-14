@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.core.domain;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/6/15.
+ * @author   on 3/6/15.
  */
 public class Pair<Key, Value> {
     private Key key;

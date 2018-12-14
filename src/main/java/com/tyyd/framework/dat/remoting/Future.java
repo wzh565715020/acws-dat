@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.remoting;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/3/15.
+ * @author   on 11/3/15.
  */
 public interface Future {
 

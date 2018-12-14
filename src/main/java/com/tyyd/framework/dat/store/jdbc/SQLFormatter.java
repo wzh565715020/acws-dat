@@ -6,7 +6,7 @@ import java.util.*;
  * 格式化SQL
  * 来自hibernate更改
  *
- * @author Robert HG (254963746@qq.com) on 3/9/16.
+ * @author   on 3/9/16.
  */
 public class SQLFormatter {
 

@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.remoting.protocol;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/6/15.
+ * @author   on 11/6/15.
  */
 public class RemotingCommandHelper {
 

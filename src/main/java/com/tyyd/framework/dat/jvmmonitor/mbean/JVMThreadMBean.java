@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.jvmmonitor.mbean;
 import java.math.BigDecimal;
 
 /**
- * @author Robert HG (254963746@qq.com) on 9/15/15.
+ * @author   on 9/15/15.
  */
 public interface JVMThreadMBean {
 

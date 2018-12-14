@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/13/15.
+ * @author   on 12/13/15.
  */
 public interface DB<K, V> {
 

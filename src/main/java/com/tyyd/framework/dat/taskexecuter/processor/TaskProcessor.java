@@ -11,7 +11,7 @@ import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.exception.RequestTimeoutException;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
-import com.tyyd.framework.dat.core.protocol.JobProtos;
+import com.tyyd.framework.dat.core.protocol.TaskProtos;
 import com.tyyd.framework.dat.core.protocol.command.TaskCompletedRequest;
 import com.tyyd.framework.dat.core.protocol.command.TaskPushRequest;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
@@ -76,12 +76,12 @@ public class TaskProcessor extends AbstractProcessor {
             appContext.getRunnerPool().execute(channel,taskMeta, taskRunnerCallback);
         } catch (NoAvailableTaskRunnerException e) {
             // 任务推送失败
-            return RemotingCommand.createResponseCommand(JobProtos.ResponseCode.NO_AVAILABLE_JOB_RUNNER.code(),
+            return RemotingCommand.createResponseCommand(TaskProtos.ResponseCode.NO_AVAILABLE_JOB_RUNNER.code(),
                     "job push failure , no available task runner!");
         }
 
         // 任务推送成功
-        return RemotingCommand.createResponseCommand(JobProtos
+        return RemotingCommand.createResponseCommand(TaskProtos
                 .ResponseCode.TASK_PUSH_SUCCESS.code(), "task push success!");
     }
 
@@ -100,7 +100,7 @@ public class TaskProcessor extends AbstractProcessor {
             TaskCompletedRequest requestBody = appContext.getCommandBodyWrapper().wrapper(new TaskCompletedRequest());
             requestBody.addJobResult(taskRunResult);
 
-            int requestCode = JobProtos.RequestCode.TASK_COMPLETED.code();
+            int requestCode = TaskProtos.RequestCode.TASK_COMPLETED.code();
 
             RemotingCommand request = RemotingCommand.createRequestCommand(requestCode, requestBody);
 
@@ -156,7 +156,7 @@ public class TaskProcessor extends AbstractProcessor {
         requestBody.setTaskRunResults(results);
         requestBody.setReSend(true);
 
-        int requestCode = JobProtos.RequestCode.TASK_COMPLETED.code();
+        int requestCode = TaskProtos.RequestCode.TASK_COMPLETED.code();
         RemotingCommand request = RemotingCommand.createRequestCommand(requestCode, requestBody);
 
         try {

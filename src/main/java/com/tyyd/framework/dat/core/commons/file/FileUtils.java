@@ -7,7 +7,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/6/15.
+ * @author   on 3/6/15.
  */
 public class FileUtils {
 

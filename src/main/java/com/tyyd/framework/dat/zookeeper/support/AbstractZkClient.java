@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
- * @author Robert HG (254963746@qq.com) on 7/8/14.
+ * @author   on 7/8/14.
  */
 public abstract class AbstractZkClient<TargetChildListener, TargetDataListener> implements ZkClient {
 

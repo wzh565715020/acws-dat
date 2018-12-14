@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * druid相关的配置使用 druid. 开头即可
- * @author Robert HG (254963746@qq.com) on 10/24/14.
+ * @author   on 10/24/14.
  */
 public class MysqlDataSourceProvider implements DataSourceProvider {
 

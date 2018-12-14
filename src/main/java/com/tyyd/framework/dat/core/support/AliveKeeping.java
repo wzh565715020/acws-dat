@@ -9,8 +9,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 非守护线程, 保持节点存活
- *
- * @author Robert HG (254963746@qq.com) on 3/11/16.
  */
 public class AliveKeeping {
 

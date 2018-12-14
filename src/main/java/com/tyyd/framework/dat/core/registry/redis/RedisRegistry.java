@@ -25,9 +25,6 @@ import redis.clients.jedis.JedisPubSub;
 import java.util.*;
 import java.util.concurrent.*;
 
-/**
- * @author Robert HG (254963746@qq.com) on 5/17/15.
- */
 public class RedisRegistry extends FailbackRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisRegistry.class);

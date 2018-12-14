@@ -14,9 +14,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Robert HG (254963746@qq.com) on 5/27/15.
- */
 public class RocksdbFailStore extends AbstractFailStore {
 
     private RocksDB db = null;

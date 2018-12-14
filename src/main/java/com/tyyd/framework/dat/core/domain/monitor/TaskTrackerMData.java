@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.core.domain.monitor;
 /**
  * TaskTracker Monitor Info(MI)
  *
- * @author Robert HG (254963746@qq.com) on 8/21/15.
+ * @author   on 8/21/15.
  */
 public class TaskTrackerMData extends MData {
 

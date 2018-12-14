@@ -8,9 +8,9 @@ public interface SpiExtensionKey {
 
     String EVENT_CENTER = "event.center";
 
-    String REMOTING = "dta.remoting";
+    String REMOTING = "dat.remoting";
 
-    String REMOTING_SERIALIZABLE_DFT = "dta.remoting.serializable.default";
+    String REMOTING_SERIALIZABLE_DFT = "dat.remoting.serializable.default";
 
     String ZK_CLIENT_KEY = "zk.client";
 
@@ -20,9 +20,9 @@ public interface SpiExtensionKey {
 
     String DAT_LOGGER = "dat.logger";
 
-    String JOB_QUEUE = "job.queue";
+    String TASK_QUEUE = "task.queue";
 
     String DAT_JSON = "dat.json";
 
-    String ACCESS_DB = "dta.admin.access.db";
+    String ACCESS_DB = "dat.admin.access.db";
 }

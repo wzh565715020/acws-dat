@@ -7,7 +7,7 @@ import java.io.InputStream;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.file.FileUtils;
 import com.tyyd.framework.dat.core.constant.Constants;
-import com.tyyd.framework.dat.core.exception.LtsRuntimeException;
+import com.tyyd.framework.dat.core.exception.DatRuntimeException;
 import com.tyyd.framework.dat.store.jdbc.SqlTemplate;
 import com.tyyd.framework.dat.store.jdbc.SqlTemplateFactory;
 import com.tyyd.framework.dat.store.jdbc.datasource.DataSourceProvider;
@@ -40,7 +40,7 @@ public abstract class MemoryAccess {
         try {
             return FileUtils.read(is, Constants.CHARSET);
         } catch (IOException e) {
-            throw new LtsRuntimeException("Read sql file : [" + path + "] error ", e);
+            throw new DatRuntimeException("Read sql file : [" + path + "] error ", e);
         }
     }
 

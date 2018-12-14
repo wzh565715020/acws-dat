@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.biz.logger.JobLoggerFactory;
 import com.tyyd.framework.dat.core.cluster.Config;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/27/15.
+ * @author   on 12/27/15.
  */
 public class MongoJobLoggerFactory implements JobLoggerFactory {
     @Override

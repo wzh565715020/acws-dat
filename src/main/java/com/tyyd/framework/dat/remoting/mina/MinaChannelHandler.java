@@ -6,7 +6,7 @@ import com.tyyd.framework.dat.remoting.Future;
 import org.apache.mina.core.future.*;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/4/15.
+ * @author   on 11/4/15.
  */
 public class MinaChannelHandler implements ChannelHandler {
 

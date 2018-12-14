@@ -11,7 +11,7 @@ import java.lang.reflect.Type;
 
 /**
  * JSON 序列化
- * Robert HG (254963746@qq.com) 12/5/15.
+ *   12/5/15.
  */
 public class JsonStoreSerializer implements StoreSerializer {
 

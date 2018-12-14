@@ -7,9 +7,6 @@ import com.tyyd.framework.dat.core.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.*;
 
-/**
- * @author Robert HG (254963746@qq.com) on 12/28/15.
- */
 public class LtsJSONAdapter implements JSONAdapter {
 
     @Override

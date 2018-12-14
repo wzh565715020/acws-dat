@@ -9,7 +9,7 @@ import org.apache.mina.core.session.IoSession;
 import java.net.SocketAddress;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/4/15.
+ * @author   on 11/4/15.
  */
 public class MinaChannel implements Channel {
 

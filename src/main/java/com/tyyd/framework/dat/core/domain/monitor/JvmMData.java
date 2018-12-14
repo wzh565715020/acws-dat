@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.core.domain.monitor;
 import java.util.Map;
 
 /**
- * @author Robert HG (254963746@qq.com) on 9/27/15.
+ * @author   on 9/27/15.
  */
 public class JvmMData {
 

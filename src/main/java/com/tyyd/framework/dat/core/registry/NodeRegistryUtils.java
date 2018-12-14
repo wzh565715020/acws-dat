@@ -6,10 +6,10 @@ import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 
 /**
  *         <p/>
- *         /LTS/{集群名字}/NODES/TASK_EXECUTER/TASK_EXECUTER:\\192.168.0.150:8888?group=TASK_TRACKER&threads=8&identity=85750db6-e854-4eb3-a595-9227a5f2c8f6&createTime=1408189898185&isAvailable=true&listenNodeTypes=CLIENT,TASK_TRACKER
- *         /LTS/{集群名字}/NODES/TASK_CLIENT/TASK_CLIENT:\\192.168.0.150:8888?group=JOB_CLIENT&threads=8&identity=85750db6-e854-4eb3-a595-9227a5f2c8f6&createTime=1408189898185&isAvailable=true&listenNodeTypes=CLIENT,TASK_TRACKER
- *         /LTS/{集群名字}/NODES/TASK_DISPATCHER/TASK_DISPATCHER:\\192.168.0.150:8888?group=JOB_TRACKER&threads=8&identity=85750db6-e854-4eb3-a595-9227a5f2c8f6&createTime=1408189898185&isAvailable=true&listenNodeTypes=CLIENT,TASK_TRACKER
- *         /LTS/{集群名字}/NODES/MONITOR/MONITOR:\\192.168.0.150:8888?group=JOB_TRACKER&threads=8&identity=85750db6-e854-4eb3-a595-9227a5f2c8f6&createTime=1408189898185&isAvailable=true
+ *         /DTA/{集群名字}/NODES/TASK_EXECUTER/TASK_EXECUTER:\\192.168.0.150:8888?group=TASK_TRACKER&threads=8&identity=85750db6-e854-4eb3-a595-9227a5f2c8f6&createTime=1408189898185&isAvailable=true&listenNodeTypes=CLIENT,TASK_TRACKER
+ *         /DTA/{集群名字}/NODES/TASK_CLIENT/TASK_CLIENT:\\192.168.0.150:8888?group=JOB_CLIENT&threads=8&identity=85750db6-e854-4eb3-a595-9227a5f2c8f6&createTime=1408189898185&isAvailable=true&listenNodeTypes=CLIENT,TASK_TRACKER
+ *         /DTA/{集群名字}/NODES/TASK_DISPATCHER/TASK_DISPATCHER:\\192.168.0.150:8888?group=JOB_TRACKER&threads=8&identity=85750db6-e854-4eb3-a595-9227a5f2c8f6&createTime=1408189898185&isAvailable=true&listenNodeTypes=CLIENT,TASK_TRACKER
+ *         /DTA/{集群名字}/NODES/MONITOR/MONITOR:\\192.168.0.150:8888?group=JOB_TRACKER&threads=8&identity=85750db6-e854-4eb3-a595-9227a5f2c8f6&createTime=1408189898185&isAvailable=true
  *         <p/>
  */
 public class NodeRegistryUtils {

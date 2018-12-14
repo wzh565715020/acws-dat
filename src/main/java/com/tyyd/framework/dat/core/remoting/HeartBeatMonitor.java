@@ -8,7 +8,7 @@ import com.tyyd.framework.dat.core.constant.EcTopic;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
-import com.tyyd.framework.dat.core.protocol.JobProtos;
+import com.tyyd.framework.dat.core.protocol.TaskProtos;
 import com.tyyd.framework.dat.core.protocol.command.HeartBeatRequest;
 import com.tyyd.framework.dat.ec.EventInfo;
 import com.tyyd.framework.dat.ec.EventSubscriber;
@@ -24,8 +24,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 如果用来发送心跳包，当没有连接上JobTracker的时候，启动快速检测连接；连接后，采用慢周期检测来保持长连接
- *
- * @author Robert HG (254963746@qq.com) on 7/25/14.
  */
 public class HeartBeatMonitor {
 
@@ -204,11 +202,11 @@ public class HeartBeatMonitor {
         HeartBeatRequest commandBody = appContext.getCommandBodyWrapper().wrapper(new HeartBeatRequest());
 
         RemotingCommand request = RemotingCommand.createRequestCommand(
-                JobProtos.RequestCode.HEART_BEAT.code(), commandBody);
+                TaskProtos.RequestCode.HEART_BEAT.code(), commandBody);
         try {
             RemotingCommand response = remotingClient.getRemotingClient().invokeSync(addr, request, 5000);
-            if (response != null && JobProtos.ResponseCode.HEART_BEAT_SUCCESS ==
-                    JobProtos.ResponseCode.valueOf(response.getCode())) {
+            if (response != null && TaskProtos.ResponseCode.HEART_BEAT_SUCCESS ==
+                    TaskProtos.ResponseCode.valueOf(response.getCode())) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("heart beat success. ");
                 }

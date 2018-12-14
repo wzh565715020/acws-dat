@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/30/15.
+ * @author   on 12/30/15.
  */
 public class PrimitiveTypeDeserializer implements Deserializer {
 

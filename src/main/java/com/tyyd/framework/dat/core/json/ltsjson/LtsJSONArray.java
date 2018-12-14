@@ -8,9 +8,6 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.*;
 
-/**
- * @author Robert HG (254963746@qq.com) on 12/28/15.
- */
 public class LtsJSONArray implements JSONArray {
 
     private com.tyyd.framework.dat.json.JSONArray jsonArray;

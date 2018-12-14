@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.core.exception;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/17/15.
+ * @author   on 5/17/15.
  */
 public class NodeRegistryException extends RuntimeException {
 

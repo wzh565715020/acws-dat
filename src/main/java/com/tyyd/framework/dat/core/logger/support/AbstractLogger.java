@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.core.logger.Logger;
 
 /**
  * 扩展多参数Logger
- * @author Robert HG (254963746@qq.com) on 5/19/15.
+ * @author   on 5/19/15.
  */
 public abstract class AbstractLogger implements Logger {
 

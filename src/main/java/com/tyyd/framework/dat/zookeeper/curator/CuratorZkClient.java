@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/16/15.
+ * @author   on 5/16/15.
  */
 public class CuratorZkClient extends AbstractZkClient<CuratorZkClient.PathChildrenListener, CuratorZkClient.NodeListener> {
 

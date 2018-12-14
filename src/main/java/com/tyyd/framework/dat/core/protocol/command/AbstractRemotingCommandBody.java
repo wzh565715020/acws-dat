@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Robert HG (254963746@qq.com) on 7/24/14.
  * 抽象的header 传输信息
  */
 public class AbstractRemotingCommandBody implements RemotingCommandBody {

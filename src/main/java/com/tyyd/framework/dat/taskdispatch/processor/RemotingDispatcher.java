@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.commons.concurrent.limiter.RateLimiter;
-import com.tyyd.framework.dat.core.protocol.JobProtos;
-import com.tyyd.framework.dat.core.protocol.JobProtos.RequestCode;
+import com.tyyd.framework.dat.core.protocol.TaskProtos;
+import com.tyyd.framework.dat.core.protocol.TaskProtos.RequestCode;
 import com.tyyd.framework.dat.core.protocol.command.AbstractRemotingCommandBody;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
@@ -45,9 +45,9 @@ public class RemotingDispatcher extends AbstractRemotingProcessor {
     @Override
     public RemotingCommand processRequest(Channel channel, RemotingCommand request) throws RemotingCommandException {
         // 心跳
-        if (request.getCode() == JobProtos.RequestCode.HEART_BEAT.code()) {
+        if (request.getCode() == TaskProtos.RequestCode.HEART_BEAT.code()) {
             offerHandler(channel, request);
-            return RemotingCommand.createResponseCommand(JobProtos.ResponseCode.HEART_BEAT_SUCCESS.code(), "");
+            return RemotingCommand.createResponseCommand(TaskProtos.ResponseCode.HEART_BEAT_SUCCESS.code(), "");
         }
         if (reqLimitEnable) {
             return doBizWithReqLimit(channel, request);

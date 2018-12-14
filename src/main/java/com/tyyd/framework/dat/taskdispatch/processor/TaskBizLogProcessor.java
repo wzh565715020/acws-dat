@@ -7,7 +7,7 @@ import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.domain.BizLog;
-import com.tyyd.framework.dat.core.protocol.JobProtos;
+import com.tyyd.framework.dat.core.protocol.TaskProtos;
 import com.tyyd.framework.dat.core.protocol.command.BizLogSendRequest;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.remoting.Channel;
@@ -44,6 +44,6 @@ public class TaskBizLogProcessor extends AbstractRemotingProcessor {
             }
         }
 
-        return RemotingCommand.createResponseCommand(JobProtos.ResponseCode.BIZ_LOG_SEND_SUCCESS.code(), "");
+        return RemotingCommand.createResponseCommand(TaskProtos.ResponseCode.BIZ_LOG_SEND_SUCCESS.code(), "");
     }
 }

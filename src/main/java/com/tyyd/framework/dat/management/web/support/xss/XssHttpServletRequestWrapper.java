@@ -7,7 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/10/15.
+ * @author   on 11/10/15.
  */
 public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
 

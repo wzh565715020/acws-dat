@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.core.factory;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.core.commons.utils.NetUtils;
-import com.tyyd.framework.dat.core.exception.LtsRuntimeException;
+import com.tyyd.framework.dat.core.exception.DatRuntimeException;
 import com.tyyd.framework.dat.core.support.IpPortUtil;
 import com.tyyd.framework.dat.core.support.SystemClock;
 
@@ -31,7 +31,7 @@ public class NodeFactory {
 			node.setClusterName(config.getClusterName());
 			return node;
 		} catch (Exception e) {
-			throw new LtsRuntimeException("Create Node error: clazz=" + clazz, e);
+			throw new DatRuntimeException("Create Node error: clazz=" + clazz, e);
 		}
 	}
 

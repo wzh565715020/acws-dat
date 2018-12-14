@@ -7,7 +7,7 @@ import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/5/15.
+ * @author   on 11/5/15.
  */
 public class NettyLogger {
 

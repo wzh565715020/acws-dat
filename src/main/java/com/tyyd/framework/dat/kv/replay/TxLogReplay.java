@@ -13,7 +13,7 @@ import com.tyyd.framework.dat.kv.txlog.StoreTxLogPosition;
 import com.tyyd.framework.dat.core.logger.Logger;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/19/15.
+ * @author   on 12/19/15.
  */
 public class TxLogReplay<K, V> {
 

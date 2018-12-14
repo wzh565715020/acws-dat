@@ -15,7 +15,7 @@ import org.apache.mina.filter.codec.*;
 import java.nio.ByteBuffer;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/4/15.
+ * @author   on 11/4/15.
  */
 public class MinaCodecFactory implements ProtocolCodecFactory {
 

@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * 可以实现子类,定制化返回值
  *
- * @author Robert HG (254963746@qq.com) on 10/26/15.
+ * @author   on 10/26/15.
  */
 public class HttpCmd<Resp extends HttpCmdResponse> extends HttpCmdRequest {
     /**

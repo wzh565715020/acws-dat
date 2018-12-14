@@ -4,9 +4,8 @@ import com.tyyd.framework.dat.core.constant.Environment;
 
 /**
  * 全局变量
- * @author Robert HG (254963746@qq.com) on 9/12/15.
  */
-public class LTSConfig {
+public class DATConfig {
 
     private static Environment environment = Environment.ONLINE;
 
@@ -18,6 +17,6 @@ public class LTSConfig {
     }
 
     public static void setEnvironment(Environment environment) {
-        LTSConfig.environment = environment;
+        DATConfig.environment = environment;
     }
 }

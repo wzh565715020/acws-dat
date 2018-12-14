@@ -6,10 +6,9 @@ import com.tyyd.framework.dat.core.domain.Task;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 7/24/14.
  * 任务传递信息
  */
-public class JobSubmitResponse extends AbstractRemotingCommandBody {
+public class TaskSubmitResponse extends AbstractRemotingCommandBody {
 
 	private static final long serialVersionUID = 9133108871954698698L;
 

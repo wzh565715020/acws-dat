@@ -9,9 +9,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/19/15.
- */
 public class FastJSONAdapter implements JSONAdapter {
 
     @Override

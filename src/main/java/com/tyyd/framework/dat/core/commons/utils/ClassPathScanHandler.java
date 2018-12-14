@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.core.commons.utils;
 
-import com.tyyd.framework.dat.core.exception.LtsRuntimeException;
+import com.tyyd.framework.dat.core.exception.DatRuntimeException;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -80,7 +80,7 @@ public class ClassPathScanHandler {
                 }
             }
         } catch (IOException e) {
-            throw new LtsRuntimeException(e);
+            throw new DatRuntimeException(e);
         }
         return classes;
     }
@@ -119,12 +119,12 @@ public class ClassPathScanHandler {
                     try {
                         classes.add(Thread.currentThread().getContextClassLoader().loadClass(className));
                     } catch (ClassNotFoundException e) {
-                        throw new LtsRuntimeException(e);
+                        throw new DatRuntimeException(e);
                     }
                 }
             }
         } catch (IOException e) {
-            throw new LtsRuntimeException(e);
+            throw new DatRuntimeException(e);
         }
     }
 
@@ -160,7 +160,7 @@ public class ClassPathScanHandler {
                             .loadClass(packageName + '.' + className));
 
                 } catch (ClassNotFoundException e) {
-                    throw new LtsRuntimeException(e);
+                    throw new DatRuntimeException(e);
                 }
             }
         }

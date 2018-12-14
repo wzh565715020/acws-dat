@@ -8,9 +8,6 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.*;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/19/15.
- */
 public class FastJSONArray implements JSONArray {
 
     private com.alibaba.fastjson.JSONArray jsonArray;

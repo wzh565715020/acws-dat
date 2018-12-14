@@ -2,9 +2,6 @@ package com.tyyd.framework.dat.core.spi;
 
 import java.lang.annotation.*;
 
-/**
- * @author Robert HG (254963746@qq.com)on 12/23/15.
- */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

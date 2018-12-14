@@ -8,9 +8,6 @@ import com.tyyd.framework.dat.ec.EventInfo;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * @author Robert HG (254963746@qq.com) on 9/8/15.
- */
 public class RegistryStatMonitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegistryStatMonitor.class);

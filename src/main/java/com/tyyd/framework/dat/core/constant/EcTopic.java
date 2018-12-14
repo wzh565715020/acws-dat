@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.core.constant;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/11/15.
+ * @author   on 5/11/15.
  */
 public interface EcTopic {
 

@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.admin.request.PaginationReq;
 import java.util.Date;
 
 /**
- * @author Robert HG (254963746@qq.com) on 6/11/15.
+ * @author   on 6/11/15.
  */
 public class JobLoggerRequest extends PaginationReq {
 

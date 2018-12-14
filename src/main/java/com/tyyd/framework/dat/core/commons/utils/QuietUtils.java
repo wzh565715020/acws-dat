@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 
 /**
- * @author Robert HG (254963746@qq.com) on 9/26/15.
+ * @author   on 9/26/15.
  */
 public class QuietUtils {
 

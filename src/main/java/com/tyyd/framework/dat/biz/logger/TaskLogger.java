@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * 执行任务日志记录器
  *
- * @author Robert HG (254963746@qq.com) on 3/24/15.
+ * @author   on 3/24/15.
  */
 public interface TaskLogger {
 

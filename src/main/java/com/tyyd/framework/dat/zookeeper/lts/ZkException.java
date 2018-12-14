@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.zookeeper.lts;
 import org.apache.zookeeper.KeeperException;
 
 /**
- * @author Robert HG (254963746@qq.com) on 2/18/16.
+ * @author   on 2/18/16.
  */
 public class ZkException extends RuntimeException {
 

@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.core.exception;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/18/14.
+ * @author   on 8/18/14.
  */
 public class RemotingSendException extends Exception{
 

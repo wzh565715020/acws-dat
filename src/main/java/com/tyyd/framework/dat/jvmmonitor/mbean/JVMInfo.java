@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Properties;
 
 /**
- * @author Robert HG (254963746@qq.com) on 9/15/15.
+ * @author   on 9/15/15.
  */
 public class JVMInfo implements JVMInfoMBean {
 

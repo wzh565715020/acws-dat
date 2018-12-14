@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/17/15.
+ * @author   on 12/17/15.
  */
 public abstract class AbstractFileHeader {
 

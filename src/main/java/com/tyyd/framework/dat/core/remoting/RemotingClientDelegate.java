@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.core.remoting;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.core.constant.EcTopic;
-import com.tyyd.framework.dat.core.exception.JobTrackerNotFoundException;
+import com.tyyd.framework.dat.core.exception.TaskDispatcherNotFoundException;
 import com.tyyd.framework.dat.core.loadbalance.LoadBalance;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
@@ -75,7 +75,7 @@ public class RemotingClientDelegate {
 	/**
 	 * 同步调用
 	 */
-	public RemotingCommand invokeSync(RemotingCommand request) throws JobTrackerNotFoundException {
+	public RemotingCommand invokeSync(RemotingCommand request) throws TaskDispatcherNotFoundException {
 
 		Node taskExecuter = getTaskExecuterNode();
 
@@ -100,7 +100,7 @@ public class RemotingClientDelegate {
 	/**
 	 * 异步调用
 	 */
-	public void invokeAsync(RemotingCommand request, AsyncCallback asyncCallback) throws JobTrackerNotFoundException {
+	public void invokeAsync(RemotingCommand request, AsyncCallback asyncCallback) throws TaskDispatcherNotFoundException {
 
 		Node taskExecuter = getTaskExecuterNode();
 
@@ -125,7 +125,7 @@ public class RemotingClientDelegate {
 	 * 异步调用
 	 */
 	public void invokeAsync(Channel channel, RemotingCommand request, AsyncCallback asyncCallback)
-			throws JobTrackerNotFoundException {
+			throws TaskDispatcherNotFoundException {
 		try {
 			remotingClient.invokeAsync(channel, request, appContext.getConfig().getInvokeTimeoutMillis(),
 					asyncCallback);

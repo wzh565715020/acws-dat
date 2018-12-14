@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/19/15.
+ * @author   on 12/19/15.
  */
 public class MemIndexSnapshot<K, V> extends AbstractIndexSnapshot<K, V> {
 

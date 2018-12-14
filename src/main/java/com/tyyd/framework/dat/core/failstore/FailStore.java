@@ -5,9 +5,6 @@ import com.tyyd.framework.dat.core.domain.Pair;
 import java.lang.reflect.Type;
 import java.util.List;
 
-/**
- * Robert HG (254963746@qq.com) on 5/21/15.
- */
 public interface FailStore {
 
     public String getPath();

@@ -11,7 +11,7 @@ import java.util.*;
 import static com.tyyd.framework.dat.core.json.TypeUtils.*;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/28/15.
+ * @author   on 12/28/15.
  */
 public class JSONArray implements Iterable<Object> {
 

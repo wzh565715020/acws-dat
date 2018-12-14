@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.cluster.Config;
 import javax.sql.DataSource;
 
 /**
- * @author Robert HG (254963746@qq.com) on 10/24/14.
+ * @author   on 10/24/14.
  */
 public interface DataSourceProvider {
 

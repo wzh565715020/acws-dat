@@ -22,7 +22,7 @@ import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.exception.RemotingSendException;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
-import com.tyyd.framework.dat.core.protocol.JobProtos;
+import com.tyyd.framework.dat.core.protocol.TaskProtos;
 import com.tyyd.framework.dat.core.protocol.command.TaskAskRequest;
 import com.tyyd.framework.dat.core.protocol.command.TaskAskResponse;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
@@ -155,7 +155,7 @@ public class ExecutingDeadTaskChecker {
 			}
 			TaskAskRequest requestBody = appContext.getCommandBodyWrapper().wrapper(new TaskAskRequest());
 			requestBody.setIds(ids);
-			RemotingCommand request = RemotingCommand.createRequestCommand(JobProtos.RequestCode.TASK_ASK.code(),
+			RemotingCommand request = RemotingCommand.createRequestCommand(TaskProtos.RequestCode.TASK_ASK.code(),
 					requestBody);
 			remotingServer.invokeAsync(channel, request, new AsyncCallback() {
 				@Override

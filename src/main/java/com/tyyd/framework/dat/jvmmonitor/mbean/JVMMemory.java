@@ -6,7 +6,7 @@ import java.lang.management.MemoryPoolMXBean;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 9/15/15.
+ * @author   on 9/15/15.
  */
 public class JVMMemory implements JVMMemoryMBean {
 

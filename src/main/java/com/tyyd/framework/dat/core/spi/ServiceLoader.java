@@ -16,9 +16,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * @author Robert HG (254963746@qq.com)on 12/23/15.
- */
 public class ServiceLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceLoader.class);

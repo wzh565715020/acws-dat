@@ -4,7 +4,7 @@ package com.tyyd.framework.dat.taskdispatch.monitor;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.tyyd.framework.dat.core.cluster.NodeType;
-import com.tyyd.framework.dat.core.domain.monitor.JobTrackerMData;
+import com.tyyd.framework.dat.core.domain.monitor.TaskDispatcherMData;
 import com.tyyd.framework.dat.core.domain.monitor.MData;
 import com.tyyd.framework.dat.core.monitor.AbstractMStatReporter;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
@@ -60,7 +60,7 @@ public class TaskDispatcherMStatReporter extends AbstractMStatReporter {
 
     @Override
     protected MData collectMData() {
-        JobTrackerMData mData = new JobTrackerMData();
+        TaskDispatcherMData mData = new TaskDispatcherMData();
         mData.setReceiveJobNum(receiveJobNum.getAndSet(0));
         mData.setExeExceptionNum(exeExceptionNum.getAndSet(0));
         mData.setExeFailedNum(exeFailedNum.getAndSet(0));

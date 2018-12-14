@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.jvmmonitor;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/14/16.
+ * @author   on 3/14/16.
  */
 public interface ReferenceCount {
 

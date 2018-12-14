@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.store.jdbc.exception;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/8/16.
+ * @author   on 3/8/16.
  */
 public class TableNotExistException extends JdbcException {
 

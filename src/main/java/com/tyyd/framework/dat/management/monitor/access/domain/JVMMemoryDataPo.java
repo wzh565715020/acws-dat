@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.management.monitor.access.domain;
 
 /**
- * @author Robert HG (254963746@qq.com) on 9/27/15.
+ * @author   on 9/27/15.
  */
 public class JVMMemoryDataPo extends MDataPo {
 

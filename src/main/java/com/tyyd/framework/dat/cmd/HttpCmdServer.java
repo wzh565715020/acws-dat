@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * 主要用于 curl
  *
- * @author Robert HG (254963746@qq.com) on 10/26/15.
+ * @author   on 10/26/15.
  */
 public class HttpCmdServer {
 

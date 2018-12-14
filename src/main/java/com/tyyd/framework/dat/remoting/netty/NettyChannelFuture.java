@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.ChannelFuture;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/4/15.
+ * @author   on 11/4/15.
  */
 public class NettyChannelFuture implements ChannelFuture {
 

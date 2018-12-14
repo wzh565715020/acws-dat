@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Key 在内存中的index
  *
- * @author Robert HG (254963746@qq.com) on 12/13/15.
+ * @author   on 12/13/15.
  */
 public class IndexItem<K> implements Serializable {
 

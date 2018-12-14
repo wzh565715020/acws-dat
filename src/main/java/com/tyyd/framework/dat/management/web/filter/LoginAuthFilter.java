@@ -15,7 +15,7 @@ import java.io.IOException;
  * Created by ztajy on 2015-11-11.
  *
  * @author ztajy
- * @author Robert HG (254963746@qq.com)
+ * @author  
  */
 public class LoginAuthFilter implements Filter {
     private static final String AUTH_PREFIX = "Basic ";

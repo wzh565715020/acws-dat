@@ -11,9 +11,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author Robert HG (254963746@qq.com) on 12/28/15.
- */
 public class LtsJSONObject implements JSONObject {
 
     private com.tyyd.framework.dat.json.JSONObject jsonObject;

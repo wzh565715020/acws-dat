@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.core.commons.io;
 import java.io.InputStream;
 
 /**
- * @author Robert HG (254963746@qq.com)
+ * @author  
  */
 public class UnsafeByteArrayInputStream extends InputStream {
 

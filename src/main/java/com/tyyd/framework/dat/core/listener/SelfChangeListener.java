@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * 用来监听自己的节点信息变化
- *
  */
 public class SelfChangeListener implements NodeChangeListener {
 

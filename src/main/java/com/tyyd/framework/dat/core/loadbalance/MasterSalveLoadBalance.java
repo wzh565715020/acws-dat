@@ -10,7 +10,6 @@ import java.util.List;
  * 主从模式: 譬如将JobClient和TaskTracker设置为这种负载均衡模式,
  * 那么总会去连接最老的一台JobTracker,从而达到主从模式的效果
  *
- * @author Robert HG (254963746@qq.com) on 11/21/15.
  */
 public class MasterSalveLoadBalance extends AbstractLoadBalance {
 

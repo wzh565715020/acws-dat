@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/1/14.
  * 客户端提交的任务 接受 异常
  */
-public class JobReceiveException extends Exception {
+public class TaskReceiveException extends Exception {
 
 	private static final long serialVersionUID = 6091344409709022270L;
 	/**
@@ -33,18 +32,18 @@ public class JobReceiveException extends Exception {
         jobs.add(job);
     }
 
-    public JobReceiveException() {
+    public TaskReceiveException() {
     }
 
-    public JobReceiveException(String message) {
+    public TaskReceiveException(String message) {
         super(message);
     }
 
-    public JobReceiveException(String message, Throwable cause) {
+    public TaskReceiveException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public JobReceiveException(Throwable cause) {
+    public TaskReceiveException(Throwable cause) {
         super(cause);
     }
 

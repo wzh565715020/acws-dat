@@ -10,7 +10,7 @@ import java.nio.channels.FileChannel;
  * 1. magic                  2 byte
  * 3. storeTxLogPosition     8 byte      // 快照到的最后一条事务日志ID
  * <p/>
- * @author Robert HG (254963746@qq.com) on 12/19/15.
+ * @author   on 12/19/15.
  */
 public class IndexSnapshotFileHeader extends AbstractFileHeader {
 

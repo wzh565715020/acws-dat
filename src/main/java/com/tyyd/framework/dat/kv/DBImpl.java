@@ -25,7 +25,7 @@ import java.io.Closeable;
  * 1. 缓存数据中 GET 命中即返回
  * 2. 从数据文件 (DATA) 中GET
  *
- * @author Robert HG (254963746@qq.com) on 12/13/15.
+ * @author   on 12/13/15.
  */
 public class DBImpl<K, V> implements DB<K, V>, Closeable {
 

@@ -7,9 +7,6 @@ import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import java.io.File;
 import java.io.IOException;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/10/15.
- */
 public abstract class AbstractFailStoreFactory implements FailStoreFactory {
     @Override
     public final FailStore getFailStore(Config config, String storePath) {

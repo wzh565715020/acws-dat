@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.store.jdbc;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/20/15.
+ * @author   on 5/20/15.
  */
 public class StateException extends RuntimeException {
 

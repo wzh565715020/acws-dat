@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.json.JSONException;
 import java.lang.reflect.Type;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/30/15.
+ * @author   on 12/30/15.
  */
 public class EnumDeserializer implements Deserializer {
 

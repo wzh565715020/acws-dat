@@ -9,7 +9,7 @@ import org.mongodb.morphia.Morphia;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Robert HG (254963746@qq.com) on 10/24/14.
+ * @author   on 10/24/14.
  */
 public class DataStoreProvider {
 

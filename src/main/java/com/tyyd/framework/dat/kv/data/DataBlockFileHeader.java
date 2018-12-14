@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 6. storeTxLogPosition    8 byte      // 刷盘到的最后一条事务日志ID
  * <p/>
  *
- * @author Robert HG (254963746@qq.com) on 12/17/15.
+ * @author   on 12/17/15.
  */
 public class DataBlockFileHeader extends AbstractFileHeader {
 

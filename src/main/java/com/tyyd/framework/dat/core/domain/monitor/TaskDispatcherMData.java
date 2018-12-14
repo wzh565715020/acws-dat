@@ -1,9 +1,6 @@
 package com.tyyd.framework.dat.core.domain.monitor;
 
-/**
- * @author Robert HG (254963746@qq.com) on 8/31/15.
- */
-public class JobTrackerMData extends MData {
+public class TaskDispatcherMData extends MData {
 
     /**
      * 接受的任务数

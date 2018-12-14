@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.kv.index;
 import java.io.IOException;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/19/15.
+ * @author   on 12/19/15.
  */
 public interface IndexSnapshot<K, V> {
 

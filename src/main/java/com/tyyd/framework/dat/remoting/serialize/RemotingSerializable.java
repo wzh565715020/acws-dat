@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.spi.SPI;
 import com.tyyd.framework.dat.core.spi.SpiExtensionKey;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/6/15.
+ * @author   on 11/6/15.
  */
 @SPI(key = SpiExtensionKey.REMOTING_SERIALIZABLE_DFT, dftValue = "fastjson")
 public interface RemotingSerializable {

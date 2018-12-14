@@ -14,7 +14,7 @@ import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.domain.Task;
-import com.tyyd.framework.dat.core.exception.JobReceiveException;
+import com.tyyd.framework.dat.core.exception.TaskReceiveException;
 import com.tyyd.framework.dat.core.protocol.command.TaskSubmitRequest;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.core.support.CronExpressionUtils;
@@ -43,19 +43,19 @@ public class TaskReceiver {
         this.idGenerator = ServiceLoader.load(IdGenerator.class, appContext.getConfig());
     }
 
-    public void receive(TaskSubmitRequest request) throws JobReceiveException {
+    public void receive(TaskSubmitRequest request) throws TaskReceiveException {
 
         List<Task> tasks = request.getTasks();
         if (CollectionUtils.isEmpty(tasks)) {
             return;
         }
-        JobReceiveException exception = null;
+        TaskReceiveException exception = null;
         for (Task task : tasks) {
             try {
                 addToQueue(task, request);
             } catch (Exception t) {
                 if (exception == null) {
-                    exception = new JobReceiveException(t);
+                    exception = new TaskReceiveException(t);
                 }
                 exception.addJob(task);
             }

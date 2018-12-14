@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.alarm.email;
 import com.tyyd.framework.dat.alarm.AlarmMessage;
 
 /**
- * @author Robert HG (254963746@qq.com) on 2/17/16.
+ * @author  on 2/17/16.
  */
 public class EmailAlarmMessage extends AlarmMessage {
 

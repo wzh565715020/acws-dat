@@ -12,7 +12,6 @@ import java.util.Set;
 
 /**
  * 参考dubbo
- * @author Robert HG (254963746@qq.com) on 5/19/15.
  */
 public final class Version {
 

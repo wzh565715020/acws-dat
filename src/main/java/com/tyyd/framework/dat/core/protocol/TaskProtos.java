@@ -1,12 +1,11 @@
 package com.tyyd.framework.dat.core.protocol;
 
 /**
- * @author Robert HG (254963746@qq.com) on 7/23/14.
  *         用于定义通信协议中的一些code
  */
-public class JobProtos {
+public class TaskProtos {
 
-    private JobProtos() {
+    private TaskProtos() {
     }
 
     public enum RequestCode {

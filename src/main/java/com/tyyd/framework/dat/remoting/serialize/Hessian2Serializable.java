@@ -6,7 +6,7 @@ import com.tyyd.framework.dat.core.commons.io.UnsafeByteArrayInputStream;
 import com.tyyd.framework.dat.core.commons.io.UnsafeByteArrayOutputStream;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/6/15.
+ * @author   on 11/6/15.
  */
 public class Hessian2Serializable implements RemotingSerializable {
 

@@ -3,9 +3,6 @@ package com.tyyd.framework.dat.core.json;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/19/15.
- */
 public abstract class TypeReference<T> {
 
     private final Type type;

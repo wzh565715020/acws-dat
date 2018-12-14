@@ -1,10 +1,8 @@
 package com.tyyd.framework.dat.core.support;
 
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
-import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.domain.TaskMeta;
-import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 
 public class TaskDomainConverter {

@@ -7,7 +7,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/6/15.
+ * @author   on 11/6/15.
  */
 public class JavaSerializable implements RemotingSerializable {
 

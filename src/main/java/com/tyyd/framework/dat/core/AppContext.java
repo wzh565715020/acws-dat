@@ -2,7 +2,6 @@ package com.tyyd.framework.dat.core;
 
 import com.tyyd.framework.dat.cmd.HttpCmdServer;
 import com.tyyd.framework.dat.core.cluster.Config;
-import com.tyyd.framework.dat.core.cluster.MasterElector;
 import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.core.cluster.SubscribedNodeManager;
 import com.tyyd.framework.dat.core.monitor.MStatReporter;

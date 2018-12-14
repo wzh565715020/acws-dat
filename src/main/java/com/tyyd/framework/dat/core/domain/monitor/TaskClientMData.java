@@ -1,10 +1,7 @@
 package com.tyyd.framework.dat.core.domain.monitor;
 
 
-/**
- * @author Robert HG (254963746@qq.com) on 3/11/16.
- */
-public class JobClientMData extends MData {
+public class TaskClientMData extends MData {
 
     // 提交成功的个数
     private Long submitSuccessNum;

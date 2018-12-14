@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author Robert HG (254963746@qq.com) on 9/15/15.
+ * @author   on 9/15/15.
  */
 public class JVMCollector {
 

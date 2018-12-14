@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.constant.Level;
 import java.util.Map;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/20/14.
+ * @author   on 8/20/14.
  *         任务执行 日志
  */
 public class TaskLogPo {

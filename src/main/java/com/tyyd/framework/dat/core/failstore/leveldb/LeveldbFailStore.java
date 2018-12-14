@@ -16,10 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Only a single process (possibly multi-threaded) can access a particular database at a time
- * Robert HG (254963746@qq.com) on 5/21/15.
- */
 public class LeveldbFailStore extends AbstractFailStore {
 
     private DB db;

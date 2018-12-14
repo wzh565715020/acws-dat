@@ -13,7 +13,7 @@ import com.tyyd.framework.dat.core.commons.utils.Holder;
 import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.constant.EcTopic;
 import com.tyyd.framework.dat.core.exception.RequestTimeoutException;
-import com.tyyd.framework.dat.core.protocol.JobProtos;
+import com.tyyd.framework.dat.core.protocol.TaskProtos;
 import com.tyyd.framework.dat.core.protocol.command.TaskPushRequest;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
@@ -121,7 +121,7 @@ public class TaskPusher {
 				TaskPushRequest body = appContext.getCommandBodyWrapper().wrapper(new TaskPushRequest());
 				body.setTaskMeta(TaskDomainConverter.convert(taskPo));
 				RemotingCommand commandRequest = RemotingCommand
-						.createRequestCommand(JobProtos.RequestCode.PUSH_TASK.code(), body);
+						.createRequestCommand(TaskProtos.RequestCode.PUSH_TASK.code(), body);
 				// 是否分发推送任务成功
 				final Holder<Boolean> pushSuccess = new Holder<Boolean>(false);
 
@@ -137,7 +137,7 @@ public class TaskPusher {
 											LOGGER.warn("task push failed! response command is null!");
 											return;
 										}
-										if (responseCommand.getCode() == JobProtos.ResponseCode.TASK_PUSH_SUCCESS
+										if (responseCommand.getCode() == TaskProtos.ResponseCode.TASK_PUSH_SUCCESS
 												.code()) {
 											if (LOGGER.isDebugEnabled()) {
 												LOGGER.debug("task push success! " + "identity=" + identity + ", job="

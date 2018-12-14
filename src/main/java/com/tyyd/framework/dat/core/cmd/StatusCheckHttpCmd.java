@@ -7,7 +7,7 @@ import com.tyyd.framework.dat.core.cluster.Config;
 
 /**
  * 主要用于启动检测, 通过调用该命令检测是否启动成功
- * @author Robert HG (254963746@qq.com) on 3/10/16.
+ * @author   on 3/10/16.
  */
 public class StatusCheckHttpCmd implements HttpCmdProc {
 

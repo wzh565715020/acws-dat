@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * 用来缓存
- * @author Robert HG (254963746@qq.com) on 12/18/15.
+ * @author   on 12/18/15.
  */
 public class LRUDataCache<K, V> implements DataCache<K, V> {
 

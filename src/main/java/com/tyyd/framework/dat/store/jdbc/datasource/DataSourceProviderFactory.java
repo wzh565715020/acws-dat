@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.cluster.Config;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @author Robert HG (254963746@qq.com) on 6/6/15.
+ * @author   on 6/6/15.
  */
 public class DataSourceProviderFactory {
 

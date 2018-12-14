@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/5/16.
+ * @author   on 3/5/16.
  */
 public class MonitorAgentStartup {
 

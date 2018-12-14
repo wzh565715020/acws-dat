@@ -12,9 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/20/15.
- */
 public class JacksonJSONAdapter implements JSONAdapter {
 
     private ObjectMapper mapper;

@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.kv.txlog;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/19/15.
+ * @author   on 12/19/15.
  */
 public class StoreTxLogCursorEntry<K, V> {
 

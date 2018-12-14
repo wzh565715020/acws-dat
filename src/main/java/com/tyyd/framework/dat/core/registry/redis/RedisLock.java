@@ -4,7 +4,6 @@ import redis.clients.jedis.Jedis;
 
 /**
  * 锁会自动释放
- * @author Robert HG (254963746@qq.com) on 9/9/15.
  */
 public class RedisLock {
 

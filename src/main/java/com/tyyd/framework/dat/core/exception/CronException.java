@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.exception;
 
-/**
- * Robert HG (254963746@qq.com) on 5/27/15.
- */
 public class CronException extends RuntimeException {
 
 	private static final long serialVersionUID = -5252237483450100864L;

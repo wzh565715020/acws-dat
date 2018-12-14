@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.core.domain.monitor;
 import com.tyyd.framework.dat.core.cluster.NodeType;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/11/16.
+ * @author   on 3/11/16.
  */
 public class MNode {
 

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.tyyd.framework.dat.core.cluster.NodeType;
-import com.tyyd.framework.dat.core.protocol.JobProtos;
+import com.tyyd.framework.dat.core.protocol.TaskProtos;
 import com.tyyd.framework.dat.core.protocol.command.AbstractRemotingCommandBody;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
@@ -20,18 +20,18 @@ import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
  */
 public class RemotingDispatcher extends AbstractProcessor {
 
-    private final Map<JobProtos.RequestCode, RemotingProcessor> processors = new HashMap<JobProtos.RequestCode, RemotingProcessor>();
+    private final Map<TaskProtos.RequestCode, RemotingProcessor> processors = new HashMap<TaskProtos.RequestCode, RemotingProcessor>();
 
     public RemotingDispatcher(TaskExecuterAppContext appContext) {
         super(appContext);
-        processors.put(JobProtos.RequestCode.PUSH_TASK, new TaskProcessor(appContext));
-        processors.put(JobProtos.RequestCode.TASK_ASK, new TaskAskProcessor(appContext));
+        processors.put(TaskProtos.RequestCode.PUSH_TASK, new TaskProcessor(appContext));
+        processors.put(TaskProtos.RequestCode.TASK_ASK, new TaskAskProcessor(appContext));
     }
 
     @Override
     public RemotingCommand processRequest(Channel channel, RemotingCommand request) throws RemotingCommandException {
 
-        JobProtos.RequestCode code = JobProtos.RequestCode.valueOf(request.getCode());
+        TaskProtos.RequestCode code = TaskProtos.RequestCode.valueOf(request.getCode());
         RemotingProcessor processor = processors.get(code);
         if (processor == null) {
             return RemotingCommand.createResponseCommand(RemotingProtos.ResponseCode.REQUEST_CODE_NOT_SUPPORTED.code(),

@@ -12,7 +12,7 @@ import java.nio.channels.FileChannel;
 /**
  * 文件锁
  *
- * @author Robert HG (254963746@qq.com) on 5/27/15.
+ * @author   on 5/27/15.
  */
 public class FileLock {
 

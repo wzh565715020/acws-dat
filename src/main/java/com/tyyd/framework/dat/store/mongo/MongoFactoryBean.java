@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/8/14.
+ * @author   on 8/8/14.
  *         Mongo 工厂类
  */
 public class MongoFactoryBean {

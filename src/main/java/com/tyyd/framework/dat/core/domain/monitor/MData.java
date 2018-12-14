@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.core.domain.monitor;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/30/15.
+ * @author   on 8/30/15.
  */
 public class MData {
 

@@ -7,7 +7,7 @@ import com.tyyd.framework.dat.kv.serializer.StoreSerializer;
 import java.io.File;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/15/15.
+ * @author   on 12/15/15.
  */
 public class DBBuilder<K, V> {
 

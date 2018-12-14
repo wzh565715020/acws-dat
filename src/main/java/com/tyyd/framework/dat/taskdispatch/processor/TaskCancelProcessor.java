@@ -6,8 +6,8 @@ import org.slf4j.LoggerFactory;
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.constant.Level;
-import com.tyyd.framework.dat.core.protocol.JobProtos;
-import com.tyyd.framework.dat.core.protocol.command.JobCancelRequest;
+import com.tyyd.framework.dat.core.protocol.TaskProtos;
+import com.tyyd.framework.dat.core.protocol.command.TaskCancelRequest;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
@@ -27,7 +27,7 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
     @Override
     public RemotingCommand processRequest(Channel channel, RemotingCommand request) throws RemotingCommandException {
 
-        JobCancelRequest jobCancelRequest = request.getBody();
+        TaskCancelRequest jobCancelRequest = request.getBody();
 
         String taskId = jobCancelRequest.getTaskId();
         String taskTrackerNodeGroup = jobCancelRequest.getTaskTrackerNodeGroup();
@@ -50,11 +50,11 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
             appContext.getTaskLogger().log(jobLogPo);
 
             LOGGER.info("Cancel Job success , jobId={}, taskId={}, taskTrackerNodeGroup={}", job.getTaskId(), taskId, taskTrackerNodeGroup);
-            return RemotingCommand.createResponseCommand(JobProtos
+            return RemotingCommand.createResponseCommand(TaskProtos
                     .ResponseCode.TASK_CANCEL_SUCCESS.code());
         }
 
-        return RemotingCommand.createResponseCommand(JobProtos
+        return RemotingCommand.createResponseCommand(TaskProtos
                 .ResponseCode.TASK_CANCEL_FAILED.code(), "Job maybe running");
     }
 }

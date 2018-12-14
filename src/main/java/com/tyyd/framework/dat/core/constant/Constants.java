@@ -5,7 +5,6 @@ import java.nio.charset.Charset;
 import java.util.regex.Pattern;
 
 /**
- * @author Robert HG (254963746@qq.com) on 7/24/14.
  *         一些配置常量
  */
 public interface Constants {

@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/30/15.
+ * @author   on 12/30/15.
  */
 public class CollectionDeserializer implements Deserializer {
 

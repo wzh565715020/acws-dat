@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Robert HG (254963746@qq.com) on 6/5/15.
+ *   on 6/5/15.
  */
 public class BackendRegistrySrv implements InitializingBean {
 

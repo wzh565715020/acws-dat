@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.kv.cache;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/18/15.
+ * @author   on 12/18/15.
  */
 public interface DataCache<K, V> {
 

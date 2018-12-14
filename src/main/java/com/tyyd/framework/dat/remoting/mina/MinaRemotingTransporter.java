@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.remoting.*;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/6/15.
+ * @author   on 11/6/15.
  */
 public class MinaRemotingTransporter implements RemotingTransporter {
     @Override

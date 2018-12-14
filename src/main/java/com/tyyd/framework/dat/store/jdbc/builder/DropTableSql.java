@@ -7,7 +7,7 @@ import com.tyyd.framework.dat.store.jdbc.SqlTemplate;
 import com.tyyd.framework.dat.store.jdbc.exception.JdbcException;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/9/16.
+ * @author   on 3/9/16.
  */
 public class DropTableSql {
 

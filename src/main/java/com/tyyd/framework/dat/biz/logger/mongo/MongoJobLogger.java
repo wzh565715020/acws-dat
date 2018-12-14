@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/27/15.
+ * @author   on 3/27/15.
  */
 public class MongoJobLogger extends MongoRepository implements TaskLogger {
 

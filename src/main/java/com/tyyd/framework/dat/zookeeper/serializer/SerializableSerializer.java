@@ -7,7 +7,7 @@ import com.tyyd.framework.dat.core.commons.io.UnsafeByteArrayOutputStream;
 import java.io.*;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/17/15.
+ * @author   on 5/17/15.
  */
 public class SerializableSerializer implements ZkSerializer {
     @Override

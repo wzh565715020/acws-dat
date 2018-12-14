@@ -11,7 +11,7 @@ import com.tyyd.framework.dat.store.jdbc.builder.SelectSql;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/31/15.
+ * @author   on 5/31/15.
  */
 public class MysqlExecutingJobQueue extends AbstractMysqlTaskQueue implements ExecutingTaskQueue {
 
@@ -80,6 +80,6 @@ public class MysqlExecutingJobQueue extends AbstractMysqlTaskQueue implements Ex
     }
     @Override
     protected String getTableName() {
-        return TaskQueueUtils.EXECUTING_JOB_QUEUE;
+        return TaskQueueUtils.EXECUTING_TASK_QUEUE;
     }
 }

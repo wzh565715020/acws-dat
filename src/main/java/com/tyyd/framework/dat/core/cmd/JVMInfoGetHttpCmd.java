@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * 主要用于获取节点的JVM信息
  *
- * @author Robert HG (254963746@qq.com) on 3/10/16.
+ * @author   on 3/10/16.
  */
 public class JVMInfoGetHttpCmd implements HttpCmdProc {
 

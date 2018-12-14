@@ -13,7 +13,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/16/15.
+ * @author   on 12/16/15.
  */
 public abstract class AbstractIndexSnapshot<K, V> implements IndexSnapshot<K, V> {
 

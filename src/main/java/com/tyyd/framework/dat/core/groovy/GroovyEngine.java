@@ -4,9 +4,6 @@ import groovy.lang.GroovyClassLoader;
 
 import java.lang.reflect.Method;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/11/15.
- */
 public class GroovyEngine {
 
     private GroovyEngine() {

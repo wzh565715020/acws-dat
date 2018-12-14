@@ -7,7 +7,7 @@ import java.net.URLEncoder;
 import java.util.Map;
 
 /**
- * @author Robert HG (254963746@qq.com) on 10/26/15.
+ * @author   on 10/26/15.
  */
 public class HttpCmdClient {
 

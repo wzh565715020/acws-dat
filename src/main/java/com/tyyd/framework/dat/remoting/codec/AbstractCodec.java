@@ -6,7 +6,7 @@ import com.tyyd.framework.dat.remoting.serialize.AdaptiveSerializable;
 import com.tyyd.framework.dat.remoting.serialize.RemotingSerializable;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/6/15.
+ * @author   on 11/6/15.
  */
 public abstract class AbstractCodec implements Codec {
 

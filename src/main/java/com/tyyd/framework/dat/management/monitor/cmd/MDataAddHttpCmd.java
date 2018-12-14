@@ -10,8 +10,8 @@ import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.cmd.HttpCmdNames;
 import com.tyyd.framework.dat.core.cmd.HttpCmdParamNames;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.domain.monitor.JobClientMData;
-import com.tyyd.framework.dat.core.domain.monitor.JobTrackerMData;
+import com.tyyd.framework.dat.core.domain.monitor.TaskClientMData;
+import com.tyyd.framework.dat.core.domain.monitor.TaskDispatcherMData;
 import com.tyyd.framework.dat.core.domain.monitor.MData;
 import com.tyyd.framework.dat.core.domain.monitor.MNode;
 import com.tyyd.framework.dat.core.domain.monitor.TaskTrackerMData;
@@ -85,10 +85,10 @@ public class MDataAddHttpCmd implements HttpCmdProc {
             mDatas = JSON.parse(mDataJson, new TypeReference<List<TaskTrackerMData>>() {
             }.getType());
         } else if (NodeType.TASK_DISPATCH == nodeType) {
-            mDatas = JSON.parse(mDataJson, new TypeReference<List<JobTrackerMData>>() {
+            mDatas = JSON.parse(mDataJson, new TypeReference<List<TaskDispatcherMData>>() {
             }.getType());
         } else if (NodeType.TASK_CLIENT == nodeType) {
-            mDatas = JSON.parse(mDataJson, new TypeReference<List<JobClientMData>>() {
+            mDatas = JSON.parse(mDataJson, new TypeReference<List<TaskClientMData>>() {
             }.getType());
         }
         return mDatas;

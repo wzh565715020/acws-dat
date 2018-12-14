@@ -6,9 +6,6 @@ import com.tyyd.framework.dat.core.support.CronExpression;
 import java.text.ParseException;
 import java.util.Date;
 
-/**
- * @author Robert HG (254963746@qq.com) on 5/27/15.
- */
 public class CronExpressionUtils {
 
     private CronExpressionUtils() {

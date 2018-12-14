@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 带有名称的 线程 工厂类
- * @author Robert HG (254963746@qq.com) on 5/5/14.
  */
 public class NamedThreadFactory implements ThreadFactory {
     private static final AtomicInteger POOL_SEQ = new AtomicInteger(1);

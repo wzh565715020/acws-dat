@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.store.jdbc.exception;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/26/15.
+ * @author   on 3/26/15.
  */
 public class DupEntryException extends JdbcException {
 

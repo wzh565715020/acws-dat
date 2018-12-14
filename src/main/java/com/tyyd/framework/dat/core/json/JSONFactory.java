@@ -8,9 +8,6 @@ import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/19/15.
- */
 public class JSONFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JSONFactory.class);

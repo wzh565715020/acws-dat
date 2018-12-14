@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/18/15.
+ * @author   on 12/18/15.
  */
 public class MemIteratorImpl<K, V> implements DBIterator<Entry<K, V>> {
 

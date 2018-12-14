@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.jvmmonitor.mbean;
 import java.util.Date;
 
 /**
- * @author Robert HG (254963746@qq.com) on 9/15/15.
+ * @author   on 9/15/15.
  */
 public interface JVMInfoMBean {
 

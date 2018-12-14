@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.biz.logger.domain;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/28/14.
+ * @author   on 8/28/14.
  */
 public enum LogType {
 

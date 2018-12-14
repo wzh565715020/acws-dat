@@ -11,9 +11,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author Robert HG (254963746@qq.com) on 11/19/15.
- */
 public class FastJSONObject implements JSONObject {
 
     private com.alibaba.fastjson.JSONObject jsonObject;

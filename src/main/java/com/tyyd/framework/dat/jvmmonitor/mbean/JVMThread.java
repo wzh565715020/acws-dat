@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 /**
- * @author Robert HG (254963746@qq.com) on 9/15/15.
+ * @author   on 9/15/15.
  */
 @SuppressWarnings("restriction")
 public class JVMThread implements JVMThreadMBean {

@@ -6,9 +6,9 @@ import com.tyyd.framework.dat.core.spi.SPI;
 import com.tyyd.framework.dat.core.spi.SpiExtensionKey;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/12/16.
+ * @author   on 3/12/16.
  */
-@SPI(key = SpiExtensionKey.JOB_QUEUE, dftValue = "mysql")
+@SPI(key = SpiExtensionKey.TASK_QUEUE, dftValue = "mysql")
 public interface TaskQueueFactory {
 
     TaskQueue getTaskQueue(Config config);

@@ -1,7 +1,7 @@
 package com.tyyd.framework.dat.zookeeper;
 
 /**
- * @author Robert HG (254963746@qq.com) on 7/8/14.
+ * @author   on 7/8/14.
  */
 public interface StateListener {
 

@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * @author Robert HG (254963746@qq.com) on 8/1/14.
+ * @author   on 8/1/14.
  */
 public class Md5Encrypt {
 

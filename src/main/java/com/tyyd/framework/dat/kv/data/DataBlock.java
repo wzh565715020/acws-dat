@@ -25,7 +25,7 @@ import java.nio.channels.ReadableByteChannel;
  * 2. data length           4 byte
  * 3. data bytes
  *
- * @author Robert HG (254963746@qq.com) on 12/14/15.
+ * @author   on 12/14/15.
  */
 public class DataBlock {
 

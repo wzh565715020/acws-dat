@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/30/15.
+ * @author   on 12/30/15.
  */
 public class MapDeserializer implements Deserializer {
 

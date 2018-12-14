@@ -22,7 +22,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/3/15.
+ * @author   on 11/3/15.
  */
 public class NettyRemotingServer extends AbstractRemotingServer {
 

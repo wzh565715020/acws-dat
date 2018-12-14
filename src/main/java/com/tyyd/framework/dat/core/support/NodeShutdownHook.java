@@ -9,9 +9,6 @@ import com.tyyd.framework.dat.ec.EventInfo;
 import com.tyyd.framework.dat.ec.EventSubscriber;
 import com.tyyd.framework.dat.ec.Observer;
 
-/**
- * @author Robert HG (254963746@qq.com) on 3/14/16.
- */
 public class NodeShutdownHook {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeShutdownHook.class);

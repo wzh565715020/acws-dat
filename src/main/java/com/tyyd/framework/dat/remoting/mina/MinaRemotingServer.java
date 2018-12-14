@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 /**
- * @author Robert HG (254963746@qq.com) on 11/4/15.
+ * @author   on 11/4/15.
  */
 public class MinaRemotingServer extends AbstractRemotingServer {
 

@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Type;
 
 /**
- * Robert HG (254963746@qq.com) 12/5/15.
+ *   12/5/15.
  */
 public interface StoreSerializer {
 

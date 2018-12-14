@@ -8,7 +8,7 @@ import com.tyyd.framework.dat.core.cluster.NodeType;
 /**
  * 用来记录节点的上下线
  *
- * @author Robert HG (254963746@qq.com) on 9/26/15.
+ * @author   on 9/26/15.
  */
 public class NodeOnOfflineLog {
 

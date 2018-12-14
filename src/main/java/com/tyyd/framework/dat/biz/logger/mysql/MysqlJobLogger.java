@@ -18,7 +18,7 @@ import com.tyyd.framework.dat.admin.response.PaginationRsp;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 5/21/15.
+ * @author   on 5/21/15.
  */
 public class MysqlJobLogger extends JdbcAbstractAccess implements TaskLogger {
 

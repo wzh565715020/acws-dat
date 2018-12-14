@@ -6,10 +6,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-
-/**
- * @author Robert HG (254963746@qq.com) on 11/19/15.
- */
 public interface JSONObject {
 
     public int size();

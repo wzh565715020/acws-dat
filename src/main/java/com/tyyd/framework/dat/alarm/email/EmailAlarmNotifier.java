@@ -6,7 +6,7 @@ import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.cluster.Config;
 
 /**
- * @author Robert HG (254963746@qq.com)  on 2/17/16.
+ * @author    on 2/17/16.
  */
 public class EmailAlarmNotifier extends AbstractAlarmNotifier<EmailAlarmMessage> {
 

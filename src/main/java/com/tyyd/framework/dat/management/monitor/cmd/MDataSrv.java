@@ -12,7 +12,7 @@ import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.domain.monitor.JvmMData;
 import com.tyyd.framework.dat.core.domain.monitor.MData;
 import com.tyyd.framework.dat.core.domain.monitor.MNode;
-import com.tyyd.framework.dat.core.exception.LtsRuntimeException;
+import com.tyyd.framework.dat.core.exception.DatRuntimeException;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.management.monitor.MonitorAppContext;
 import com.tyyd.framework.dat.management.monitor.access.domain.JVMGCDataPo;
@@ -48,7 +48,7 @@ public class MDataSrv {
                 addTaskTrackerMData(mNode, mDatas);
                 break;
             default:
-                throw new LtsRuntimeException("Unsupport nodeType:" + mNode.getNodeType());
+                throw new DatRuntimeException("Unsupport nodeType:" + mNode.getNodeType());
         }
     }
 

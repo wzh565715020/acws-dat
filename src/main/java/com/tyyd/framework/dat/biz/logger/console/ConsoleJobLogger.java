@@ -11,7 +11,7 @@ import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import java.util.List;
 
 /**
- * @author Robert HG (254963746@qq.com) on 3/27/15.
+ * @author   on 3/27/15.
  */
 public class ConsoleJobLogger implements TaskLogger {
 

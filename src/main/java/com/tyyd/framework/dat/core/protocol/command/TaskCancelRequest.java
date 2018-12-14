@@ -2,9 +2,8 @@ package com.tyyd.framework.dat.core.protocol.command;
 
 /**
  * 取消(删除)任务
- * @author Robert HG (254963746@qq.com) on 11/7/15.
  */
-public class JobCancelRequest extends AbstractRemotingCommandBody{
+public class TaskCancelRequest extends AbstractRemotingCommandBody{
 
 	private static final long serialVersionUID = 2945964772160028674L;
 

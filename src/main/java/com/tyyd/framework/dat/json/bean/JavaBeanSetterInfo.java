@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Robert HG (254963746@qq.com) on 12/31/15.
+ * @author   on 12/31/15.
  */
 public class JavaBeanSetterInfo {
 
