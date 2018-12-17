@@ -16,7 +16,7 @@ import java.io.StringWriter;
 
 public class ExceptionHandlerResolver implements HandlerExceptionResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger("[LTS-Admin]");
+    private static final Logger LOGGER = LoggerFactory.getLogger("[DAT-Admin]");
 
     @Override
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {

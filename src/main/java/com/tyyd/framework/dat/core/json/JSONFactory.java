@@ -3,7 +3,6 @@ package com.tyyd.framework.dat.core.json;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.json.fastjson.FastJSONAdapter;
 import com.tyyd.framework.dat.core.json.jackson.JacksonJSONAdapter;
-import com.tyyd.framework.dat.core.json.ltsjson.LtsJSONAdapter;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
@@ -15,7 +14,7 @@ public class JSONFactory {
     private static volatile JSONAdapter JSON_ADAPTER;
 
     static {
-        String json = System.getProperty("lts.json");
+        String json = System.getProperty("dat.json");
         if ("fastjson".equals(json)) {
             setJSONAdapter(new FastJSONAdapter());
         } else if ("jackson".equals(json)) {
@@ -27,11 +26,6 @@ public class JSONFactory {
                 try {
                     setJSONAdapter(new JacksonJSONAdapter());
                 } catch (Throwable ignored2) {
-                    try {
-                        setJSONAdapter(new LtsJSONAdapter());
-                    } catch (Throwable ignored3) {
-                        throw new JSONException("Please check JSON lib");
-                    }
                 }
             }
         }

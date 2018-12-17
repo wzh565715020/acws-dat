@@ -20,7 +20,7 @@ import com.tyyd.framework.dat.taskexecuter.expcetion.NoAvailableTaskRunnerExcept
  */
 public class RunnerPool {
 
-	private final Logger LOGGER = LoggerFactory.getLogger("LTS.RunnerPool");
+	private final Logger LOGGER = LoggerFactory.getLogger("DAT.RunnerPool");
 
 	private ThreadPoolExecutor threadPoolExecutor = null;
 

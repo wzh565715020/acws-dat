@@ -12,5 +12,6 @@ public class TaskDispatcherNode extends Node {
         this.setNodeType(NodeType.TASK_DISPATCH);
         this.addListenNodeType(NodeType.TASK_EXECUTER);
         this.addListenNodeType(NodeType.TASK_DISPATCH);
+        this.addListenNodeType(NodeType.MONITOR);
     }
 }

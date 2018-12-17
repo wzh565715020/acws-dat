@@ -47,7 +47,7 @@ public class ExecutingDeadTaskChecker {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutingDeadTaskChecker.class);
 
 	private final ScheduledExecutorService FIXED_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1,
-			new NamedThreadFactory("LTS-ExecutingJobQueue-Fix-Executor", true));
+			new NamedThreadFactory("DAT-ExecutingTaskQueue-Fix-Executor", true));
 
 	private TaskDispatcherAppContext appContext;
 	private TaskDispatcherMStatReporter stat;

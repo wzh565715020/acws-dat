@@ -21,9 +21,9 @@ public abstract class AbstractPreLoader implements PreLoader {
 	// 预取阀值
 	private double factor;
 
-	private JobPriorityBlockingQueue queue = null;
+	private TaskPriorityBlockingQueue queue = null;
 	private ScheduledExecutorService LOAD_EXECUTOR_SERVICE = Executors
-			.newSingleThreadScheduledExecutor(new NamedThreadFactory("LTS-PreLoader", true));
+			.newSingleThreadScheduledExecutor(new NamedThreadFactory("DAT-PreLoader", true));
 	private ScheduledFuture<?> scheduledFuture;
 	private AtomicBoolean start = new AtomicBoolean(false);
 
@@ -31,7 +31,7 @@ public abstract class AbstractPreLoader implements PreLoader {
 		if (start.compareAndSet(false, true)) {
 			loadSize = appContext.getConfig().getParameter("task.preloader.size", 300);
 			factor = appContext.getConfig().getParameter("task.preloader.factor", 0.2);
-			queue = new JobPriorityBlockingQueue(loadSize);
+			queue = new TaskPriorityBlockingQueue(loadSize);
 			scheduledFuture = LOAD_EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
 				@Override
 				public void run() {

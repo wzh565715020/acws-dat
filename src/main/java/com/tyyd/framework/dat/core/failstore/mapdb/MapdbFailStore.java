@@ -28,10 +28,10 @@ public class MapdbFailStore extends AbstractFailStore {
     @Override
     protected void init() throws FailStoreException {
         try {
-            String dbName = dbPath.getPath() + "/lts.db";
+            String dbName = dbPath.getPath() + "/dat.db";
             db = DBMaker.fileDB(new File(dbName))
                     .closeOnJvmShutdown()
-                    .encryptionEnable("lts")
+                    .encryptionEnable("dat")
                     .make();
         } catch (Exception e) {
             throw new FailStoreException(e);
@@ -46,7 +46,7 @@ public class MapdbFailStore extends AbstractFailStore {
     @Override
     public void open() throws FailStoreException {
         try {
-            map = db.treeMap("lts");
+            map = db.treeMap("dat");
         } catch (Exception e) {
             throw new FailStoreException(e);
         }

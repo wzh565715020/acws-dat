@@ -87,7 +87,7 @@ public abstract class AbstractTaskNode<T extends Node, Context extends AppContex
 
     private void initHttpCmdServer() {
         // 命令中心
-        int port = appContext.getConfig().getParameter("lts.http.cmd.port", 8719);
+        int port = appContext.getConfig().getParameter("dat.http.cmd.port", 8719);
         appContext.setHttpCmdServer(HttpCmdServer.Factory.getHttpCmdServer(config.getIp(), port));
 
         // 先启动，中间看端口是否被占用

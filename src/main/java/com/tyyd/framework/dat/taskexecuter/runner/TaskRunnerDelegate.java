@@ -66,7 +66,7 @@ public class TaskRunnerDelegate implements Runnable {
 				((InterruptibleAdapter) interruptor).interrupt();
 			}
 
-			DtaLoggerFactory.setLogger(logger);
+			DatLoggerFactory.setLogger(logger);
 
 			long startTime = SystemClock.now();
 			// 设置当前context中的jobId
@@ -111,7 +111,7 @@ public class TaskRunnerDelegate implements Runnable {
 			callback.runComplete(response);
 
 		} finally {
-			DtaLoggerFactory.remove();
+			DatLoggerFactory.remove();
 
 			blockedOn(null);
 		}

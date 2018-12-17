@@ -26,7 +26,7 @@ public class InjvmEventCenter implements EventCenter {
     private final ConcurrentHashMap<String, Set<EventSubscriber>> ecMap =
             new ConcurrentHashMap<String, Set<EventSubscriber>>();
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(Constants.AVAILABLE_PROCESSOR * 2, new NamedThreadFactory("LTS-InjvmEventCenter-Executor", true));
+    private final ExecutorService executor = Executors.newFixedThreadPool(Constants.AVAILABLE_PROCESSOR * 2, new NamedThreadFactory("DAT-InjvmEventCenter-Executor", true));
 
     public void subscribe(EventSubscriber subscriber, String... topics) {
         for (String topic : topics) {

@@ -23,7 +23,7 @@ public abstract class AbstractMStatReporter implements MStatReporter {
     protected Config config;
 
     private ScheduledExecutorService executor = Executors
-            .newSingleThreadScheduledExecutor(new NamedThreadFactory("LTS-Monitor-data-collector", true));
+            .newSingleThreadScheduledExecutor(new NamedThreadFactory("DAT-Monitor-data-collector", true));
     private ScheduledFuture<?> scheduledFuture;
     private AtomicBoolean start = new AtomicBoolean(false);
 

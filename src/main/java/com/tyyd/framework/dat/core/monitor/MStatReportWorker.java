@@ -43,7 +43,7 @@ public class MStatReportWorker implements Runnable {
     public MStatReportWorker(AppContext appContext, AbstractMStatReporter reporter) {
         this.appContext = appContext;
         this.reporter = reporter;
-        interval = appContext.getConfig().getParameter("lts.monitor.report.interval", 1);
+        interval = appContext.getConfig().getParameter("dat.monitor.report.interval", 1);
         this.loadBalance = ServiceLoader.load(LoadBalance.class, appContext.getConfig(), "monitor.select.loadbalance");
     }
 

@@ -53,7 +53,7 @@ public class DataStoreProvider {
     private static final String ADDRESSES_KEY = "mongo.addresses";
     private static final String DEFAULT_ADDRESSES = "127.0.0.1:27017";
     private static final String DATABASE_KEY = "mongo.database";
-    private static final String DEFAULT_DATABASE = "lts";
+    private static final String DEFAULT_DATABASE = "dat";
     private static final String USERNAME = "mongo.username";
     private static final String PASSWORD = "mongo.password";
 

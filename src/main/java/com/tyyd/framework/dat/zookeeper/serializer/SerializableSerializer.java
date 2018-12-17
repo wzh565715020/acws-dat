@@ -6,9 +6,6 @@ import com.tyyd.framework.dat.core.commons.io.UnsafeByteArrayOutputStream;
 
 import java.io.*;
 
-/**
- * @author   on 5/17/15.
- */
 public class SerializableSerializer implements ZkSerializer {
     @Override
     public byte[] serialize(Object serializable) throws ZkMarshallingException {

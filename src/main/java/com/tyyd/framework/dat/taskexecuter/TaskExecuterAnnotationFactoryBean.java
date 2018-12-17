@@ -31,7 +31,7 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
         InitializingBean, DisposableBean {
 
     private ApplicationContext applicationContext;
-    private TaskExecuter taskTracker;
+    private TaskExecuter taskExecuter;
     private boolean started;
     /**
      * 集群名称
@@ -71,9 +71,9 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
     private MasterChangeListener[] masterChangeListeners;
 
     /**
-     * 只有当使用 JobDispatcher 的时候才有效果
+     * 监听端口
      */
-    private String shardField;
+    private Integer listenPort;
     /**
      * 额外参数配置
      */
@@ -81,7 +81,7 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
 
     @Override
     public TaskExecuter getObject() throws Exception {
-        return taskTracker;
+        return taskExecuter;
     }
 
     @Override
@@ -97,7 +97,6 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
 
     public void checkProperties() {
         Assert.hasText(clusterName, "clusterName must have value.");
-        Assert.hasText(nodeGroup, "nodeGroup must have value.");
         Assert.hasText(registryAddress, "registryAddress must have value.");
         Assert.isTrue(workThreads > 0, "workThreads must > 0.");
         Assert.notNull(jobRunnerClass, "jobRunnerClass must have value");
@@ -111,26 +110,29 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
 
         checkProperties();
 
-        taskTracker = new TaskExecuter();
+        taskExecuter = new TaskExecuter();
 
-        taskTracker.setClusterName(clusterName);
-        taskTracker.setDataPath(dataPath);
-        taskTracker.setWorkThreads(workThreads);
-        taskTracker.setRegistryAddress(registryAddress);
-        taskTracker.setJobRunnerClass(jobRunnerClass);
-
+        taskExecuter.setClusterName(clusterName);
+        taskExecuter.setDataPath(dataPath);
+        taskExecuter.setWorkThreads(workThreads);
+        taskExecuter.setRegistryAddress(registryAddress);
+        taskExecuter.setJobRunnerClass(jobRunnerClass);
+        if (listenPort != null) {
+        	taskExecuter.setListenPort(listenPort);
+        }
+        
         if (bizLoggerLevel != null) {
-            taskTracker.setBizLoggerLevel(bizLoggerLevel);
+            taskExecuter.setBizLoggerLevel(bizLoggerLevel);
         }
 
         registerRunnerBeanDefinition();
 
         // 设置config
         for (Map.Entry<Object, Object> entry : configs.entrySet()) {
-            taskTracker.addConfig(entry.getKey().toString(), entry.getValue().toString());
+            taskExecuter.addConfig(entry.getKey().toString(), entry.getValue().toString());
         }
 
-        taskTracker.setRunnerFactory(new RunnerFactory() {
+        taskExecuter.setRunnerFactory(new RunnerFactory() {
             @Override
             public TaskRunner newRunner() {
                 return (TaskRunner) applicationContext.getBean(taskRunnerBeanName);
@@ -139,7 +141,7 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
 
         if (masterChangeListeners != null) {
             for (MasterChangeListener masterChangeListener : masterChangeListeners) {
-                taskTracker.addMasterChangeListener(masterChangeListener);
+                taskExecuter.addMasterChangeListener(masterChangeListener);
             }
         }
 
@@ -158,7 +160,6 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
             if (jobRunnerClass == TaskExecuterDispatcher.class) {
                 builder.setScope("singleton");
                 builder.setLazyInit(false);
-                builder.getBeanDefinition().getPropertyValues().addPropertyValue("shardField", shardField);
             } else {
                 builder.setScope("prototype");
             }
@@ -171,14 +172,14 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
      */
     public void start() {
         if (!started) {
-            taskTracker.start();
+            taskExecuter.start();
             started = true;
         }
     }
 
     @Override
     public void destroy() throws Exception {
-        taskTracker.stop();
+        taskExecuter.stop();
     }
 
     @Override
@@ -224,8 +225,8 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
         this.configs = configs;
     }
 
-    public void setShardField(String shardField) {
-        this.shardField = shardField;
+    public void setListenPort(Integer listenPort) {
+        this.listenPort = listenPort;
     }
 
 }

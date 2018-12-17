@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentMap;
 public class ServiceLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceLoader.class);
-    private static final String LTS_DIRECTORY = "META-INF/lts/";
+    private static final String LTS_DIRECTORY = "META-INF/dat/";
     private static final String LTS_INTERNAL = "internal";
     private static final String LTS_INTERNAL_DIRECTORY = LTS_DIRECTORY + LTS_INTERNAL + "/";
     private static final String DEFAULT_IDENTITY = StringUtils.generateUUID();

@@ -12,13 +12,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 
 /**
- * 系统的配置信息（lts-admin.cfg）
+ * 系统的配置信息（dat-admin.cfg）
  *
  */
 public class AppConfigurer {
 
     private static final Map<String, String> CONFIG = new HashMap<String, String>();
-    private static final String CONF_NAME = "lts-admin.cfg";
+    private static final String CONF_NAME = "dat-admin.cfg";
 
     private static AtomicBoolean load = new AtomicBoolean(false);
 

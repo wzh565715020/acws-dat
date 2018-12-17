@@ -89,7 +89,7 @@ public class LoginAuthFilter implements Filter {
         response.setStatus(401);
         response.setHeader("Cache-Control", "no-store");
         response.setDateHeader("Expires", 0);
-        response.setHeader("WWW-authenticate", AUTH_PREFIX + "Realm=\"lts admin need auth\"");
+        response.setHeader("WWW-authenticate", AUTH_PREFIX + "Realm=\"dat admin need auth\"");
     }
 
     @Override

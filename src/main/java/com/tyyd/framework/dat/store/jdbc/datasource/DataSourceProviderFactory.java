@@ -13,7 +13,6 @@ public class DataSourceProviderFactory {
 
     static {
         PROVIDER_MAP.put(DataSourceProvider.MYSQL, new MysqlDataSourceProvider());
-        PROVIDER_MAP.put(DataSourceProvider.H2, new H2DataSourceProvider());
     }
 
     public static DataSourceProvider create(Config config) {

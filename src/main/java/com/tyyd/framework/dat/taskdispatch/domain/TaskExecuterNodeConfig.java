@@ -102,8 +102,8 @@ public class TaskExecuterNodeConfig{
 
     @Override
     public String toString() {
-        return "TaskTrackerNode{" +
-                ", availableThread=" + (availableThread == null ? 0 : availableThread.get()) +
+        return "TaskExecuterNodeConfig{" +
+                "availableThread=" + (availableThread == null ? 0 : availableThread.get()) +
                 ", identity='" + identity + '\'' +
                 ", channel=" + channelWrapper +
                 '}';

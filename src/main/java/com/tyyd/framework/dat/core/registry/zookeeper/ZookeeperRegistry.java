@@ -145,10 +145,14 @@ public class ZookeeperRegistry extends FailbackRegistry {
 						Node node = NodeRegistryUtils.parse(parentPath + "/" + child);
 						currentNodeChildren.add(node);
 					}
-					List<Node> oldNodeChildren = new ArrayList<Node>(oldChildren.size());
-					for (String child : oldChildren) {
-						Node node = NodeRegistryUtils.parse(parentPath + "/" + child);
-						oldNodeChildren.add(node);
+					
+					List<Node> oldNodeChildren = null;
+					if (oldChildren != null && oldChildren.isEmpty()) {
+						oldNodeChildren = new ArrayList<Node>(oldChildren.size());
+						for (String child : oldChildren) {
+							Node node = NodeRegistryUtils.parse(parentPath + "/" + child);
+							oldNodeChildren.add(node);
+						}
 					}
 					// 1. 找出增加的 节点
 					List<Node> addChildren = CollectionUtils.getLeftDiff(currentNodeChildren, oldNodeChildren);
@@ -192,6 +196,9 @@ public class ZookeeperRegistry extends FailbackRegistry {
 	}
 	@Override
 	public void addDataListener(String path, DataListener listener) {
+		if (!zkClient.exists(path)) {
+			zkClient.create(path, true, false);
+		}
 		zkClient.addDataListener(path, listener);
 	}
 }

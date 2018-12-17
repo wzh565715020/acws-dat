@@ -14,9 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-/**
- * @author   on 7/8/14.
- */
 public abstract class AbstractZkClient<TargetChildListener, TargetDataListener> implements ZkClient {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractZkClient.class);

@@ -4,15 +4,20 @@ import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.registry.NodeRegistryUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  *         节点
  */
-public class Node {
+public class Node implements Serializable{
 
-    // 是否可用
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9065421335135662264L;
+	// 是否可用
     private boolean available = true;
     private String clusterName;
     private NodeType nodeType;

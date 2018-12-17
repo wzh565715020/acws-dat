@@ -25,4 +25,10 @@ public class MongoTaskQueueFactory implements TaskQueueFactory {
     public PreLoader getPreLoader(AppContext appContext) {
         return new MongoPreLoader(appContext);
     }
+
+	@Override
+	public PoolQueue getPoolQueue(Config config) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

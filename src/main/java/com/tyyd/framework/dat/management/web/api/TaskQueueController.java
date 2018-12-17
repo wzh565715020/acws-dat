@@ -104,7 +104,7 @@ public class TaskQueueController extends AbstractMVC {
     public RestfulResponse getExecutableTask(TaskQueueReq request) {
         PaginationRsp<TaskPo> paginationRsp = appContext.getExecutableJobQueue().pageSelect(request);
 
-        boolean needClear = Boolean.valueOf(AppConfigurer.getProperty("lts.admin.remove.running.job.on.executable.search", "false"));
+        boolean needClear = Boolean.valueOf(AppConfigurer.getProperty("dat.admin.remove.running.job.on.executable.search", "false"));
         if (needClear) {
             paginationRsp = clearRunningJob(paginationRsp);
         }
@@ -286,7 +286,7 @@ public class TaskQueueController extends AbstractMVC {
         httpCmd.setCommand(HttpCmdNames.HTTP_CMD_ADD_JOB);
         httpCmd.addParam("job", JSON.toJSONString(job));
 
-        List<Node> jobTrackerNodeList = appContext.getNodeMemCacheAccess().getNodeByNodeType(NodeType.TASK_DISPATCH);
+        List<Node> jobTrackerNodeList = null;//appContext.getNodeMemCacheAccess().getNodeByNodeType(NodeType.TASK_DISPATCH);
         if (CollectionUtils.isEmpty(jobTrackerNodeList)) {
             return new Pair<Boolean, String>(false, I18nManager.getMessage("job.tracker.not.found"));
         }

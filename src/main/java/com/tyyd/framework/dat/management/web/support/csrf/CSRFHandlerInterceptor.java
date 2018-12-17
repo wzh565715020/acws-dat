@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
  * requests. The interceptor should be registered with Spring MVC servlet using the following syntax:
  * <p/>
  * <mvc:interceptors>
- * <bean class="com.lts.web.support.csrf.CSRFHandlerInterceptor"/>
+ * <bean class="com.dat.web.support.csrf.CSRFHandlerInterceptor"/>
  * </mvc:interceptors>
  *
  * @author   on 11/10/15.

@@ -14,8 +14,6 @@ import com.tyyd.framework.dat.core.registry.RegistryStatMonitor;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.ec.EventCenter;
-import com.tyyd.framework.dat.management.access.BackendAccessFactory;
-import com.tyyd.framework.dat.management.access.memory.NodeMemCacheAccess;
 import com.tyyd.framework.dat.management.cluster.BackendAppContext;
 import com.tyyd.framework.dat.management.cluster.BackendNode;
 import com.tyyd.framework.dat.queue.TaskQueueFactory;
@@ -56,7 +54,7 @@ public class BackendAppContextFactoryBean implements FactoryBean<BackendAppConte
         config.setRegistryAddress(AppConfigurer.getProperty("registryAddress"));
         String clusterName = AppConfigurer.getProperty("clusterName");
         if (StringUtils.isEmpty(clusterName)) {
-            throw new IllegalArgumentException("clusterName in lts-admin.cfg can not be null.");
+            throw new IllegalArgumentException("clusterName in dat-admin.cfg can not be null.");
         }
         config.setClusterName(clusterName);
 
@@ -99,15 +97,6 @@ public class BackendAppContextFactoryBean implements FactoryBean<BackendAppConte
     }
 
     private void initAccess(Config config) {
-        BackendAccessFactory factory = ServiceLoader.load(BackendAccessFactory.class, config);
-        appContext.setBackendJobClientMAccess(factory.getBackendJobClientMAccess(config));
-        appContext.setBackendJobTrackerMAccess(factory.getJobTrackerMAccess(config));
-        appContext.setBackendTaskTrackerMAccess(factory.getBackendTaskTrackerMAccess(config));
-        appContext.setBackendJVMGCAccess(factory.getBackendJVMGCAccess(config));
-        appContext.setBackendJVMMemoryAccess(factory.getBackendJVMMemoryAccess(config));
-        appContext.setBackendJVMThreadAccess(factory.getBackendJVMThreadAccess(config));
-        appContext.setBackendNodeOnOfflineLogAccess(factory.getBackendNodeOnOfflineLogAccess(config));
-        appContext.setNodeMemCacheAccess(new NodeMemCacheAccess());
     }
 
 }

@@ -15,7 +15,7 @@ import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 public class NodeRegistryUtils {
 
     public static String getRootPath(String clusterName) {
-        return "/TYYD/DTA/" + clusterName + "/NODES";
+        return "/TYYD/DAT/" + clusterName + "/NODES";
     }
 
     public static String getNodeTypePath(String clusterName, NodeType nodeType) {
@@ -25,9 +25,9 @@ public class NodeRegistryUtils {
     public static Node parse(String fullPath) {
         Node node = new Node();
         String[] nodeDir = fullPath.split("/");
-        NodeType nodeType = NodeType.valueOf(nodeDir[4]);
+        NodeType nodeType = NodeType.valueOf(nodeDir[5]);
         node.setNodeType(nodeType);
-        String url = nodeDir[5];
+        String url = nodeDir[6];
 
         url = url.substring(nodeType.name().length() + 3);
         String address = url.split("\\?")[0];
@@ -48,8 +48,6 @@ public class NodeRegistryUtils {
             String value = paramEntry.split("=")[1];
             if ("clusterName".equals(key)) {
                 node.setClusterName(value);
-            } else if ("group".equals(key)) {
-                node.setGroup(value);
             } else if ("threads".equals(key)) {
                 node.setThreads(Integer.valueOf(value));
             } else if("availableThreads".equals(key)) {
@@ -60,8 +58,6 @@ public class NodeRegistryUtils {
                 node.setCreateTime(Long.valueOf(value));
             } else if ("isAvailable".equals(key)) {
                 node.setAvailable(Boolean.valueOf(value));
-            } else if ("hostName".equals(key)) {
-                node.setHostName(value);
             } else if ("httpCmdPort".equals(key)) {
                 node.setHttpCmdPort(Integer.valueOf(value));
             }
@@ -85,9 +81,7 @@ public class NodeRegistryUtils {
         }
 
         path.append("?")
-                .append("group=")
-                .append(node.getGroup())
-                .append("&clusterName=")
+                .append("clusterName=")
                 .append(node.getClusterName());
         if (node.getThreads() != 0) {
             path.append("&threads=")
@@ -102,10 +96,7 @@ public class NodeRegistryUtils {
                 .append("&createTime=")
                 .append(node.getCreateTime())
                 .append("&isAvailable=")
-                .append(node.isAvailable())
-                .append("&hostName=")
-                .append(node.getHostName());
-
+                .append(node.isAvailable());
         if (node.getHttpCmdPort() != null) {
             path.append("&httpCmdPort=").append(node.getHttpCmdPort());
         }

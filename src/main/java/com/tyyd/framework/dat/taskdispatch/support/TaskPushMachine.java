@@ -87,7 +87,11 @@ public class TaskPushMachine {
 			if (appContext.getConfig().getIdentity().equals(appContext.getMasterNode().getIdentity()) && start.compareAndSet(false, true)) {
 				PoolQueueReq request = new PoolQueueReq();
 				request.setLimit(Integer.MAX_VALUE);
-				appContext.setPoolPoList(new CopyOnWriteArrayList<PoolPo>(appContext.getPoolQueue().pageSelect(request).getRows()));
+				List<PoolPo> list = appContext.getPoolQueue().pageSelect(request).getRows();
+				appContext.setPoolPoList(new CopyOnWriteArrayList<PoolPo>());
+				if (list!=null && list.size()>0) {
+					appContext.getPoolPoList().addAll(list);
+				}
 				if (scheduledFuture == null) {
 					scheduledFuture = SCHEDULED_CHECKER.scheduleWithFixedDelay(worker, 1, taskPushFrequency,
 							TimeUnit.SECONDS);

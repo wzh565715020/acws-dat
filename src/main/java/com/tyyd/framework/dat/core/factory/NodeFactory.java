@@ -19,6 +19,7 @@ public class NodeFactory {
 			node.setIp(IpPortUtil.getLocalIP());
 			node.setHostName(NetUtils.getLocalHostName());
 			node.setThreads(config.getWorkThreads());
+			node.setAvailableThreads(config.getWorkThreads());
 			int listenPort = config.getListenPort();
 			try {
 				String port = IpPortUtil.getLocalPort();

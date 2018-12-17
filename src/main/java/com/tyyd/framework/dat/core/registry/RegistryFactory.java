@@ -2,7 +2,6 @@ package com.tyyd.framework.dat.core.registry;
 
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.registry.redis.RedisRegistry;
 import com.tyyd.framework.dat.core.registry.zookeeper.ZookeeperRegistry;
 
 public class RegistryFactory {
@@ -15,9 +14,7 @@ public class RegistryFactory {
         }
         if (address.startsWith("zookeeper://")) {
             return new ZookeeperRegistry(appContext);
-        } else if (address.startsWith("redis://")) {
-            return new RedisRegistry(appContext);
-        } else if (address.startsWith("multicast://")) {
+        }  else if (address.startsWith("multicast://")) {
 //            return new MulticastRegistry(config);
         }
         throw new IllegalArgumentException("illegal address protocol");

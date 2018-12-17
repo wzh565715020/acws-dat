@@ -55,7 +55,7 @@ public class BerkeleydbFailStore extends AbstractFailStore {
     public void open() throws FailStoreException {
         try {
             environment = new Environment(dbPath, envConfig);
-            db = environment.openDatabase(null, "lts", dbConfig);
+            db = environment.openDatabase(null, "dat", dbConfig);
         } catch (Exception e) {
             throw new FailStoreException(e);
         }
