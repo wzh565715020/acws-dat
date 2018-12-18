@@ -1,0 +1,2 @@
+fastjson=com.tyyd.framework.dat.core.json.fastjson.FastJSONAdapter
+jackson=com.tyyd.framework.dat.core.json.jackson.JacksonJSONAdapter

@@ -45,7 +45,7 @@ public class RemotingClientDelegate {
 			appContext.getEventCenter().publishAsync(eventInfo);
 			return null;
 		}
-		// 连JobTracker的负载均衡算法
+		// 连taskExecuters的负载均衡算法
 		LoadBalance loadBalance = ServiceLoader.load(LoadBalance.class, appContext.getConfig());
 		return loadBalance.select(taskExecuters, appContext.getConfig().getIdentity());
 	}
@@ -156,5 +156,14 @@ public class RemotingClientDelegate {
 
 	public RemotingClient getRemotingClient() {
 		return remotingClient;
+	}
+
+	public void invokeAsync(String address, RemotingCommand request, AsyncCallback asyncCallback) {
+		try {
+			remotingClient.invokeAsync(address, request,
+					appContext.getConfig().getInvokeTimeoutMillis(), asyncCallback);
+			this.serverEnable = true;
+		} catch (Throwable e) {
+		}
 	}
 }

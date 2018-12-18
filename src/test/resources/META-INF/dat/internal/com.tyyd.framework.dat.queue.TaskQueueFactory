@@ -1,0 +1,2 @@
+mysql=com.tyyd.framework.dat.queue.mysql.MysqlTaskQueueFactory
+mongo=com.tyyd.framework.dat.queue.mongo.MongoJobQueueFactory

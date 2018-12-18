@@ -7,19 +7,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.admin.request.TaskQueueReq;
-import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.exception.TaskReceiveException;
 import com.tyyd.framework.dat.core.protocol.command.TaskSubmitRequest;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.core.support.CronExpressionUtils;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
-import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
@@ -73,7 +69,7 @@ public class TaskReceiver {
         try {
             taskPo = TaskDomainConverter.convert(task);
             if (taskPo == null) {
-                LOGGER.warn("Job can not be null。{}", task);
+                LOGGER.warn("task can not be null。{}", task);
                 return null;
             }
             if (StringUtils.isEmpty(taskPo.getSubmitNode())) {

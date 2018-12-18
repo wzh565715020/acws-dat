@@ -124,7 +124,7 @@ public class TaskFinishHandler {
         jobLogPo.setLogType(LogType.DEL);
         jobLogPo.setLogTime(SystemClock.now());
         jobLogPo.setLevel(Level.INFO);
-        jobLogPo.setMsg("Repeat Job Finished");
+        jobLogPo.setMsg("Repeat task Finished");
         appContext.getTaskLogger().log(jobLogPo);
     }
 

@@ -17,9 +17,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * @author   on 9/15/15.
- */
 public class JVMMonitor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JVMMonitor.class);

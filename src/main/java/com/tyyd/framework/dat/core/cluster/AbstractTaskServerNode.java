@@ -25,18 +25,22 @@ import com.tyyd.framework.dat.core.support.AliveKeeping;
 import com.tyyd.framework.dat.ec.EventCenter;
 import com.tyyd.framework.dat.ec.EventInfo;
 import com.tyyd.framework.dat.remoting.serialize.AdaptiveSerializable;
+import com.tyyd.framework.dat.zookeeper.DataListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *         抽象节点
  */
-public abstract class AbstractTaskNode<T extends Node, Context extends AppContext> implements TaskNode {
+public abstract class AbstractTaskServerNode<T extends Node, Context extends AppContext> implements TaskNode {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(TaskNode.class);
-
+    private static String MASTER = "";
     protected Registry registry;
     protected T node;
     protected Config config;
@@ -44,13 +48,16 @@ public abstract class AbstractTaskNode<T extends Node, Context extends AppContex
     private List<NodeChangeListener> nodeChangeListeners;
     private List<MasterChangeListener> masterChangeListeners;
     protected AtomicBoolean started = new AtomicBoolean(false);
-
-    public AbstractTaskNode() {
+    // 调度器
+ 	private ScheduledExecutorService delayExector = Executors.newScheduledThreadPool(1);
+ 	
+    public AbstractTaskServerNode() {
         appContext = getAppContext();
         config = TaskNodeConfigFactory.getDefaultConfig();
         appContext.setConfig(config);
         nodeChangeListeners = new ArrayList<NodeChangeListener>();
         masterChangeListeners = new ArrayList<MasterChangeListener>();
+        MASTER = NodeRegistryUtils.getNodeTypePath("MASTER", NodeType.TASK_DISPATCH) + "/MASTER";
     }
 
     final public void start() {
@@ -216,8 +223,73 @@ public abstract class AbstractTaskNode<T extends Node, Context extends AppContex
                 }
             }
         });
-    }
+        registry.addDataListener(MASTER, new DataListener() {
 
+			@Override
+			public void dataDeleted(String dataPath) throws Exception {
+				Node node = appContext.getMasterNode();
+				if (node != null && node.getIdentity().equals(appContext.getNode().getIdentity())) {// 若之前master为本机,则立即抢主,否则延迟5秒抢主(防止小故障引起的抢主可能导致的网络数据风暴)
+					takeMaster();
+				} else {
+					delayExector.schedule(new Runnable() {
+						@Override
+						public void run() {
+							takeMaster();
+						}
+					}, 10, TimeUnit.SECONDS);
+				}
+			}
+
+			@Override
+			public void dataChange(String dataPath, Object data) throws Exception {
+				if (data instanceof Node) {
+					appContext.setMasterNode((Node) data);
+					notifyListener((Node) data);
+				}
+			}
+		});
+		Node newNode = NodeFactory.deepCopy(node);
+		registry.updateRegister(MASTER, newNode);
+    }
+    private void notifyListener(Node master) {
+        boolean isMaster = false;
+        if (appContext.getConfig().getIdentity().equals(appContext.getMasterNode().getIdentity())) {
+            LOGGER.info("Current node become the master node:{}", appContext.getMasterNode());
+            isMaster = true;
+        } else {
+            LOGGER.info("Master node is :{}", appContext.getMasterNode());
+            isMaster = false;
+        }
+        List<MasterChangeListener> listeners = getMasterChangeListener();
+        if (listeners != null) {
+            for (MasterChangeListener masterChangeListener : listeners) {
+                try {
+                    masterChangeListener.change(master, isMaster);
+                } catch (Throwable t) {
+                    LOGGER.error("MasterChangeListener notify error!", t);
+                }
+            }
+        }
+        EventInfo eventInfo = new EventInfo(EcTopic.MASTER_CHANGED);
+        eventInfo.setParam("master", master);
+        appContext.getEventCenter().publishSync(eventInfo);
+    }
+	private void takeMaster() {
+		try {
+			Node newNode = NodeFactory.deepCopy(node);
+			registry.updateRegister(MASTER, newNode);
+		} catch (Exception e) {
+		}
+
+	}
+	
+	/**
+     * 添加 master 节点变化监听器
+     */
+    public List<MasterChangeListener> getMasterChangeListener() {
+           return masterChangeListeners;
+    }
+    
     protected abstract void remotingStart();
 
     protected abstract void remotingStop();

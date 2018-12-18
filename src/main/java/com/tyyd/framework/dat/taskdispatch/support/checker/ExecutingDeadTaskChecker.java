@@ -64,7 +64,7 @@ public class ExecutingDeadTaskChecker {
 		try {
 			if (start.compareAndSet(false, true)) {
 				int fixCheckPeriodSeconds = appContext.getConfig()
-						.getParameter("TaskDispatcher.executing.job.fix.check.interval.seconds", 30);
+						.getParameter("TaskDispatcher.executing.task.fix.check.interval.seconds", 30);
 				if (fixCheckPeriodSeconds < 5) {
 					fixCheckPeriodSeconds = 5;
 				} else if (fixCheckPeriodSeconds > 5 * 60) {
@@ -81,14 +81,14 @@ public class ExecutingDeadTaskChecker {
 							}
 							checkAndFix();
 						} catch (Throwable t) {
-							LOGGER.error("Check executing dead job error ", t);
+							LOGGER.error("Check executing dead task error ", t);
 						}
 					}
 				}, fixCheckPeriodSeconds, fixCheckPeriodSeconds, TimeUnit.SECONDS);
 			}
-			LOGGER.info("Executing dead job checker started!");
+			LOGGER.info("Executing dead task checker started!");
 		} catch (Throwable e) {
-			LOGGER.error("Executing dead job checker start failed!", e);
+			LOGGER.error("Executing dead task checker start failed!", e);
 		}
 	}
 
@@ -148,7 +148,7 @@ public class ExecutingDeadTaskChecker {
 	 */
 	private void askTimeoutTask(Channel channel, final List<TaskPo> taskPos) {
 		try {
-			RemotingClientDelegate remotingServer = appContext.getRemotingServer();
+			RemotingClientDelegate remotingServer = appContext.getRemotingClient();
 			List<String> ids = new ArrayList<String>(taskPos.size());
 			for (TaskPo taskPo : taskPos) {
 				ids.add(taskPo.getId());
@@ -218,7 +218,7 @@ public class ExecutingDeadTaskChecker {
 		} catch (Throwable t) {
 			LOGGER.error(t.getMessage(), t);
 		}
-		LOGGER.info("checkAndFix dead job ! {}", JSON.toJSONString(taskPo));
+		LOGGER.info("checkAndFix dead task ! {}", JSON.toJSONString(taskPo));
 	}
 
 	public void stop() {
@@ -227,9 +227,9 @@ public class ExecutingDeadTaskChecker {
 				scheduledFuture.cancel(true);
 				FIXED_EXECUTOR_SERVICE.shutdown();
 			}
-			LOGGER.info("Executing dead job checker stopped!");
+			LOGGER.info("Executing dead task checker stopped!");
 		} catch (Throwable t) {
-			LOGGER.error("Executing dead job checker stop failed!", t);
+			LOGGER.error("Executing dead task checker stop failed!", t);
 		}
 	}
 

@@ -147,7 +147,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
 					}
 					
 					List<Node> oldNodeChildren = null;
-					if (oldChildren != null && oldChildren.isEmpty()) {
+					if (oldChildren != null && !oldChildren.isEmpty()) {
 						oldNodeChildren = new ArrayList<Node>(oldChildren.size());
 						for (String child : oldChildren) {
 							Node node = NodeRegistryUtils.parse(parentPath + "/" + child);

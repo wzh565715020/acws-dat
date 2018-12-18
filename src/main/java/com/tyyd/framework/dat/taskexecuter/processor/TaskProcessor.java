@@ -14,6 +14,7 @@ import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.protocol.TaskProtos;
 import com.tyyd.framework.dat.core.protocol.command.TaskCompletedRequest;
 import com.tyyd.framework.dat.core.protocol.command.TaskPushRequest;
+import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.core.support.RetryScheduler;
@@ -41,17 +42,19 @@ public class TaskProcessor extends AbstractProcessor {
 
     private TaskRunnerCallback taskRunnerCallback;
     private RemotingServerDelegate remotingServer;
+    private RemotingClientDelegate remotingClient;
     private RetryScheduler<TaskRunResult> retryScheduler;
 
     protected TaskProcessor(TaskExecuterAppContext appContext) {
         super(appContext);
         this.remotingServer = appContext.getRemotingServer();
+        this.remotingClient = appContext.getRemotingClient();
         // 线程安全的
         taskRunnerCallback = new TaskRunnerCallback();
         retryScheduler = new RetryScheduler<TaskRunResult>(appContext, 3) {
             @Override
             protected boolean isRemotingEnable() {
-                return remotingServer.isServerEnable();
+                return remotingClient.isServerEnable();
             }
 
             @Override
@@ -69,15 +72,15 @@ public class TaskProcessor extends AbstractProcessor {
 
         TaskPushRequest requestBody = request.getBody();
 
-        // JobTracker 分发来的 job
+        // JobTracker 分发来的 task
         final TaskMeta taskMeta = requestBody.getTaskMeta();
 
         try {
-            appContext.getRunnerPool().execute(channel,taskMeta, taskRunnerCallback);
+            appContext.getRunnerPool().execute(taskMeta, taskRunnerCallback);
         } catch (NoAvailableTaskRunnerException e) {
             // 任务推送失败
             return RemotingCommand.createResponseCommand(TaskProtos.ResponseCode.NO_AVAILABLE_JOB_RUNNER.code(),
-                    "job push failure , no available task runner!");
+                    "task push failure , no available task runner!");
         }
 
         // 任务推送成功
@@ -104,30 +107,22 @@ public class TaskProcessor extends AbstractProcessor {
 
             RemotingCommand request = RemotingCommand.createRequestCommand(requestCode, requestBody);
 
-            final Response returnResponse = new Response();
 
             try {
                 final CountDownLatch latch = new CountDownLatch(1);
-                remotingServer.invokeAsync(response.getChannel(),request, new AsyncCallback() {
+                remotingClient.invokeAsync(appContext.getMasterNode().getAddress(),request, new AsyncCallback() {
                     @Override
                     public void operationComplete(ResponseFuture responseFuture) {
                         try {
                             RemotingCommand commandResponse = responseFuture.getResponseCommand();
-
-                            if (commandResponse != null && commandResponse.getCode() == RemotingProtos.ResponseCode.SUCCESS.code()) {
-                                TaskPushRequest jobPushRequest = commandResponse.getBody();
-                                if (jobPushRequest != null) {
-                                    LOGGER.info("Get new job :{}", jobPushRequest.getTaskMeta());
-                                    returnResponse.setJobMeta(jobPushRequest.getTaskMeta());
-                                }
-                            }else {
-                                LOGGER.info("Job feedback failed, save local files。{}", taskRunResult);
+                            if (commandResponse == null || commandResponse.getCode() == RemotingProtos.ResponseCode.SUCCESS.code()) {
+                                LOGGER.info("task feedback failed, save local files。{}", taskRunResult);
                                 try {
                                     retryScheduler.inSchedule(
                                     		taskRunResult.getTaskMeta().getId().concat("_") + SystemClock.now(),
                                     		taskRunResult);
                                 } catch (Exception e) {
-                                    LOGGER.error("Job feedback failed", e);
+                                    LOGGER.error("task feedback failed", e);
                                 }
                             }
                         } finally {
@@ -143,6 +138,13 @@ public class TaskProcessor extends AbstractProcessor {
                 }
             } catch (Exception e) {
                  LOGGER.error("Save files failed, {}", taskRunResult.getTaskMeta(), e);
+                 try {
+                     retryScheduler.inSchedule(
+                     		taskRunResult.getTaskMeta().getId().concat("_") + SystemClock.now(),
+                     		taskRunResult);
+                 } catch (Exception e1) {
+                     LOGGER.error("task feedback failed", e);
+                 }
             }
 
         }
@@ -168,11 +170,11 @@ public class TaskProcessor extends AbstractProcessor {
             if (commandResponse != null && commandResponse.getCode() == RemotingProtos.ResponseCode.SUCCESS.code()) {
                 return true;
             } else {
-                LOGGER.warn("Send job failed, {}", commandResponse);
+                LOGGER.warn("Send task failed, {}", commandResponse);
                 return false;
             }
         } catch (Exception e) {
-            LOGGER.error("Retry send job result failed! taskResults={}", results, e);
+            LOGGER.error("Retry send task result failed! taskResults={}", results, e);
         }
         return false;
     }

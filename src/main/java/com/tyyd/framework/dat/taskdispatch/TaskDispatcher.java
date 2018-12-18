@@ -2,7 +2,7 @@ package com.tyyd.framework.dat.taskdispatch;
 
 
 import com.tyyd.framework.dat.biz.logger.SmartJobLogger;
-import com.tyyd.framework.dat.core.cluster.AbstractClientNode;
+import com.tyyd.framework.dat.core.cluster.AbstractServerNode;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.ec.injvm.InjvmEventCenter;
 import com.tyyd.framework.dat.queue.TaskQueueFactory;
@@ -21,7 +21,7 @@ import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
 import com.tyyd.framework.dat.taskdispatch.support.listener.TaskNodeChangeListener;
 import com.tyyd.framework.dat.taskdispatch.support.listener.TaskDispatcherMasterChangeListener;
 
-public class TaskDispatcher extends AbstractClientNode<TaskDispatcherNode, TaskDispatcherAppContext> {
+public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskDispatcherAppContext> {
 	
 	public TaskDispatcher() {
 		// 监控中心
@@ -43,7 +43,8 @@ public class TaskDispatcher extends AbstractClientNode<TaskDispatcherNode, TaskD
 	@Override
 	protected void beforeStart() {
 		// injectRemotingServer
-		appContext.setRemotingServer(remotingClient);
+		appContext.setRemotingClient(remotingClient);
+		appContext.setRemotingServer(remotingServer);
 		appContext.setJobLogger(new SmartJobLogger(appContext));
 
 		TaskQueueFactory factory = ServiceLoader.load(TaskQueueFactory.class, config);

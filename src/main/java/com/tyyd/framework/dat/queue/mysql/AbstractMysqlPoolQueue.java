@@ -59,7 +59,7 @@ public abstract class AbstractMysqlPoolQueue extends JdbcAbstractAccess implemen
 		return new UpdateSql(getSqlTemplate()).update().table(getTableName())
 				.setOnNotNull("pool_name", request.getPoolName())
 				.setOnNotNull("max_count", request.getMaxCount())
-				.setOnNotNull("available_count", request.getAvailableCount()==null ? null :"available_count + 1")
+				.setOnNotNull("available_count", request.getAvailableCount())
 				.setOnNotNull("task_ids", request.getTaskIds())
 				.setOnNotNull("memo", request.getMemo())
 				.setOnNotNull("update_date", request.getUpdateDate())

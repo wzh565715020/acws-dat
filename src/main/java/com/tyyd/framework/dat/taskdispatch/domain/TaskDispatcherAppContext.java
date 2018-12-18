@@ -5,6 +5,7 @@ import java.util.List;
 import com.tyyd.framework.dat.biz.logger.TaskLogger;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
+import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
 import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
 import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
 import com.tyyd.framework.dat.queue.PoolQueue;
@@ -25,18 +26,20 @@ import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
 public class TaskDispatcherAppContext extends AppContext {
 
     private RemotingClientDelegate remotingClient;
+    
+    private RemotingServerDelegate remotingServer;
     // channel manager
     private ChannelManager channelManager;
-    // TaskTracker manager for job tracker
+    // TaskTracker manager for task tracker
     private TaskExecuterManager taskExecuterManager;
-    // dead job checker
+    // dead task checker
     private ExecutingDeadTaskChecker executingDeadJobChecker;
     // biz logger
     private TaskLogger taskLogger;
     
-    // executable job queue（waiting for exec）
+    // executable task queue（waiting for exec）
     private ExecutableTaskQueue executableTaskQueue;
-    // executing job queue
+    // executing task queue
     private ExecutingTaskQueue executingTaskQueue;
 
     // task queue
@@ -48,7 +51,7 @@ public class TaskDispatcherAppContext extends AppContext {
     private TaskReceiver taskReceiver;
     private TaskSender taskSender;
 
-    // Pull Job Machine
+    // Pull task Machine
     private TaskPushMachine taskPushMachine;
     
     private List<PoolPo> poolPoList;
@@ -94,11 +97,11 @@ public class TaskDispatcherAppContext extends AppContext {
     }
 
 
-    public RemotingClientDelegate getRemotingServer() {
+    public RemotingClientDelegate getRemotingClient() {
         return remotingClient;
     }
 
-    public void setRemotingServer(RemotingClientDelegate remotingClientDelegate) {
+    public void setRemotingClient(RemotingClientDelegate remotingClientDelegate) {
         this.remotingClient = remotingClientDelegate;
     }
 
@@ -172,6 +175,14 @@ public class TaskDispatcherAppContext extends AppContext {
 
 	public void setPoolQueue(PoolQueue poolQueue) {
 		this.poolQueue = poolQueue;
+	}
+
+	public RemotingServerDelegate getRemotingServer() {
+		return remotingServer;
+	}
+
+	public void setRemotingServer(RemotingServerDelegate remotingServer) {
+		this.remotingServer = remotingServer;
 	}
 
 

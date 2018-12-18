@@ -5,7 +5,7 @@ import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.constant.Constants;
-import com.tyyd.framework.dat.core.domain.Job;
+import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.domain.Pair;
 import com.tyyd.framework.dat.core.failstore.FailStore;
 import com.tyyd.framework.dat.core.failstore.FailStoreException;
@@ -27,7 +27,6 @@ public class MapdbFailStoreTest {
         Config config = new Config();
         config.setIdentity("testIdentity");
         config.setDataPath(Constants.USER_HOME);
-        config.setNodeGroup("test");
         config.setNodeType(NodeType.TASK_CLIENT);
         failStore = new MapdbFailStoreFactory().getFailStore(config, config.getFailStorePath());
         failStore.open();
@@ -35,10 +34,10 @@ public class MapdbFailStoreTest {
 
     @Test
     public void put() throws FailStoreException {
-        Job job = new Job();
-        job.setTaskId("2131232");
+        Task task = new Task();
+        task.setTaskId("2131232");
         for (int i = 0; i < 100; i++) {
-            failStore.put(key + "" + i, job);
+            failStore.put(key + "" + i, task);
         }
         System.out.println("这里debug测试多线程");
         failStore.close();
@@ -46,9 +45,9 @@ public class MapdbFailStoreTest {
 
     @Test
     public void fetchTop() throws FailStoreException {
-        List<Pair<String, Job>> pairs = failStore.fetchTop(5, Job.class);
+        List<Pair<String, Task>> pairs = failStore.fetchTop(5, Task.class);
         if (CollectionUtils.isNotEmpty(pairs)) {
-            for (Pair<String, Job> pair : pairs) {
+            for (Pair<String, Task> pair : pairs) {
                 System.out.println(JSON.toJSONString(pair));
             }
         }

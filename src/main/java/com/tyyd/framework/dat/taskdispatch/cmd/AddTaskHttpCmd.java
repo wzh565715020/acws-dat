@@ -46,31 +46,31 @@ public class AddTaskHttpCmd implements HttpCmdProc {
         HttpCmdResponse response = new HttpCmdResponse();
         response.setSuccess(false);
 
-        String jobJSON = request.getParam("job");
+        String jobJSON = request.getParam("task");
         if (StringUtils.isEmpty(jobJSON)) {
-            response.setMsg("job can not be null");
+            response.setMsg("task can not be null");
             return response;
         }
         try {
-            Task job = JSON.parse(jobJSON, Task.class);
-            if (job == null) {
-                response.setMsg("job can not be null");
+            Task task = JSON.parse(jobJSON, Task.class);
+            if (task == null) {
+                response.setMsg("task can not be null");
                 return response;
             }
 
-            job.checkField();
+            task.checkField();
 
             TaskSubmitRequest jobSubmitRequest = new TaskSubmitRequest();
-            jobSubmitRequest.setTasks(Collections.singletonList(job));
+            jobSubmitRequest.setTasks(Collections.singletonList(task));
             appContext.getTaskReceiver().receive(jobSubmitRequest);
 
-            LOGGER.info("add job succeed, {}", job);
+            LOGGER.info("add task succeed, {}", task);
 
             response.setSuccess(true);
 
         } catch (Exception e) {
-            LOGGER.error("add job error, message:", e);
-            response.setMsg("add job error, message:" + e.getMessage());
+            LOGGER.error("add task error, message:", e);
+            response.setMsg("add task error, message:" + e.getMessage());
         }
         return response;
     }

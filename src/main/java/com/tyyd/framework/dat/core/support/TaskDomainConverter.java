@@ -10,38 +10,38 @@ public class TaskDomainConverter {
     private TaskDomainConverter() {
     }
 
-    public static TaskPo convert(Task job) {
+    public static TaskPo convert(Task task) {
         TaskPo taskPo = new TaskPo();
-        taskPo.setTaskId(job.getTaskId());
-        taskPo.setTaskClass(job.getTaskClass());
-        taskPo.setTaskExecType(job.getTaskExecType());
-        taskPo.setTaskName(job.getTaskName());
-        taskPo.setTaskType(job.getTaskType());
+        taskPo.setTaskId(task.getTaskId());
+        taskPo.setTaskClass(task.getTaskClass());
+        taskPo.setTaskExecType(task.getTaskExecType());
+        taskPo.setTaskName(task.getTaskName());
+        taskPo.setTaskType(task.getTaskType());
         taskPo.setCreateDate(SystemClock.now());
         taskPo.setUpdateDate(taskPo.getCreateDate());
-        taskPo.setSubmitNode(job.getSubmitNode());
-        taskPo.setCron(job.getCron());
-        taskPo.setRepeatCount(job.getRepeatCount());
+        taskPo.setSubmitNode(task.getSubmitNode());
+        taskPo.setCron(task.getCron());
+        taskPo.setRepeatCount(task.getRepeatCount());
         taskPo.setCreateDate(SystemClock.now());
         taskPo.setUpdateDate(SystemClock.now());
         taskPo.setCreateUserid("");
         taskPo.setUpdateUserid("");
         if (!taskPo.isCron()) {
-            if (job.getTriggerTime() == null) {
+            if (task.getTriggerTime() == null) {
                 taskPo.setTriggerTime(SystemClock.now());
             } else {
-                taskPo.setTriggerTime(job.getTriggerTime());
+                taskPo.setTriggerTime(task.getTriggerTime());
             }
         }
-        if (job.getRepeatCount() != 0) {
+        if (task.getRepeatCount() != 0) {
             taskPo.setCron(null);
-            taskPo.setRepeatInterval(job.getRepeatInterval());
+            taskPo.setRepeatInterval(task.getRepeatInterval());
         }
         return taskPo;
     }
 
     /**
-     * JobPo 转 Job
+     * JobPo 转 task
      */
     public static TaskMeta convert(TaskPo taskPo) {
         Task task = new Task();
@@ -66,17 +66,17 @@ public class TaskDomainConverter {
     public static TaskLogPo convertJobLog(TaskMeta jobMeta) {
         TaskLogPo jobLogPo = new TaskLogPo();
         jobLogPo.setGmtCreated(SystemClock.now());
-        Task job = jobMeta.getTask();
+        Task task = jobMeta.getTask();
         jobLogPo.setInternalExtParams(jobMeta.getInternalExtParams());
-        jobLogPo.setSubmitNodeGroup(job.getSubmitNode());
-        jobLogPo.setTaskId(job.getTaskId());
+        jobLogPo.setSubmitNodeGroup(task.getSubmitNode());
+        jobLogPo.setTaskId(task.getTaskId());
         jobLogPo.setJobId(jobMeta.getId());
-        jobLogPo.setCronExpression(job.getCron());
-        jobLogPo.setTriggerTime(job.getTriggerTime());
+        jobLogPo.setCronExpression(task.getCron());
+        jobLogPo.setTriggerTime(task.getTriggerTime());
 
-        jobLogPo.setRepeatCount(job.getRepeatCount());
-        jobLogPo.setRepeatedCount(job.getRepeatedCount());
-        jobLogPo.setRepeatInterval(job.getRepeatInterval());
+        jobLogPo.setRepeatCount(task.getRepeatCount());
+        jobLogPo.setRepeatedCount(task.getRepeatedCount());
+        jobLogPo.setRepeatInterval(task.getRepeatInterval());
         return jobLogPo;
     }
 

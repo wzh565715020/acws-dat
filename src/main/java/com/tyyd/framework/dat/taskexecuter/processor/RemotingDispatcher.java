@@ -32,6 +32,11 @@ public class RemotingDispatcher extends AbstractProcessor {
     public RemotingCommand processRequest(Channel channel, RemotingCommand request) throws RemotingCommandException {
 
         TaskProtos.RequestCode code = TaskProtos.RequestCode.valueOf(request.getCode());
+        // 心跳
+        if (request.getCode() == TaskProtos.RequestCode.HEART_BEAT.code()) {
+            offerHandler(channel, request);
+            return RemotingCommand.createResponseCommand(TaskProtos.ResponseCode.HEART_BEAT_SUCCESS.code(), "");
+        }
         RemotingProcessor processor = processors.get(code);
         if (processor == null) {
             return RemotingCommand.createResponseCommand(RemotingProtos.ResponseCode.REQUEST_CODE_NOT_SUPPORTED.code(),

@@ -52,9 +52,9 @@ public class TaskProcBiz implements TaskCompletedBiz {
         }
 
         // 判断重试次数
-        Task job = result.getTaskMeta().getTask();
-        Integer retryTimes = job.getRetryTimes();
-        int jobMaxRetryTimes = job.getMaxRetryTimes();
+        Task task = result.getTaskMeta().getTask();
+        Integer retryTimes = task.getRetryTimes();
+        int jobMaxRetryTimes = task.getMaxRetryTimes();
         return !(retryTimes >= globalMaxRetryTimes || retryTimes >= jobMaxRetryTimes);
     }
 

@@ -1,6 +1,5 @@
 package com.tyyd.framework.dat.taskexecuter.example;
 
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.tyyd.framework.dat.core.domain.Action;
 import com.tyyd.framework.dat.core.domain.Task;
@@ -15,24 +14,17 @@ public class SpringAnnotationJobRunner implements TaskRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringAnnotationJobRunner.class);
 
-    @Autowired
-    SpringBean springBean;
-
     @Override
-    public Result run(Task job) throws Throwable {
+    public Result run(Task task) throws Throwable {
         try {
             Thread.sleep(1000L);
 
-            springBean.hello();
+            System.out.println("我是SpringBean，我执行了");
 
             // TODO 业务逻辑
-            LOGGER.info("我要执行：" + job);
-            BizLogger bizLogger = DatLoggerFactory.getBizLogger();
-            // 会发送到 LTS (JobTracker上)
-            bizLogger.info("测试，业务日志啊啊啊啊啊");
-
+            LOGGER.info("我要执行：" + task);
         } catch (Exception e) {
-            LOGGER.info("Run job failed!", e);
+            LOGGER.info("Run task failed!", e);
             return new Result(Action.EXECUTE_LATER, e.getMessage());
         }
         return new Result(Action.EXECUTE_SUCCESS, "执行成功了，哈哈");

@@ -186,13 +186,13 @@ public class Task implements Serializable {
 
 	public void checkField() throws TaskSubmitException {
         if (taskId == null) {
-            throw new TaskSubmitException("taskId can not be null! job is " + toString());
+            throw new TaskSubmitException("taskId can not be null! task is " + toString());
         }
         if (StringUtils.isNotEmpty(cron) && !CronExpression.isValidExpression(cron)) {
-            throw new TaskSubmitException("cronExpression invalid! job is " + toString());
+            throw new TaskSubmitException("cronExpression invalid! task is " + toString());
         }
         if (repeatCount < -1) {
-            throw new TaskSubmitException("repeatCount invalid, must be great than -1! job is " + toString());
+            throw new TaskSubmitException("repeatCount invalid, must be great than -1! task is " + toString());
         }
     }
 

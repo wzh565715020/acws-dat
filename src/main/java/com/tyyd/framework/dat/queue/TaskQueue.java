@@ -17,7 +17,7 @@ public interface TaskQueue extends TaskQueueInterface{
     TaskPo getTask(String taskId);
 
     /**
-     * 移除Cron Job
+     * 移除Cron task
      */
     boolean remove(String taskId);
 

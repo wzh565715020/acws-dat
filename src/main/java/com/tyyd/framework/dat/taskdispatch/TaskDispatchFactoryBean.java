@@ -17,6 +17,7 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
         InitializingBean, DisposableBean {
 
     private TaskDispatcher taskDispatcher;
+    
     private boolean started;
     /**
      * 集群名称
@@ -30,6 +31,12 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
      * master节点变化监听器
      */
     private MasterChangeListener[] masterChangeListeners;
+  
+    /**
+     * 监听端口
+     */
+    private Integer listenPort;
+    
     /**
      * 额外参数配置
      */
@@ -64,7 +71,9 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
 
         taskDispatcher.setClusterName(clusterName);
         taskDispatcher.setRegistryAddress(registryAddress);
-
+        if (listenPort != null) {
+        	taskDispatcher.setListenPort(listenPort);
+        }
         // 设置config
         for (Map.Entry<Object, Object> entry : configs.entrySet()) {
             taskDispatcher.addConfig(entry.getKey().toString(), entry.getValue().toString());

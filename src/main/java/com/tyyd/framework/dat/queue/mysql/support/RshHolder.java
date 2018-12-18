@@ -3,7 +3,6 @@ package com.tyyd.framework.dat.queue.mysql.support;
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.constant.Level;
-import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.json.TypeReference;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
@@ -92,6 +91,7 @@ public class RshHolder {
         jobPo.setRepeatCount(rs.getInt("repeat_count"));
         jobPo.setRepeatedCount(rs.getInt("repeated_count"));
         jobPo.setRepeatInterval(rs.getLong("repeat_interval"));
+        jobPo.setId(rs.getString("id"));
         return jobPo;
     }
 

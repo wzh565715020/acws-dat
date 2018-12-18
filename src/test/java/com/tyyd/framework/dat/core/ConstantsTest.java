@@ -1,6 +1,9 @@
 package com.tyyd.framework.dat.core;
 
 import com.tyyd.framework.dat.core.constant.Constants;
+import com.tyyd.framework.dat.core.spi.ServiceLoader;
+import com.tyyd.framework.dat.remoting.serialize.RemotingSerializable;
+
 import org.junit.Test;
 
 /**
@@ -10,8 +13,8 @@ public class ConstantsTest {
 
     @Test
     public void test() {
-
-
-        System.out.println(Constants.USER_HOME + "/.job");
+    	RemotingSerializable serializable  = ServiceLoader.load(RemotingSerializable.class, Constants.ADAPTIVE);
+System.out.println(serializable.getId());
+        System.out.println(Constants.USER_HOME + "/.task");
     }
 }

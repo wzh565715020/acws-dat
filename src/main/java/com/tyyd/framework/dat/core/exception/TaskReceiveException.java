@@ -24,12 +24,12 @@ public class TaskReceiveException extends Exception {
         this.jobs = jobs;
     }
 
-    public void addJob(Task job){
+    public void addJob(Task task){
         if(jobs == null){
             jobs = new ArrayList<Task>();
         }
 
-        jobs.add(job);
+        jobs.add(task);
     }
 
     public TaskReceiveException() {

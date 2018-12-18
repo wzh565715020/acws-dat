@@ -11,7 +11,6 @@ import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.ec.EventInfo;
 import com.tyyd.framework.dat.ec.EventSubscriber;
 import com.tyyd.framework.dat.ec.Observer;
-import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 import com.tyyd.framework.dat.taskexecuter.expcetion.NoAvailableTaskRunnerException;
 
@@ -54,15 +53,15 @@ public class RunnerPool {
 				new ThreadPoolExecutor.AbortPolicy());
 	}
 
-	public void execute(Channel channel, TaskMeta jobMeta, RunnerCallback callback)
+	public void execute(TaskMeta jobMeta, RunnerCallback callback)
 			throws NoAvailableTaskRunnerException {
 		try {
-			threadPoolExecutor.execute(new TaskRunnerDelegate(appContext, jobMeta, callback, channel));
+			threadPoolExecutor.execute(new TaskRunnerDelegate(appContext, jobMeta, callback));
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Receive job success ! " + jobMeta);
+				LOGGER.debug("Receive task success ! " + jobMeta);
 			}
 		} catch (RejectedExecutionException e) {
-			LOGGER.warn("No more thread to run job .");
+			LOGGER.warn("No more thread to run task .");
 			throw new NoAvailableTaskRunnerException(e);
 		}
 	}

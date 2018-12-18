@@ -31,30 +31,30 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
 
         String taskId = jobCancelRequest.getTaskId();
         String taskTrackerNodeGroup = jobCancelRequest.getTaskTrackerNodeGroup();
-        TaskPo job = appContext.getTaskQueue().getTask(taskId);
-        if (job == null) {
-            job = appContext.getExecutableTaskQueue().getTask(taskId);
+        TaskPo task = appContext.getTaskQueue().getTask(taskId);
+        if (task == null) {
+            task = appContext.getExecutableTaskQueue().getTask(taskId);
         }
 
-        if (job != null) {
-            appContext.getExecutableTaskQueue().remove(job.getTaskId());
-            if (job.isCron()) {
-                appContext.getTaskQueue().remove(job.getTaskId());
+        if (task != null) {
+            appContext.getExecutableTaskQueue().remove(task.getTaskId());
+            if (task.isCron()) {
+                appContext.getTaskQueue().remove(task.getTaskId());
             }
             // 记录日志
-            TaskLogPo jobLogPo = TaskDomainConverter.convertJobLog(job);
+            TaskLogPo jobLogPo = TaskDomainConverter.convertJobLog(task);
             jobLogPo.setSuccess(true);
             jobLogPo.setLogType(LogType.DEL);
             jobLogPo.setLogTime(SystemClock.now());
             jobLogPo.setLevel(Level.INFO);
             appContext.getTaskLogger().log(jobLogPo);
 
-            LOGGER.info("Cancel Job success , jobId={}, taskId={}, taskTrackerNodeGroup={}", job.getTaskId(), taskId, taskTrackerNodeGroup);
+            LOGGER.info("Cancel task success , jobId={}, taskId={}, taskTrackerNodeGroup={}", task.getTaskId(), taskId, taskTrackerNodeGroup);
             return RemotingCommand.createResponseCommand(TaskProtos
                     .ResponseCode.TASK_CANCEL_SUCCESS.code());
         }
 
         return RemotingCommand.createResponseCommand(TaskProtos
-                .ResponseCode.TASK_CANCEL_FAILED.code(), "Job maybe running");
+                .ResponseCode.TASK_CANCEL_FAILED.code(), "task maybe running");
     }
 }

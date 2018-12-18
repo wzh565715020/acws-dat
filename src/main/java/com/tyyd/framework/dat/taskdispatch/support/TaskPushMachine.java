@@ -76,7 +76,7 @@ public class TaskPushMachine {
 					}
 					sendRequest();
 				} catch (Exception e) {
-					LOGGER.error("Job pull machine run error!", e);
+					LOGGER.error("task pull machine run error!", e);
 				}
 			}
 		};

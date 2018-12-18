@@ -21,7 +21,6 @@ import com.tyyd.framework.dat.ec.EventInfo;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
-import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.ResponseFuture;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
@@ -40,16 +39,14 @@ public class TaskPusher {
 	private final Logger LOGGER = LoggerFactory.getLogger(TaskPusher.class);
 	private TaskDispatcherAppContext appContext;
 	private TaskDispatcherMStatReporter stat;
-	private RemotingClientDelegate remotingClient;
 
 	public TaskPusher(TaskDispatcherAppContext appContext) {
 		this.appContext = appContext;
 		this.stat = (TaskDispatcherMStatReporter) appContext.getMStatReporter();
-		this.remotingClient = appContext.getRemotingServer();
 	}
 
 	public void push() {
-		Node node = appContext.getRemotingServer().getTaskExecuterNode();
+		Node node = appContext.getRemotingClient().getTaskExecuterNode();
 		if (node == null) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("taskExecuter didn't have node.");
@@ -67,7 +64,7 @@ public class TaskPusher {
 		if (null == channelWrapper) {
 			try {
 				channelWrapper = new ChannelWrapper(
-						appContext.getRemotingServer().getRemotingClient()
+						appContext.getRemotingClient().getRemotingClient()
 								.getAndCreateChannel(taskExecuterNode.getIp() + ":" + taskExecuterNode.getPort()),
 						NodeType.TASK_EXECUTER, identity);
 				appContext.getChannelManager().offerChannel(channelWrapper);
@@ -85,7 +82,7 @@ public class TaskPusher {
 			LOGGER.debug("taskTrackerIdentity:{} , availableThreads:{}", identity, availableThreads);
 		}
 		// 推送任务
-		TaskPushResult result = send(remotingClient, taskExecuterNode);
+		TaskPushResult result = send(appContext.getRemotingClient(), taskExecuterNode);
 		switch (result) {
 		case SUCCESS:
 			availableThreads = taskExecuterNode.getAvailableThread().decrementAndGet();
@@ -127,7 +124,7 @@ public class TaskPusher {
 
 				final CountDownLatch latch = new CountDownLatch(1);
 				try {
-					remotingClient.invokeAsync(taskTrackerNode.getChannelWrapper().getChannel(), commandRequest,
+					remotingClient.invokeAsync(taskTrackerNode.getIp() + ":" + taskTrackerNode.getPort(), commandRequest,
 							new AsyncCallback() {
 								@Override
 								public void operationComplete(ResponseFuture responseFuture) {
@@ -140,7 +137,7 @@ public class TaskPusher {
 										if (responseCommand.getCode() == TaskProtos.ResponseCode.TASK_PUSH_SUCCESS
 												.code()) {
 											if (LOGGER.isDebugEnabled()) {
-												LOGGER.debug("task push success! " + "identity=" + identity + ", job="
+												LOGGER.debug("task push success! " + "identity=" + identity + ", task="
 														+ taskPo);
 											}
 											pushSuccess.set(true);
@@ -164,7 +161,7 @@ public class TaskPusher {
 
 				if (!pushSuccess.get()) {
 					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("Job push failed!" + ", identity=" + identity + ", job=" + taskPo);
+						LOGGER.debug("task push failed!" + ", identity=" + identity + ", task=" + taskPo);
 					}
 					// 队列切回来
 					try {

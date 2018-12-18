@@ -38,10 +38,6 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
      */
     private String clusterName;
     /**
-     * 节点组名称
-     */
-    private String nodeGroup;
-    /**
      * zookeeper地址
      */
     private String registryAddress;
@@ -62,7 +58,7 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
      */
     private Level bizLoggerLevel;
     /**
-     * spring中jobRunner的bean name
+     * spring中taskRunner的bean name
      */
     private String taskRunnerBeanName;
     /**
@@ -189,10 +185,6 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
 
     public void setClusterName(String clusterName) {
         this.clusterName = clusterName;
-    }
-
-    public void setNodeGroup(String nodeGroup) {
-        this.nodeGroup = nodeGroup;
     }
 
     public void setRegistryAddress(String registryAddress) {

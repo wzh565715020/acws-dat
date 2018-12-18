@@ -4,18 +4,14 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.domain.Action;
 import com.tyyd.framework.dat.core.domain.TaskMeta;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.taskexecuter.Result;
 import com.tyyd.framework.dat.taskexecuter.domain.Response;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
-import com.tyyd.framework.dat.taskexecuter.logger.BizLoggerAdapter;
-import com.tyyd.framework.dat.taskexecuter.logger.BizLoggerFactory;
 import com.tyyd.framework.dat.taskexecuter.monitor.TaskExecuterMStatReporter;
 
 import sun.nio.ch.Interruptible;
@@ -29,23 +25,17 @@ public class TaskRunnerDelegate implements Runnable {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaskRunnerDelegate.class);
 	private TaskMeta taskMeta;
 	private RunnerCallback callback;
-	private BizLoggerAdapter logger;
 	private TaskExecuterAppContext appContext;
 	private TaskExecuterMStatReporter stat;
 	private Interruptible interruptor;
 	private TaskRunner curTaskRunner;
 	private AtomicBoolean interrupted = new AtomicBoolean(false);
 	private Thread thread;
-	private Channel channel;
 
-	public TaskRunnerDelegate(TaskExecuterAppContext appContext, TaskMeta taskMeta, RunnerCallback callback,
-			Channel channel) {
+	public TaskRunnerDelegate(TaskExecuterAppContext appContext, TaskMeta taskMeta, RunnerCallback callback) {
 		this.appContext = appContext;
 		this.callback = callback;
 		this.taskMeta = taskMeta;
-        this.channel = channel;
-		this.logger = (BizLoggerAdapter) BizLoggerFactory.getLogger(appContext.getBizLogLevel(),
-				appContext.getRemotingServer(), appContext);
 		stat = (TaskExecuterMStatReporter) appContext.getMStatReporter();
 
 		this.interruptor = new InterruptibleAdapter() {
@@ -65,15 +55,10 @@ public class TaskRunnerDelegate implements Runnable {
 			if (Thread.currentThread().isInterrupted()) {
 				((InterruptibleAdapter) interruptor).interrupt();
 			}
-
-			DatLoggerFactory.setLogger(logger);
-
 			long startTime = SystemClock.now();
 			// 设置当前context中的jobId
-			logger.setId(taskMeta.getId(), taskMeta.getTask().getTaskId());
 			Response response = new Response();
 			response.setJobMeta(taskMeta);
-			response.setChannel(this.channel);
 			try {
 				appContext.getRunnerPool().getRunningTaskManager().in(taskMeta.getId(), this);
 				this.curTaskRunner = appContext.getRunnerPool().getRunnerFactory().newRunner();
@@ -92,7 +77,7 @@ public class TaskRunnerDelegate implements Runnable {
 
 				long time = SystemClock.now() - startTime;
 				stat.addRunningTime(time);
-				LOGGER.info("Job execute completed : {}, time:{} ms.", taskMeta.getTask(), time);
+				LOGGER.info("task execute completed : {}, time:{} ms.", taskMeta.getTask(), time);
 			} catch (Throwable t) {
 				StringWriter sw = new StringWriter();
 				t.printStackTrace(new PrintWriter(sw));
@@ -100,10 +85,9 @@ public class TaskRunnerDelegate implements Runnable {
 				response.setMsg(sw.toString());
 				long time = SystemClock.now() - startTime;
 				stat.addRunningTime(time);
-				LOGGER.info("Job execute error : {}, time: {}, {}", taskMeta.getTask(), time, t.getMessage(), t);
+				LOGGER.info("task execute error : {}, time: {}, {}", taskMeta.getTask(), time, t.getMessage(), t);
 			} finally {
 				checkInterrupted();
-				logger.removeId();
 				appContext.getRunnerPool().getRunningTaskManager().out(taskMeta.getId());
 			}
 			// 统计数据
@@ -163,19 +147,10 @@ public class TaskRunnerDelegate implements Runnable {
 		public abstract void interrupt();
 	}
 
-	private boolean isStopToGetNewJob() {
-		if (isInterrupted()) {
-			// 如果当前线程被阻断了,那么也就不接受新任务了
-			return true;
-		}
-		// 机器资源是否充足
-		return !appContext.getConfig().getInternalData(Constants.MACHINE_RES_ENOUGH, true);
-	}
-
 	private void checkInterrupted() {
 		try {
 			if (isInterrupted()) {
-				logger.info("SYSTEM:Interrupted");
+				LOGGER.info("SYSTEM:Interrupted");
 			}
 		} catch (Throwable t) {
 			LOGGER.warn("checkInterrupted error", t);

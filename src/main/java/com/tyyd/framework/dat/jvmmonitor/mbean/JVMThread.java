@@ -10,10 +10,6 @@ import java.lang.management.ThreadMXBean;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
-/**
- * @author   on 9/15/15.
- */
-@SuppressWarnings("restriction")
 public class JVMThread implements JVMThreadMBean {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(JVMThread.class);

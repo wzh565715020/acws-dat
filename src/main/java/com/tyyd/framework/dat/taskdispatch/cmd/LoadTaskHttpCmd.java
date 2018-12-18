@@ -39,8 +39,8 @@ public class LoadTaskHttpCmd implements HttpCmdProc {
         String taskTrackerNodeGroup = request.getParam("nodeGroup");
         //appContext.getPreLoader().load(taskTrackerNodeGroup);
 
-        LOGGER.info("load job succeed : nodeGroup={}", taskTrackerNodeGroup);
+        LOGGER.info("load task succeed : nodeGroup={}", taskTrackerNodeGroup);
 
-        return HttpCmdResponse.newResponse(true, "load job succeed");
+        return HttpCmdResponse.newResponse(true, "load task succeed");
     }
 }

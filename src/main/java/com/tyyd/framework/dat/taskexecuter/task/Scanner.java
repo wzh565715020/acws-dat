@@ -90,7 +90,7 @@ public class Scanner implements DisposableBean, BeanFactoryPostProcessor, BeanPo
 
                     TaskRunnerHolder.add(shardValue, new TaskRunner() {
                         @Override
-                        public Result run(Task job) throws Throwable {
+                        public Result run(Task task) throws Throwable {
                             if (pTypes == null || pTypes.length == 0) {
                                 return (Result) method.invoke(bean);
                             }
@@ -98,7 +98,7 @@ public class Scanner implements DisposableBean, BeanFactoryPostProcessor, BeanPo
 
                             for (int i = 0; i < pTypes.length; i++) {
                                 if (pTypes[i] == Task.class) {
-                                    pTypeValues[i] = job;
+                                    pTypeValues[i] = task;
                                 } else {
                                     pTypeValues[i] = null;
                                 }

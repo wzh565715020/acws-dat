@@ -26,7 +26,7 @@ public class TaskRetryHandler {
 
     public TaskRetryHandler(TaskDispatcherAppContext appContext) {
         this.appContext = appContext;
-        this.retryInterval = appContext.getConfig().getParameter("jobtracker.job.retry.interval.millis", 30 * 1000);
+        this.retryInterval = appContext.getConfig().getParameter("jobtracker.task.retry.interval.millis", 30 * 1000);
     }
 
     public void onComplete(List<TaskRunResult> results) {
@@ -48,7 +48,7 @@ public class TaskRetryHandler {
             Long nextRetryTriggerTime = SystemClock.now() + retryInterval;
 
             if (taskPo.isCron()) {
-                // 如果是 cron Job, 判断任务下一次执行时间和重试时间的比较
+                // 如果是 cron task, 判断任务下一次执行时间和重试时间的比较
                 TaskPo cronJobPo = appContext.getTaskQueue().getTask(jobMeta.getTask().getTaskId());
                 if (cronJobPo != null) {
                     Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(cronJobPo.getCron());

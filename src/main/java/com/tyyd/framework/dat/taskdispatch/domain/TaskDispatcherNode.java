@@ -8,10 +8,14 @@ import com.tyyd.framework.dat.core.cluster.NodeType;
  */
 public class TaskDispatcherNode extends Node {
 
-    public TaskDispatcherNode() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2301281177872533692L;
+
+	public TaskDispatcherNode() {
         this.setNodeType(NodeType.TASK_DISPATCH);
         this.addListenNodeType(NodeType.TASK_EXECUTER);
         this.addListenNodeType(NodeType.TASK_DISPATCH);
-        this.addListenNodeType(NodeType.MONITOR);
     }
 }

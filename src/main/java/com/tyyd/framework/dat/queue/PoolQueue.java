@@ -17,7 +17,7 @@ public interface PoolQueue extends PoolQueueInterface{
     PoolPo getPool(String poolId);
 
     /**
-     * 移除Cron Job
+     * 移除Cron task
      */
     boolean remove(String poolId);
 

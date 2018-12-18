@@ -45,7 +45,7 @@ public class TaskStatBiz implements TaskCompletedBiz {
                     "JobResults can not be empty!");
         }
 
-        LOGGER.info("Job execute completed : {}", results);
+        LOGGER.info("task execute completed : {}", results);
 
         LogType logType = request.isReSend() ? LogType.RESEND : LogType.FINISHED;
 

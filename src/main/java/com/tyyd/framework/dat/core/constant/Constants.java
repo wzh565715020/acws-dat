@@ -18,10 +18,12 @@ public interface Constants {
 
     String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    int TASK_EXECUTER_DEFAULT_LISTEN_PORT = 35001;
+    int TASK_DISPATCH_DEFAULT_LISTEN_PORT = 35001;
+    
+    int TASK_EXECUTER_DEFAULT_LISTEN_PORT = 35002;
 
     // 默认集群名字
-    String DEFAULT_CLUSTER_NAME = "defaultCluster";
+    String DEFAULT_CLUSTER_NAME = "DEFAULT_CLUSTER";
 
     String CHARSET = "UTF-8";
 

@@ -33,10 +33,10 @@ public class TaskSubmitProcessor extends AbstractRemotingProcessor {
             appContext.getTaskReceiver().receive(jobSubmitRequest);
 
             response = RemotingCommand.createResponseCommand(
-                    TaskProtos.ResponseCode.TASK_RECEIVE_SUCCESS.code(), "job submit success!", jobSubmitResponse);
+                    TaskProtos.ResponseCode.TASK_RECEIVE_SUCCESS.code(), "task submit success!", jobSubmitResponse);
 
         } catch (TaskReceiveException e) {
-            LOGGER.error("Receive job failed , jobs = " + jobSubmitRequest.getTasks(), e);
+            LOGGER.error("Receive task failed , jobs = " + jobSubmitRequest.getTasks(), e);
             jobSubmitResponse.setSuccess(false);
             jobSubmitResponse.setMsg(e.getMessage());
             jobSubmitResponse.setFailedJobs(e.getJobs());

@@ -46,13 +46,13 @@ public class CommonView {
         return "nodeJvmInfo";
     }
 
-    @RequestMapping("job-add")
+    @RequestMapping("task-add")
     public String addJobUI(Model model) {
         setAttr(model);
         return "jobAdd";
     }
 
-    @RequestMapping("job-logger")
+    @RequestMapping("task-logger")
     public String jobLoggerUI(Model model, String taskId, String taskTrackerNodeGroup,
                               Date startLogTime, Date endLogTime) {
         model.addAttribute("taskId", taskId);
@@ -69,31 +69,31 @@ public class CommonView {
         return "jobLogger";
     }
 
-    @RequestMapping("cron-job-queue")
+    @RequestMapping("cron-task-queue")
     public String cronJobQueueUI(Model model) {
         setAttr(model);
         return "cronJobQueue";
     }
 
-    @RequestMapping("repeat-job-queue")
+    @RequestMapping("repeat-task-queue")
     public String repeatJobQueueUI(Model model) {
         setAttr(model);
         return "repeatJobQueue";
     }
 
-    @RequestMapping("executable-job-queue")
+    @RequestMapping("executable-task-queue")
     public String executableJobQueueUI(Model model) {
         setAttr(model);
         return "executableJobQueue";
     }
 
-    @RequestMapping("executing-job-queue")
+    @RequestMapping("executing-task-queue")
     public String executingJobQueueUI(Model model) {
         setAttr(model);
         return "executingJobQueue";
     }
 
-    @RequestMapping("load-job")
+    @RequestMapping("load-task")
     public String loadJobUI(Model model) {
         setAttr(model);
         return "loadJob";
@@ -104,7 +104,7 @@ public class CommonView {
         return "cron/cronGenerator";
     }
 
-	@RequestMapping("suspend-job-queue")
+	@RequestMapping("suspend-task-queue")
 	public String suspendJobQueueUI(Model model) {
 		setAttr(model);
 		return "suspendJobQueue";

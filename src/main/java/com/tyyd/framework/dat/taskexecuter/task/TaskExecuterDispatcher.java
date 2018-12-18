@@ -8,9 +8,9 @@ import com.tyyd.framework.dat.taskexecuter.runner.TaskRunner;
 public class TaskExecuterDispatcher implements TaskRunner {
 
     @Override
-    public Result run(Task job) throws Throwable {
+    public Result run(Task task) throws Throwable {
 
-        String value = job.getTaskClass();
+        String value = task.getTaskClass();
 
         TaskRunner taskRunner = null;
         if (StringUtils.isNotEmpty(value)) {
@@ -23,7 +23,7 @@ public class TaskExecuterDispatcher implements TaskRunner {
                 throw new TaskDispatchException("Can not find JobRunner by Shard Value : [" + value + "]");
             }
         }
-        return taskRunner.run(job);
+        return taskRunner.run(task);
     }
 
 }

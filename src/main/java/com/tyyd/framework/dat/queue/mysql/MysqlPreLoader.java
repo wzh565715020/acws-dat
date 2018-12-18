@@ -35,15 +35,14 @@ public class MysqlPreLoader extends AbstractPreLoader {
             return new UpdateSql(sqlTemplate)
                     .update()
                     .table(getTableName())
-                    .set("is_running", true)
+                    .set("is_running", 1)
                     .set("task_execute_node", taskTrackerIdentity)
-                    .set("update_time", SystemClock.now())
+                    .set("update_date", SystemClock.now())
                     .where("id = ?", id)
-                    .and("is_running = ?", false)
-                    .and("trigger_time = ?", triggerTime)
+                    .and("is_running = ?", 0)
                     .doUpdate() == 1;
         } catch (Exception e) {
-            LOGGER.error("Error when lock job:" + e.getMessage(), e);
+            LOGGER.error("Error when lock task:" + e.getMessage(), e);
             return false;
         }
     }
@@ -57,14 +56,14 @@ public class MysqlPreLoader extends AbstractPreLoader {
                     .all()
                     .from()
                     .table(getTableName())
-                    .where("is_running = ?", false)
+                    .where("is_running = ?", 0)
                     .and("trigger_time< ?", SystemClock.now())
                     .orderBy()
                     .column("trigger_time", OrderByType.ASC)
                     .limit(0, loadSize)
                     .list(RshHolder.TASK_PO_LIST_RSH);
         } catch (Exception e) {
-            LOGGER.error("Error when load job:" + e.getMessage(), e);
+            LOGGER.error("Error when load task:" + e.getMessage(), e);
             return null;
         }
     }

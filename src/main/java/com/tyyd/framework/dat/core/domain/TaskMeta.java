@@ -30,8 +30,8 @@ public class TaskMeta implements Serializable {
         return task;
     }
 
-    public void setTask(Task job) {
-        this.task = job;
+    public void setTask(Task task) {
+        this.task = task;
     }
 
     public Map<String, String> getInternalExtParams() {

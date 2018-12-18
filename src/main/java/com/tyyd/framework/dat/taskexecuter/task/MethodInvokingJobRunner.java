@@ -57,7 +57,7 @@ public class MethodInvokingJobRunner implements InitializingBean {
 
         TaskRunnerHolder.add(shardValue, new TaskRunner() {
             @Override
-            public Result run(Task job) throws Throwable {
+            public Result run(Task task) throws Throwable {
                 if (pTypes == null || pTypes.length == 0) {
                     return (Result) finalMethod.invoke(targetObject);
                 }
@@ -65,7 +65,7 @@ public class MethodInvokingJobRunner implements InitializingBean {
 
                 for (int i = 0; i < pTypes.length; i++) {
                     if (pTypes[i] == Task.class) {
-                        pTypeValues[i] = job;
+                        pTypeValues[i] = task;
                     } else {
                         pTypeValues[i] = null;
                     }

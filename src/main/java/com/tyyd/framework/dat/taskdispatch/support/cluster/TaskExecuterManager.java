@@ -93,7 +93,7 @@ public class TaskExecuterManager {
 		} else {
 			try {
 				channel = new ChannelWrapper(
-						appContext.getRemotingServer().getRemotingClient().getAndCreateChannel(
+						appContext.getRemotingClient().getRemotingClient().getAndCreateChannel(
 								returnTaskExecuterNode.getIp() + ":" + returnTaskExecuterNode.getPort()),
 						NodeType.TASK_EXECUTER, returnTaskExecuterNode.getIdentity());
 			} catch (InterruptedException e) {

@@ -8,7 +8,12 @@ import com.tyyd.framework.dat.core.cluster.NodeType;
  */
 public class TaskExecuterNode extends Node {
 
-    public TaskExecuterNode() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3937969847800101276L;
+
+	public TaskExecuterNode() {
         this.setNodeType(NodeType.TASK_EXECUTER);
     }
 

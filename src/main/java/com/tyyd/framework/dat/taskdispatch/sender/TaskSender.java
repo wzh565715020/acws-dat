@@ -89,7 +89,7 @@ public class TaskSender {
 			}
 			PoolQueueReq poolQueueReq = new PoolQueueReq();
 			poolQueueReq.setPoolId(taskPoolPo.getPoolId());
-			poolQueueReq.setAvailableCount(taskPoolPo.getAvailableCount() > 0 ? taskPoolPo.getAvailableCount() - 1 : 0);
+			poolQueueReq.setAvailableCount(taskPoolPo.getAvailableCount()-1);
 			appContext.getPoolQueue().selectiveUpdate(poolQueueReq);
 			return taskPoolPo.getPoolId();
 		} finally {

@@ -13,7 +13,7 @@ import com.tyyd.framework.dat.taskexecuter.logger.BizLoggerFactory;
  */
 public abstract class TaskRunnerTester {
 
-    public Result run(Task job) throws Throwable {
+    public Result run(Task task) throws Throwable {
         // 1. 设置LTS环境为 UNIT_TEST
         DATConfig.setEnvironment(Environment.UNIT_TEST);
         // 设置 BizLogger
@@ -22,8 +22,8 @@ public abstract class TaskRunnerTester {
         initContext();
         // 3. new jobRunner
         TaskRunner jobRunner = newJobRunner();
-        // 4. run job
-        return jobRunner.run(job);
+        // 4. run task
+        return jobRunner.run(task);
     }
 
     /**

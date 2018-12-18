@@ -104,7 +104,7 @@ public class TaskQueueController extends AbstractMVC {
     public RestfulResponse getExecutableTask(TaskQueueReq request) {
         PaginationRsp<TaskPo> paginationRsp = appContext.getExecutableJobQueue().pageSelect(request);
 
-        boolean needClear = Boolean.valueOf(AppConfigurer.getProperty("dat.admin.remove.running.job.on.executable.search", "false"));
+        boolean needClear = Boolean.valueOf(AppConfigurer.getProperty("dat.admin.remove.running.task.on.executable.search", "false"));
         if (needClear) {
             paginationRsp = clearRunningJob(paginationRsp);
         }
@@ -199,7 +199,7 @@ public class TaskQueueController extends AbstractMVC {
         }
     }
 
-    @RequestMapping("/job-logger/job-logger-get")
+    @RequestMapping("/task-logger/task-logger-get")
     public RestfulResponse jobLoggerGet(JobLoggerRequest request) {
         RestfulResponse response = new RestfulResponse();
 
@@ -281,14 +281,14 @@ public class TaskQueueController extends AbstractMVC {
         return addJob(task);
     }
 
-    private Pair<Boolean, String> addJob(Task job) {
+    private Pair<Boolean, String> addJob(Task task) {
         HttpCmd httpCmd = new DefaultHttpCmd();
         httpCmd.setCommand(HttpCmdNames.HTTP_CMD_ADD_JOB);
-        httpCmd.addParam("job", JSON.toJSONString(job));
+        httpCmd.addParam("task", JSON.toJSONString(task));
 
         List<Node> jobTrackerNodeList = null;//appContext.getNodeMemCacheAccess().getNodeByNodeType(NodeType.TASK_DISPATCH);
         if (CollectionUtils.isEmpty(jobTrackerNodeList)) {
-            return new Pair<Boolean, String>(false, I18nManager.getMessage("job.tracker.not.found"));
+            return new Pair<Boolean, String>(false, I18nManager.getMessage("task.tracker.not.found"));
         }
 
         HttpCmdResponse response = null;
