@@ -29,7 +29,7 @@ public class TaskSender {
 	public SendResult send(String taskExecuterIdentity, SendInvoker invoker) {
 
 		// 取一个可运行的task
-		final TaskPo taskPo = appContext.getPreLoader().take(taskExecuterIdentity);
+		final TaskPo taskPo = appContext.getPreLoader().take();
 		if (taskPo == null) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Task push failed: no Task!identity " + taskExecuterIdentity);

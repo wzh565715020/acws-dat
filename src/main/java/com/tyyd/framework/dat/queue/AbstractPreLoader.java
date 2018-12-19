@@ -62,9 +62,8 @@ public abstract class AbstractPreLoader implements PreLoader {
 		}
 	}
 
-	public TaskPo take(String taskExecuterIdentity) {
-		TaskPo taskPo = queue.poll();
-		return taskPo;
+	public TaskPo take() {
+		return queue.poll();
 	}
 
 	/**

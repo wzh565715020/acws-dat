@@ -60,7 +60,9 @@ public class TaskFinishHandler {
 			poolQueueReq.setAvailableCount(poolPo.getAvailableCount() + 1);
 			appContext.getPoolQueue().selectiveUpdate(poolQueueReq);
 			// 加入到历史队列
-			appContext.getExecutedTaskQueue().add(TaskDomainConverter.convert(taskMeta.getTask()));
+			TaskPo taskPo = TaskDomainConverter.convert(taskMeta.getTask());
+			taskPo.setId(taskMeta.getId());
+			appContext.getExecutedTaskQueue().add(taskPo);
 		}
 	}
 

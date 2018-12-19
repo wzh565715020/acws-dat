@@ -167,9 +167,9 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
 		}
 
 		// 设置json
-		String ltsJson = config.getParameter(SpiExtensionKey.DAT_JSON);
-		if (StringUtils.isNotEmpty(ltsJson)) {
-			JSONFactory.setJSONAdapter(ltsJson);
+		String datJson = config.getParameter(SpiExtensionKey.DAT_JSON);
+		if (StringUtils.isNotEmpty(datJson)) {
+			JSONFactory.setJSONAdapter(datJson);
 		}
 
 		// 设置logger
