@@ -45,7 +45,7 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskQueue implements 
                 .update()
                 .table(getTableName())
                 .set("is_running", false)
-                .set("task_tracker_identity", null)
+                .set("task_execute_node", null)
                 .set("update_date", SystemClock.now())
                 .where("id = ?", taskPo.getId())
                 .doUpdate();

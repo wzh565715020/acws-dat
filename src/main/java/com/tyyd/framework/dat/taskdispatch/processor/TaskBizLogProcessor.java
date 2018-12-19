@@ -30,11 +30,10 @@ public class TaskBizLogProcessor extends AbstractRemotingProcessor {
         if (CollectionUtils.isNotEmpty(bizLogs)) {
             for (BizLog bizLog : bizLogs) {
                 TaskLogPo jobLogPo = new TaskLogPo();
-                jobLogPo.setGmtCreated(SystemClock.now());
+                jobLogPo.setCreateTime(SystemClock.now());
                 jobLogPo.setLogTime(bizLog.getLogTime());
-                jobLogPo.setTaskTrackerNodeGroup(bizLog.getTaskTrackerNodeGroup());
-                jobLogPo.setTaskTrackerIdentity(bizLog.getTaskTrackerIdentity());
-                jobLogPo.setJobId(bizLog.getJobId());
+                jobLogPo.setTaskExecuteNode(bizLog.getTaskExecuteNode());
+                jobLogPo.setId(bizLog.getId());
                 jobLogPo.setTaskId(bizLog.getTaskId());
                 jobLogPo.setMsg(bizLog.getMsg());
                 jobLogPo.setSuccess(true);

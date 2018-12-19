@@ -38,7 +38,6 @@ public class NodeFactory {
 
 	public static Node deepCopy(Node node) {
 		Node newNode = new Node();
-		newNode.setAvailable(node.isAvailable());
 		newNode.setAvailableThreads(node.getAvailableThreads());
 		newNode.setClusterName(node.getClusterName());
 		newNode.setCreateTime(node.getCreateTime());

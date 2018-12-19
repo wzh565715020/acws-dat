@@ -56,8 +56,6 @@ public class NodeRegistryUtils {
                 node.setIdentity(value);
             } else if ("createTime".equals(key)) {
                 node.setCreateTime(Long.valueOf(value));
-            } else if ("isAvailable".equals(key)) {
-                node.setAvailable(Boolean.valueOf(value));
             } else if ("httpCmdPort".equals(key)) {
                 node.setHttpCmdPort(Integer.valueOf(value));
             }
@@ -94,9 +92,7 @@ public class NodeRegistryUtils {
         path.append("&identity=")
                 .append(node.getIdentity())
                 .append("&createTime=")
-                .append(node.getCreateTime())
-                .append("&isAvailable=")
-                .append(node.isAvailable());
+                .append(node.getCreateTime());
         if (node.getHttpCmdPort() != null) {
             path.append("&httpCmdPort=").append(node.getHttpCmdPort());
         }

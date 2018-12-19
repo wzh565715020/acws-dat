@@ -25,7 +25,6 @@ import com.tyyd.framework.dat.ec.EventInfo;
 import com.tyyd.framework.dat.remoting.serialize.AdaptiveSerializable;
 import com.tyyd.framework.dat.zookeeper.DataListener;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -154,7 +153,7 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
 		SubscribedNodeManager subscribedNodeManager = new SubscribedNodeManager(appContext);
 		appContext.setSubscribedNodeManager(subscribedNodeManager);
 		nodeChangeListeners.add(subscribedNodeManager);
-		// 监听自己节点变化（如，当前节点被禁用了）
+		// 监听自己节点变化
 		nodeChangeListeners.add(new SelfChangeListener(appContext));
 
 		setSpiConfig();
@@ -241,6 +240,9 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
 				}
 			}
 		});
+		if (registry.exists(MASTER) && registry.getData(MASTER) != null) {
+			appContext.setMasterNode(registry.getData(MASTER));
+		}
 	}
 
 	protected abstract void remotingStart();

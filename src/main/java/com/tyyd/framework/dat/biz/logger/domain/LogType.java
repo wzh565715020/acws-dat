@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.biz.logger.domain;
 
-/**
- * @author   on 8/28/14.
- */
 public enum LogType {
 
     RECEIVE,         // 接受任务
@@ -13,6 +10,5 @@ public enum LogType {
     BIZ,             // 业务日志
     DEL,             // 删除
     SUSPEND,        // 暂停
-    RESUME,         // 恢复
-    ;
+    RESUME        // 恢复
 }

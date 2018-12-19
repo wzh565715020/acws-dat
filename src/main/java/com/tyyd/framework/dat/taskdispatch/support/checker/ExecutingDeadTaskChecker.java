@@ -106,7 +106,7 @@ public class ExecutingDeadTaskChecker {
 		// 查询出所有死掉的任务 (其实可以直接在数据库中fix的, 查询出来主要是为了日志打印)
 		// 一般来说这个是没有多大的，我就不分页去查询了
 		List<TaskPo> maybeDeadJobPos = appContext.getExecutingTaskQueue()
-				.getDeadJobs(SystemClock.now() - maxDeadCheckTime * 1000);
+				.getDeadTasks(SystemClock.now() - maxDeadCheckTime * 1000);
 		if (CollectionUtils.isEmpty(maybeDeadJobPos)) {
 			return;
 		}

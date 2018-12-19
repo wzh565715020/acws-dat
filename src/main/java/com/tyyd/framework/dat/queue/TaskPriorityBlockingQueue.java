@@ -68,7 +68,7 @@ public class TaskPriorityBlockingQueue {
         try {
             if (ID_SET.contains(e.getId())) {
                 // 如果已经存在了，替换
-                replace(e);
+            	return true;
             }else{
                 siftUpUsingComparator(n, e, queue, comparator);
                 size = n + 1;

@@ -1,3 +1,0 @@
-random=com.tyyd.framework.dat.core.loadbalance.RandomLoadBalance
-consistenthash=com.tyyd.framework.dat.core.loadbalance.ConsistentHashLoadBalance
-mastersalve=com.tyyd.framework.dat.core.loadbalance.MasterSalveLoadBalance

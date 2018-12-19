@@ -4,7 +4,6 @@ import com.tyyd.framework.dat.core.cluster.Config;
 import org.mongodb.morphia.AdvancedDatastore;
 
 /**
- * @author   on 8/8/14.
  *         通用的mongo存储类
  */
 public abstract class MongoRepository {

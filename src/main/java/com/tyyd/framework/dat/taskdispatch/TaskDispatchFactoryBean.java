@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * JobTracker Spring Bean 工厂类
+ * TaskDispatch Spring Bean 工厂类
  */
 public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
         InitializingBean, DisposableBean {

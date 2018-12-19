@@ -1,0 +1,2 @@
+uuid=com.tyyd.framework.dat.taskdispatch.id.UUIDGenerator
+md5=com.tyyd.framework.dat.taskdispatch.id.Md5Generator

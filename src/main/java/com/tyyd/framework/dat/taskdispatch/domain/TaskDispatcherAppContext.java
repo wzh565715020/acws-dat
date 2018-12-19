@@ -7,6 +7,7 @@ import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
 import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
+import com.tyyd.framework.dat.queue.ExecutedTaskQueue;
 import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
 import com.tyyd.framework.dat.queue.PoolQueue;
 import com.tyyd.framework.dat.queue.PreLoader;
@@ -41,7 +42,8 @@ public class TaskDispatcherAppContext extends AppContext {
     private ExecutableTaskQueue executableTaskQueue;
     // executing task queue
     private ExecutingTaskQueue executingTaskQueue;
-
+    // executing task queue
+    private ExecutedTaskQueue executedTaskQueue;
     // task queue
     private TaskQueue taskQueue;
     private PoolQueue poolQueue;
@@ -92,8 +94,8 @@ public class TaskDispatcherAppContext extends AppContext {
         return taskLogger;
     }
 
-    public void setJobLogger(TaskLogger jobLogger) {
-        this.taskLogger = jobLogger;
+    public void setTaskLogger(TaskLogger taskLogger) {
+        this.taskLogger = taskLogger;
     }
 
 
@@ -141,7 +143,7 @@ public class TaskDispatcherAppContext extends AppContext {
         return executableTaskQueue;
     }
 
-    public void setExecutableJobQueue(ExecutableTaskQueue executableTaskQueue) {
+    public void setExecutableTaskQueue(ExecutableTaskQueue executableTaskQueue) {
         this.executableTaskQueue = executableTaskQueue;
     }
 
@@ -149,7 +151,7 @@ public class TaskDispatcherAppContext extends AppContext {
         return executingTaskQueue;
     }
 
-    public void setExecutingJobQueue(ExecutingTaskQueue executingTaskQueue) {
+    public void setExecutingTaskQueue(ExecutingTaskQueue executingTaskQueue) {
         this.executingTaskQueue = executingTaskQueue;
     }
 
@@ -183,6 +185,14 @@ public class TaskDispatcherAppContext extends AppContext {
 
 	public void setRemotingServer(RemotingServerDelegate remotingServer) {
 		this.remotingServer = remotingServer;
+	}
+
+	public ExecutedTaskQueue getExecutedTaskQueue() {
+		return executedTaskQueue;
+	}
+
+	public void setExecutedTaskQueue(ExecutedTaskQueue executedTaskQueue) {
+		this.executedTaskQueue = executedTaskQueue;
 	}
 
 

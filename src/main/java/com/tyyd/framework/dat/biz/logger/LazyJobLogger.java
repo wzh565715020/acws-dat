@@ -2,7 +2,7 @@ package com.tyyd.framework.dat.biz.logger;
 
 import com.tyyd.framework.dat.admin.response.PaginationRsp;
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
-import com.tyyd.framework.dat.biz.logger.domain.JobLoggerRequest;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLoggerRequest;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
@@ -163,7 +163,7 @@ public class LazyJobLogger implements TaskLogger {
     }
 
     @Override
-    public PaginationRsp<TaskLogPo> search(JobLoggerRequest request) {
+    public PaginationRsp<TaskLogPo> search(TaskLoggerRequest request) {
         return delegate.search(request);
     }
 

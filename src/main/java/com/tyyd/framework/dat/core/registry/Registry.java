@@ -38,4 +38,10 @@ public interface Registry {
     void updateRegister(String path,Node node);
 
 	void addDataListener(String path, DataListener listener);
+
+	Node createNewRegister(String path, Node data);
+
+	Boolean exists(String path);
+
+	Node getData(String path);
 }

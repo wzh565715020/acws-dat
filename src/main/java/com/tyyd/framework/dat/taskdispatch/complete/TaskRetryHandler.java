@@ -36,20 +36,21 @@ public class TaskRetryHandler {
         }
         for (TaskRunResult result : results) {
 
-            TaskMeta jobMeta = result.getTaskMeta();
+            TaskMeta taskMeta = result.getTaskMeta();
             // 1. 加入到重试队列
-            TaskPo taskPo = appContext.getExecutingTaskQueue().getJob(jobMeta.getId());
+            TaskPo taskPo = appContext.getExecutingTaskQueue().getTask(taskMeta.getId());
             if (taskPo == null) {    // 表示已经被删除了
                 continue;
             }
 
             // 重试次数+1
+            taskPo.setRetryTimes((taskPo.getRetryTimes() == null ? 0 : taskPo.getRetryTimes()) + 1);
             // 1 分钟重试一次吧
             Long nextRetryTriggerTime = SystemClock.now() + retryInterval;
 
             if (taskPo.isCron()) {
                 // 如果是 cron task, 判断任务下一次执行时间和重试时间的比较
-                TaskPo cronJobPo = appContext.getTaskQueue().getTask(jobMeta.getTask().getTaskId());
+                TaskPo cronJobPo = appContext.getTaskQueue().getTask(taskMeta.getTask().getTaskId());
                 if (cronJobPo != null) {
                     Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(cronJobPo.getCron());
                     if (nextTriggerTime != null && nextTriggerTime.getTime() < nextRetryTriggerTime) {
@@ -59,7 +60,7 @@ public class TaskRetryHandler {
                     } 
                 }
             } else if (taskPo.isRepeatable()) {
-                TaskPo repeatJobPo = appContext.getTaskQueue().getTask(jobMeta.getTask().getTaskId());
+                TaskPo repeatJobPo = appContext.getTaskQueue().getTask(taskMeta.getTask().getTaskId());
                 if (repeatJobPo != null) {
                     // 比较下一次重复时间和重试时间
                     if (repeatJobPo.getRepeatCount() == -1 || (repeatJobPo.getRepeatedCount() < repeatJobPo.getRepeatCount())) {

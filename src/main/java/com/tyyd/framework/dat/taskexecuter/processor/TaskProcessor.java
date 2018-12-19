@@ -14,16 +14,10 @@ import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.protocol.TaskProtos;
 import com.tyyd.framework.dat.core.protocol.command.TaskCompletedRequest;
 import com.tyyd.framework.dat.core.protocol.command.TaskPushRequest;
-import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
-import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
-import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.core.support.RetryScheduler;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
 import com.tyyd.framework.dat.remoting.Channel;
-import com.tyyd.framework.dat.remoting.RemotingClient;
-import com.tyyd.framework.dat.remoting.RemotingClientConfig;
-import com.tyyd.framework.dat.remoting.RemotingTransporter;
 import com.tyyd.framework.dat.remoting.ResponseFuture;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
@@ -41,22 +35,13 @@ public class TaskProcessor extends AbstractProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskProcessor.class);
 
     private TaskRunnerCallback taskRunnerCallback;
-    private RemotingServerDelegate remotingServer;
-    private RemotingClientDelegate remotingClient;
     private RetryScheduler<TaskRunResult> retryScheduler;
 
     protected TaskProcessor(TaskExecuterAppContext appContext) {
         super(appContext);
-        this.remotingServer = appContext.getRemotingServer();
-        this.remotingClient = appContext.getRemotingClient();
         // 线程安全的
         taskRunnerCallback = new TaskRunnerCallback();
         retryScheduler = new RetryScheduler<TaskRunResult>(appContext, 3) {
-            @Override
-            protected boolean isRemotingEnable() {
-                return remotingClient.isServerEnable();
-            }
-
             @Override
             protected boolean retry(List<TaskRunResult> results) {
                 return retrySendJobResults(results);
@@ -110,12 +95,15 @@ public class TaskProcessor extends AbstractProcessor {
 
             try {
                 final CountDownLatch latch = new CountDownLatch(1);
-                remotingClient.invokeAsync(appContext.getMasterNode().getAddress(),request, new AsyncCallback() {
+                if (appContext.getMasterNode()==null) {
+					throw new Exception("主节点为空，不能发送");
+				}
+                appContext.getRemotingClient().invokeAsync(appContext.getMasterNode().getAddress(),request, new AsyncCallback() {
                     @Override
                     public void operationComplete(ResponseFuture responseFuture) {
                         try {
                             RemotingCommand commandResponse = responseFuture.getResponseCommand();
-                            if (commandResponse == null || commandResponse.getCode() == RemotingProtos.ResponseCode.SUCCESS.code()) {
+                            if (commandResponse == null || commandResponse.getCode() == RemotingProtos.ResponseCode.SYSTEM_ERROR.code()) {
                                 LOGGER.info("task feedback failed, save local files。{}", taskRunResult);
                                 try {
                                     retryScheduler.inSchedule(
@@ -125,7 +113,7 @@ public class TaskProcessor extends AbstractProcessor {
                                     LOGGER.error("task feedback failed", e);
                                 }
                             }
-                        } finally {
+                        }finally {
                             latch.countDown();
                         }
                     }
@@ -145,12 +133,12 @@ public class TaskProcessor extends AbstractProcessor {
                  } catch (Exception e1) {
                      LOGGER.error("task feedback failed", e);
                  }
-            }
+            } 
 
         }
     }
     /**
-     * 发送JobResults
+     * 发送taskResults
      */
     private boolean retrySendJobResults(List<TaskRunResult> results) {
         // 发送消息给taskDispatch
@@ -162,11 +150,12 @@ public class TaskProcessor extends AbstractProcessor {
         RemotingCommand request = RemotingCommand.createRequestCommand(requestCode, requestBody);
 
         try {
-        	appContext.getMasterNode();
+        	if(appContext.getMasterNode()==null) {
+        		LOGGER.error("Retry send task result failed! ");
+        		return false;
+        	}
             // 这里一定要用同步，不然异步会发生文件锁，死锁
-        	RemotingClient remotingClient = ServiceLoader.load(RemotingTransporter.class, appContext.getConfig()).getRemotingClient(appContext, new RemotingClientConfig());
-        	Channel channel = remotingClient.getAndCreateChannel(appContext.getMasterNode().getAddress());
-            RemotingCommand commandResponse = remotingServer.invokeSync(channel,request);
+            RemotingCommand commandResponse = appContext.getRemotingClient().invokeSync(appContext.getMasterNode().getAddress(),request);
             if (commandResponse != null && commandResponse.getCode() == RemotingProtos.ResponseCode.SUCCESS.code()) {
                 return true;
             } else {

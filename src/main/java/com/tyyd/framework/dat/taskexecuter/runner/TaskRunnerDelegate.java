@@ -77,7 +77,7 @@ public class TaskRunnerDelegate implements Runnable {
 
 				long time = SystemClock.now() - startTime;
 				stat.addRunningTime(time);
-				LOGGER.info("task execute completed : {}, time:{} ms.", taskMeta.getTask(), time);
+				LOGGER.info("task execute completed : {}, time:{} ms.", taskMeta, time);
 			} catch (Throwable t) {
 				StringWriter sw = new StringWriter();
 				t.printStackTrace(new PrintWriter(sw));
@@ -85,7 +85,7 @@ public class TaskRunnerDelegate implements Runnable {
 				response.setMsg(sw.toString());
 				long time = SystemClock.now() - startTime;
 				stat.addRunningTime(time);
-				LOGGER.info("task execute error : {}, time: {}, {}", taskMeta.getTask(), time, t.getMessage(), t);
+				LOGGER.info("task execute error : {}, time: {}, {}", taskMeta, time, t.getMessage(), t);
 			} finally {
 				checkInterrupted();
 				appContext.getRunnerPool().getRunningTaskManager().out(taskMeta.getId());
@@ -95,8 +95,6 @@ public class TaskRunnerDelegate implements Runnable {
 			callback.runComplete(response);
 
 		} finally {
-			DatLoggerFactory.remove();
-
 			blockedOn(null);
 		}
 	}

@@ -33,13 +33,6 @@ public class SelfChangeListener implements NodeChangeListener {
                 config.setWorkThreads(node.getThreads());
                 appContext.getEventCenter().publishAsync(new EventInfo(EcTopic.WORK_THREAD_CHANGE));
             }
-
-            // 2. 看 available 有没有改变
-            if (node.isAvailable() != config.isAvailable()) {
-                String topic = node.isAvailable() ? EcTopic.NODE_ENABLE : EcTopic.NODE_DISABLE;
-                config.setAvailable(node.isAvailable());
-                appContext.getEventCenter().publishAsync(new EventInfo(topic));
-            }
         }
     }
 

@@ -10,43 +10,40 @@ import com.tyyd.framework.dat.store.jdbc.builder.SelectSql;
 
 import java.util.List;
 
-/**
- * @author   on 5/31/15.
- */
-public class MysqlExecutingJobQueue extends AbstractMysqlTaskQueue implements ExecutingTaskQueue {
+public class MysqlExecutingTaskQueue extends AbstractMysqlTaskQueue implements ExecutingTaskQueue {
 
-    public MysqlExecutingJobQueue(Config config) {
+    public MysqlExecutingTaskQueue(Config config) {
         super(config);
     }
 
     @Override
-    public boolean add(TaskPo jobPo) {
-        return super.add(getTableName(), jobPo);
+    public boolean add(TaskPo taskPo) {
+        return super.add(getTableName(), taskPo);
     }
 
     @Override
-    public boolean remove(String jobId) {
+    public boolean remove(String id) {
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
                 .table(getTableName())
-                .where("id = ?", jobId)
+                .where("id = ?", id)
                 .doDelete() == 1;
     }
 
     @Override
-    public List<TaskPo> getJobs(String taskTrackerIdentity) {
+    public List<TaskPo> getTasks(String taskTrackerIdentity) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
-                .where("task_tracker_identity = ?", taskTrackerIdentity)
+                .where("task_execute_node = ?", taskTrackerIdentity)
                 .list(RshHolder.TASK_PO_LIST_RSH);
     }
 
     @Override
-    public List<TaskPo> getDeadJobs(long deadline) {
+    public List<TaskPo> getDeadTasks(long deadline) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
@@ -57,25 +54,25 @@ public class MysqlExecutingJobQueue extends AbstractMysqlTaskQueue implements Ex
     }
 
     @Override
-    public TaskPo getJob(String taskTrackerNodeGroup, String taskId) {
+    public TaskPo getTask(String taskTrackerNode, String taskId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
                 .where("task_id = ?", taskId)
-                .and("task_tracker_node_group = ?", taskTrackerNodeGroup)
+                .and("task_execute_node = ?", taskTrackerNode)
                 .single(RshHolder.TASK_PO_RSH);
     }
 
     @Override
-    public TaskPo getJob(String jobId) {
+    public TaskPo getTask(String taskId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
-                .where("job_id = ?", jobId)
+                .where("task_id = ?", taskId)
                 .single(RshHolder.TASK_PO_RSH);
     }
     @Override

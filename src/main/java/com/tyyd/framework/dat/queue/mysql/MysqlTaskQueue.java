@@ -27,36 +27,36 @@ public class MysqlTaskQueue extends AbstractMysqlTaskQueue implements TaskQueue 
                 .all()
                 .from()
                 .table(getTableName())
-                .where("task_id = ?", id)
+                .where("id = ?", id)
                 .single(RshHolder.TASK_PO_RSH);
     }
 
     @Override
-    public boolean remove(String jobId) {
+    public boolean remove(String id) {
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
                 .table(getTableName())
-                .where("task_id = ?", jobId)
+                .where("id = ?", id)
                 .doDelete() == 1;
     }
 
 
     @Override
-    public int incRepeatedCount(String jobId) {
+    public int incRepeatedCount(String id) {
         while (true) {
-            TaskPo jobPo = getTask(jobId);
-            if (jobPo == null) {
+            TaskPo taskPo = getTask(id);
+            if (taskPo == null) {
                 return -1;
             }
             if (new UpdateSql(getSqlTemplate())
                     .update()
                     .table(getTableName())
-                    .set("repeated_count", jobPo.getRepeatedCount() + 1)
-                    .where("job_id = ?", jobId)
-                    .and("repeated_count = ?", jobPo.getRepeatedCount())
+                    .set("repeated_count", taskPo.getRepeatedCount() + 1)
+                    .where("id = ?", id)
+                    .and("repeated_count = ?", taskPo.getRepeatedCount())
                     .doUpdate() == 1) {
-                return jobPo.getRepeatedCount() + 1;
+                return taskPo.getRepeatedCount() + 1;
             }
         }
     }

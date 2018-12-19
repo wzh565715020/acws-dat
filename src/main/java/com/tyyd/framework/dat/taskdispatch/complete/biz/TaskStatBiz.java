@@ -42,7 +42,7 @@ public class TaskStatBiz implements TaskCompletedBiz {
         if (CollectionUtils.isEmpty(results)) {
             return RemotingCommand.createResponseCommand(RemotingProtos
                             .ResponseCode.REQUEST_PARAM_ERROR.code(),
-                    "JobResults can not be empty!");
+                    "TaskResults can not be empty!");
         }
 
         LOGGER.info("task execute completed : {}", results);
@@ -56,7 +56,7 @@ public class TaskStatBiz implements TaskCompletedBiz {
             jobLogPo.setMsg(result.getMsg());
             jobLogPo.setLogType(logType);
             jobLogPo.setSuccess(Action.EXECUTE_SUCCESS.equals(result.getAction()));
-            jobLogPo.setTaskTrackerIdentity(request.getIdentity());
+            jobLogPo.setTaskExecuteNode(request.getIdentity());
             jobLogPo.setLevel(Level.INFO);
             jobLogPo.setLogTime(result.getTime());
             appContext.getTaskLogger().log(jobLogPo);

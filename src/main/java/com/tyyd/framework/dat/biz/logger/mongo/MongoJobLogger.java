@@ -3,7 +3,7 @@ package com.tyyd.framework.dat.biz.logger.mongo;
 
 import com.tyyd.framework.dat.biz.logger.TaskLogger;
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
-import com.tyyd.framework.dat.biz.logger.domain.JobLoggerRequest;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLoggerRequest;
 import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
@@ -16,14 +16,11 @@ import org.mongodb.morphia.query.Query;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author   on 3/27/15.
- */
 public class MongoJobLogger extends MongoRepository implements TaskLogger {
 
     public MongoJobLogger(Config config) {
         super(config);
-        setTableName("lts_job_log_po");
+        setTableName("dat_task_log");
 
         // create table
         DBCollection dbCollection = template.getCollection();
@@ -31,29 +28,26 @@ public class MongoJobLogger extends MongoRepository implements TaskLogger {
         // create index if not exist
         if (CollectionUtils.sizeOf(indexInfo) <= 1) {
             template.ensureIndex("idx_logTime", "logTime");
-            template.ensureIndex("idx_taskId_taskTrackerNodeGroup", "taskId,taskTrackerNodeGroup");
+            template.ensureIndex("idx_id", "id");
         }
     }
 
     @Override
-    public void log(TaskLogPo jobLogPo) {
-        template.save(jobLogPo);
+    public void log(TaskLogPo taskLogPo) {
+        template.save(taskLogPo);
     }
 
     @Override
-    public void log(List<TaskLogPo> jobLogPos) {
-        template.save(jobLogPos);
+    public void log(List<TaskLogPo> taskLogPos) {
+        template.save(taskLogPos);
     }
 
     @Override
-    public PaginationRsp<TaskLogPo> search(JobLoggerRequest request) {
+    public PaginationRsp<TaskLogPo> search(TaskLoggerRequest request) {
 
         Query<TaskLogPo> query = template.createQuery(TaskLogPo.class);
-        if(StringUtils.isNotEmpty(request.getTaskId())){
-            query.field("taskId").equal(request.getTaskId());
-        }
-        if(StringUtils.isNotEmpty(request.getTaskTrackerNodeGroup())){
-            query.field("taskTrackerNodeGroup").equal(request.getTaskTrackerNodeGroup());
+        if(StringUtils.isNotEmpty(request.getId())){
+            query.field("id").equal(request.getId());
         }
         if (request.getStartLogTime() != null) {
             query.filter("logTime >= ", getTimestamp(request.getStartLogTime()));

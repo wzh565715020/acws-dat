@@ -63,15 +63,14 @@ public class TaskDomainConverter {
         return taskMeta;
     }
 
-    public static TaskLogPo convertJobLog(TaskMeta jobMeta) {
+    public static TaskLogPo convertJobLog(TaskMeta taskMeta) {
         TaskLogPo jobLogPo = new TaskLogPo();
-        jobLogPo.setGmtCreated(SystemClock.now());
-        Task task = jobMeta.getTask();
-        jobLogPo.setInternalExtParams(jobMeta.getInternalExtParams());
-        jobLogPo.setSubmitNodeGroup(task.getSubmitNode());
+        jobLogPo.setCreateTime(SystemClock.now());
+        Task task = taskMeta.getTask();
+        jobLogPo.setSubmitNode(task.getSubmitNode());
         jobLogPo.setTaskId(task.getTaskId());
-        jobLogPo.setJobId(jobMeta.getId());
-        jobLogPo.setCronExpression(task.getCron());
+        jobLogPo.setId(taskMeta.getId());
+        jobLogPo.setCron(task.getCron());
         jobLogPo.setTriggerTime(task.getTriggerTime());
 
         jobLogPo.setRepeatCount(task.getRepeatCount());
@@ -80,19 +79,19 @@ public class TaskDomainConverter {
         return jobLogPo;
     }
 
-    public static TaskLogPo convertJobLog(TaskPo jobPo) {
-        TaskLogPo jobLogPo = new TaskLogPo();
-        jobLogPo.setGmtCreated(SystemClock.now());
-        jobLogPo.setSubmitNodeGroup(jobPo.getSubmitNode());
-        jobLogPo.setTaskId(jobPo.getTaskId());
-        jobLogPo.setCronExpression(jobPo.getCron());
-        jobLogPo.setTriggerTime(jobPo.getTriggerTime());
-        jobLogPo.setTaskTrackerIdentity(jobPo.getTaskExecuteNode());
-
-        jobLogPo.setRepeatCount(jobPo.getRepeatCount());
-        jobLogPo.setRepeatedCount(jobPo.getRepeatedCount());
-        jobLogPo.setRepeatInterval(jobPo.getRepeatInterval());
-        return jobLogPo;
+    public static TaskLogPo convertJobLog(TaskPo taskPo) {
+        TaskLogPo taskLogPo = new TaskLogPo();
+        taskLogPo.setId(taskPo.getId());
+        taskLogPo.setCreateTime(SystemClock.now());
+        taskLogPo.setSubmitNode(taskPo.getSubmitNode());
+        taskLogPo.setTaskId(taskPo.getTaskId());
+        taskLogPo.setCron(taskPo.getCron());
+        taskLogPo.setTriggerTime(taskPo.getTriggerTime());
+        taskLogPo.setTaskExecuteNode(taskPo.getTaskExecuteNode());
+        taskLogPo.setRepeatCount(taskPo.getRepeatCount());
+        taskLogPo.setRepeatedCount(taskPo.getRepeatedCount());
+        taskLogPo.setRepeatInterval(taskPo.getRepeatInterval());
+        return taskLogPo;
     }
 
 }

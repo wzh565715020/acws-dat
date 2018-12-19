@@ -25,7 +25,7 @@ public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implemen
     protected boolean add(String tableName, TaskPo taskPo) {
         return new InsertSql(getSqlTemplate())
                 .insert(tableName)
-                .columns("task_id",
+                .columns("id","task_id",
                 		"task_name",
                 		"task_class",
                 		"task_type",
@@ -41,7 +41,8 @@ public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implemen
                         "repeat_count",
                         "repeated_count",
                         "repeat_interval")
-                .values(taskPo.getTaskId(),
+                .values(taskPo.getId(),
+                		taskPo.getTaskId(),
                 		taskPo.getTaskName(),
                 		taskPo.getTaskClass(),
                 		taskPo.getTaskType(),

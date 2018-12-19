@@ -6,8 +6,6 @@ import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.taskexecuter.Result;
-import com.tyyd.framework.dat.taskexecuter.logger.BizLogger;
-import com.tyyd.framework.dat.taskexecuter.runner.DatLoggerFactory;
 import com.tyyd.framework.dat.taskexecuter.runner.TaskRunner;
 
 public class SpringAnnotationJobRunner implements TaskRunner {
@@ -21,7 +19,6 @@ public class SpringAnnotationJobRunner implements TaskRunner {
 
             System.out.println("我是SpringBean，我执行了");
 
-            // TODO 业务逻辑
             LOGGER.info("我要执行：" + task);
         } catch (Exception e) {
             LOGGER.info("Run task failed!", e);

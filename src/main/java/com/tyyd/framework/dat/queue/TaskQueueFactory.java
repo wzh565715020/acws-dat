@@ -20,5 +20,7 @@ public interface TaskQueueFactory {
     PreLoader getPreLoader(AppContext appContext);
 
     PoolQueue getPoolQueue(Config config);
+
+	ExecutedTaskQueue getExecutedJobQueue(Config config);
 }
 

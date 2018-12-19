@@ -7,13 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tyyd.framework.dat.admin.request.TaskQueueReq;
 import com.tyyd.framework.dat.admin.response.PaginationRsp;
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
-import com.tyyd.framework.dat.biz.logger.domain.JobLoggerRequest;
+import com.tyyd.framework.dat.biz.logger.domain.TaskLoggerRequest;
 import com.tyyd.framework.dat.cmd.DefaultHttpCmd;
 import com.tyyd.framework.dat.cmd.HttpCmd;
 import com.tyyd.framework.dat.cmd.HttpCmdClient;
 import com.tyyd.framework.dat.cmd.HttpCmdResponse;
 import com.tyyd.framework.dat.core.cluster.Node;
-import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.cmd.HttpCmdNames;
 import com.tyyd.framework.dat.core.commons.utils.Assert;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
@@ -125,7 +124,7 @@ public class TaskQueueController extends AbstractMVC {
         PaginationRsp<TaskPo> rsp = new PaginationRsp<TaskPo>();
         List<TaskPo> rows = new ArrayList<TaskPo>();
         for (TaskPo jobPo : paginationRsp.getRows()) {
-            if (appContext.getExecutingJobQueue().getJob(jobPo.getTaskExecuteNode(), jobPo.getTaskId()) == null) {
+            if (appContext.getExecutingJobQueue().getTask(jobPo.getTaskExecuteNode(), jobPo.getTaskId()) == null) {
                 // 没有正在执行, 则显示在等待执行列表中
                 rows.add(jobPo);
             }
@@ -200,7 +199,7 @@ public class TaskQueueController extends AbstractMVC {
     }
 
     @RequestMapping("/task-logger/task-logger-get")
-    public RestfulResponse jobLoggerGet(JobLoggerRequest request) {
+    public RestfulResponse jobLoggerGet(TaskLoggerRequest request) {
         RestfulResponse response = new RestfulResponse();
 
         PaginationRsp<TaskLogPo> paginationRsp = appContext.getJobLogger().search(request);

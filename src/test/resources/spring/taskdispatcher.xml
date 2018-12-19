@@ -19,6 +19,10 @@
                 <prop key="jdbc.username">root</prop>
                 <prop key="jdbc.password">root</prop>
                 <prop key="druid.validationQuery">select 1</prop>
+                <prop key="mongo.password">Yakexilog_user@123</prop>
+                <prop key="mongo.username">yakexilog_user</prop>
+                <prop key="mongo.database">yakexilog</prop>
+                <prop key="mongo.addresses">172.23.2.102:27017</prop>
             </props>
         </property>
     </bean>

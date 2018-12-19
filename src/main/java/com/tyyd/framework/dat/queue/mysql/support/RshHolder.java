@@ -3,8 +3,6 @@ package com.tyyd.framework.dat.queue.mysql.support;
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
 import com.tyyd.framework.dat.core.constant.Level;
-import com.tyyd.framework.dat.core.json.JSON;
-import com.tyyd.framework.dat.core.json.TypeReference;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.dbutils.ResultSetHandler;
@@ -12,9 +10,7 @@ import com.tyyd.framework.dat.store.jdbc.dbutils.ResultSetHandler;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RshHolder {
 
@@ -73,26 +69,26 @@ public class RshHolder {
 		return poolPo;
 	}
     private static TaskPo getTaskPo(ResultSet rs) throws SQLException {
-        TaskPo jobPo = new TaskPo();
-        jobPo.setRetryTimes(rs.getInt("retry_times"));
-        jobPo.setMaxRetryTimes(rs.getInt("max_retry_times"));
-        jobPo.setTaskId(rs.getString("task_id"));
-        jobPo.setTaskName(rs.getString("task_name"));
-        jobPo.setTaskType(rs.getString("task_type"));
-        jobPo.setTaskClass(rs.getString("task_class"));
-        jobPo.setTaskExecType(rs.getString("task_exec_type"));
-        jobPo.setCreateDate(rs.getLong("create_date"));
-        jobPo.setUpdateDate(rs.getLong("update_date"));
-        jobPo.setSubmitNode(rs.getString("submit_node"));
-        jobPo.setTaskExecuteNode(rs.getString("task_execute_node"));
-        jobPo.setParams(rs.getString("params"));
-        jobPo.setCron(rs.getString("cron"));
-        jobPo.setTriggerTime(rs.getLong("trigger_time"));
-        jobPo.setRepeatCount(rs.getInt("repeat_count"));
-        jobPo.setRepeatedCount(rs.getInt("repeated_count"));
-        jobPo.setRepeatInterval(rs.getLong("repeat_interval"));
-        jobPo.setId(rs.getString("id"));
-        return jobPo;
+        TaskPo taskPo = new TaskPo();
+        taskPo.setRetryTimes(rs.getInt("retry_times"));
+        taskPo.setMaxRetryTimes(rs.getInt("max_retry_times"));
+        taskPo.setTaskId(rs.getString("task_id"));
+        taskPo.setTaskName(rs.getString("task_name"));
+        taskPo.setTaskType(rs.getString("task_type"));
+        taskPo.setTaskClass(rs.getString("task_class"));
+        taskPo.setTaskExecType(rs.getString("task_exec_type"));
+        taskPo.setCreateDate(rs.getLong("create_date"));
+        taskPo.setUpdateDate(rs.getLong("update_date"));
+        taskPo.setSubmitNode(rs.getString("submit_node"));
+        taskPo.setTaskExecuteNode(rs.getString("task_execute_node"));
+        taskPo.setParams(rs.getString("params"));
+        taskPo.setCron(rs.getString("cron"));
+        taskPo.setTriggerTime(rs.getLong("trigger_time"));
+        taskPo.setRepeatCount(rs.getInt("repeat_count"));
+        taskPo.setRepeatedCount(rs.getInt("repeated_count"));
+        taskPo.setRepeatInterval(rs.getLong("repeat_interval"));
+        taskPo.setId(rs.getString("id"));
+        return taskPo;
     }
 
     public static final ResultSetHandler<List<TaskLogPo>> JOB_LOGGER_LIST_RSH = new ResultSetHandler<List<TaskLogPo>>() {
@@ -102,22 +98,16 @@ public class RshHolder {
             while (rs.next()) {
                 TaskLogPo jobLogPo = new TaskLogPo();
                 jobLogPo.setLogTime(rs.getLong("log_time"));
-                jobLogPo.setGmtCreated(rs.getLong("gmt_created"));
+                jobLogPo.setCreateTime(rs.getLong("createTime"));
                 jobLogPo.setLogType(LogType.valueOf(rs.getString("log_type")));
                 jobLogPo.setSuccess(rs.getBoolean("success"));
                 jobLogPo.setMsg(rs.getString("msg"));
-                jobLogPo.setTaskTrackerIdentity(rs.getString("task_tracker_identity"));
+                jobLogPo.setTaskExecuteNode(rs.getString("task_execute_node"));
                 jobLogPo.setLevel(Level.valueOf(rs.getString("level")));
                 jobLogPo.setTaskId(rs.getString("task_id"));
-                jobLogPo.setJobId(rs.getString("job_id"));
-                jobLogPo.setPriority(rs.getInt("priority"));
-                jobLogPo.setSubmitNodeGroup(rs.getString("submit_node_group"));
-                jobLogPo.setTaskTrackerNodeGroup(rs.getString("task_tracker_node_group"));
-                jobLogPo.setExtParams(JSON.parse(rs.getString("ext_params"), new TypeReference<Map<String, String>>() {
-                }));
-                jobLogPo.setInternalExtParams(JSON.parse(rs.getString("internal_ext_params"), new TypeReference<HashMap<String, String>>(){}));
-                jobLogPo.setNeedFeedback(rs.getBoolean("need_feedback"));
-                jobLogPo.setCronExpression(rs.getString("cron_expression"));
+                jobLogPo.setId(rs.getString("task_run_id"));
+                jobLogPo.setSubmitNode(rs.getString("submit_node"));
+                jobLogPo.setCron(rs.getString("cron"));
                 jobLogPo.setTriggerTime(rs.getLong("trigger_time"));
                 jobLogPo.setRetryTimes(rs.getInt("retry_times"));
                 jobLogPo.setMaxRetryTimes(rs.getInt("max_retry_times"));

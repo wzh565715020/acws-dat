@@ -10,7 +10,7 @@ public class BizLog implements Serializable {
 
 	private String taskId;
 
-    private String jobId;
+    private String id;
 
     private String msg;
 
@@ -18,9 +18,7 @@ public class BizLog implements Serializable {
 
     private Long logTime;
 
-    private String taskTrackerIdentity;
-
-    private String taskTrackerNodeGroup;
+    private String taskExecuteNode;
 
     public String getTaskId() {
         return taskId;
@@ -30,13 +28,6 @@ public class BizLog implements Serializable {
         this.taskId = taskId;
     }
 
-    public String getJobId() {
-        return jobId;
-    }
-
-    public void setJobId(String jobId) {
-        this.jobId = jobId;
-    }
 
     public String getMsg() {
         return msg;
@@ -62,19 +53,20 @@ public class BizLog implements Serializable {
         this.logTime = logTime;
     }
 
-    public String getTaskTrackerIdentity() {
-        return taskTrackerIdentity;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setTaskTrackerIdentity(String taskTrackerIdentity) {
-        this.taskTrackerIdentity = taskTrackerIdentity;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public String getTaskTrackerNodeGroup() {
-        return taskTrackerNodeGroup;
-    }
+	public String getTaskExecuteNode() {
+		return taskExecuteNode;
+	}
 
-    public void setTaskTrackerNodeGroup(String taskTrackerNodeGroup) {
-        this.taskTrackerNodeGroup = taskTrackerNodeGroup;
-    }
+	public void setTaskExecuteNode(String taskExecuteNode) {
+		this.taskExecuteNode = taskExecuteNode;
+	}
+
 }

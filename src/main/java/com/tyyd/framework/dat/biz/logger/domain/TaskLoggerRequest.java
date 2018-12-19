@@ -4,33 +4,20 @@ import com.tyyd.framework.dat.admin.request.PaginationReq;
 
 import java.util.Date;
 
-/**
- * @author   on 6/11/15.
- */
-public class JobLoggerRequest extends PaginationReq {
+public class TaskLoggerRequest extends PaginationReq {
 
-    private String taskId;
-
-    private String taskTrackerNodeGroup;
+    private String id;
 
     private Date startLogTime;
 
     private Date endLogTime;
 
-    public String getTaskId() {
-        return taskId;
+    public String getId() {
+        return id;
     }
 
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-    }
-
-    public String getTaskTrackerNodeGroup() {
-        return taskTrackerNodeGroup;
-    }
-
-    public void setTaskTrackerNodeGroup(String taskTrackerNodeGroup) {
-        this.taskTrackerNodeGroup = taskTrackerNodeGroup;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Date getStartLogTime() {

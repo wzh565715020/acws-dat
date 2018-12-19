@@ -14,7 +14,6 @@ import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
-import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
 public class TaskSender {
@@ -50,7 +49,7 @@ public class TaskSender {
 			taskPo.setPoolId(poolId);
 			taskPo.setCreateDate(taskPo.getCreateDate());
 			appContext.getExecutingTaskQueue().add(taskPo);
-		} catch (DupEntryException e) {
+		} catch (Exception e) {
 			LOGGER.warn("ExecutingJobQueue already exist:" + JSON.toJSONString(taskPo));
 			appContext.getExecutableTaskQueue().resume(taskPo);
 			return new SendResult(false, TaskPushResult.FAILED);

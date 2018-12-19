@@ -36,7 +36,7 @@ public class MongoFactoryBean {
             if (MongoCredential.GSSAPI_MECHANISM.equals(mechanism)) {
                 mongoCredentials.add(MongoCredential.createGSSAPICredential(username));
             } else {
-                mongoCredentials.add(MongoCredential.createMongoCRCredential(username, database, pwd.toCharArray()));
+                mongoCredentials.add(MongoCredential.createScramSha1Credential(username, database, pwd.toCharArray()));
             }
         }
     }

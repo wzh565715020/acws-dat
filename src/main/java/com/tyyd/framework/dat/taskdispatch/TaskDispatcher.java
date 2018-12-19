@@ -45,16 +45,16 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
 		// injectRemotingServer
 		appContext.setRemotingClient(remotingClient);
 		appContext.setRemotingServer(remotingServer);
-		appContext.setJobLogger(new SmartJobLogger(appContext));
+		appContext.setTaskLogger(new SmartJobLogger(appContext));
 
 		TaskQueueFactory factory = ServiceLoader.load(TaskQueueFactory.class, config);
 		appContext.setPoolQueue(factory.getPoolQueue(config));
-		appContext.setExecutableJobQueue(factory.getExecutableJobQueue(config));
-		appContext.setExecutingJobQueue(factory.getExecutingJobQueue(config));
+		appContext.setExecutableTaskQueue(factory.getExecutableJobQueue(config));
+		appContext.setExecutingTaskQueue(factory.getExecutingJobQueue(config));
 		appContext.setTaskQueue(factory.getTaskQueue(config));
 		appContext.setPreLoader(factory.getPreLoader(appContext));
 		appContext.setTaskSender(new TaskSender(appContext));
-
+		appContext.setExecutedTaskQueue(factory.getExecutedJobQueue(config));
 		appContext.getHttpCmdServer().registerCommands(new LoadTaskHttpCmd(appContext), // 手动加载任务
 				new AddTaskHttpCmd(appContext)); // 添加任务
 	}

@@ -42,7 +42,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
 		this.zkClient = zookeeperTransporter.connect(appContext.getConfig());
 		this.zkListeners = new ConcurrentHashMap<Node, ConcurrentMap<NotifyListener, ChildListener>>();
 		// 默认是连成功的(用zkclient时候，第一次不会有state changed事件暴露给用户，
-		// 他居然在new ZkClient的时候就直接连接了，给个提供listener的构造函数或者把启动改为start方法都ok呀，蛋疼)
+		// 他居然在new ZkClient的时候就直接连接了，给个提供listener的构造函数或者把启动改为start方法都ok)
 		appContext.getRegistryStatMonitor().setAvailable(true);
 
 		zkClient.addStateListener(new StateListener() {
@@ -145,7 +145,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
 						Node node = NodeRegistryUtils.parse(parentPath + "/" + child);
 						currentNodeChildren.add(node);
 					}
-					
+
 					List<Node> oldNodeChildren = null;
 					if (oldChildren != null && !oldChildren.isEmpty()) {
 						oldNodeChildren = new ArrayList<Node>(oldChildren.size());
@@ -192,13 +192,29 @@ public class ZookeeperRegistry extends FailbackRegistry {
 	@Override
 	public void updateRegister(String path, Node data) {
 		zkClient.setData(path, data);
-		
+
 	}
+
+	@Override
+	public Node createNewRegister(String path, Node data) {
+		zkClient.create(path, data, true, false);
+		return data;
+	}
+
 	@Override
 	public void addDataListener(String path, DataListener listener) {
 		if (!zkClient.exists(path)) {
 			zkClient.create(path, true, false);
 		}
 		zkClient.addDataListener(path, listener);
+	}
+
+	@Override
+	public Boolean exists(String path) {
+		return zkClient.exists(path);
+	}
+	@Override
+	public Node getData(String path) {
+		return zkClient.getData(path);
 	}
 }

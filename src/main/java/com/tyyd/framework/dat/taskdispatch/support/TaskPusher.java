@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.tyyd.framework.dat.core.cluster.Node;
-import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.commons.utils.Holder;
 import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.constant.EcTopic;
@@ -24,9 +23,7 @@ import com.tyyd.framework.dat.remoting.AsyncCallback;
 import com.tyyd.framework.dat.remoting.ResponseFuture;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
-import com.tyyd.framework.dat.taskdispatch.channel.ChannelWrapper;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
-import com.tyyd.framework.dat.taskdispatch.domain.TaskExecuterNodeConfig;
 import com.tyyd.framework.dat.taskdispatch.monitor.TaskDispatcherMStatReporter;
 import com.tyyd.framework.dat.taskdispatch.sender.TaskPushResult;
 import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
@@ -55,26 +52,8 @@ public class TaskPusher {
 			appContext.getEventCenter().publishAsync(eventInfo);
 			return;
 		}
-		TaskExecuterNodeConfig taskExecuterNode = new TaskExecuterNodeConfig(node.getIdentity());
-		taskExecuterNode.setAvailableThread(node.getAvailableThreads());
-		taskExecuterNode.setIp(node.getIp());
-		taskExecuterNode.setPort(node.getPort());
-		String identity = taskExecuterNode.getIdentity();
-		ChannelWrapper channelWrapper = appContext.getChannelManager().getChannel(NodeType.TASK_EXECUTER, identity);
-		if (null == channelWrapper) {
-			try {
-				channelWrapper = new ChannelWrapper(
-						appContext.getRemotingClient().getRemotingClient()
-								.getAndCreateChannel(taskExecuterNode.getIp() + ":" + taskExecuterNode.getPort()),
-						NodeType.TASK_EXECUTER, identity);
-				appContext.getChannelManager().offerChannel(channelWrapper);
-			} catch (InterruptedException e) {
-				LOGGER.error("创建channel失败",e);
-				return;
-			}
-		}
-		
-		int availableThreads = taskExecuterNode.getAvailableThread().get();
+		String identity = node.getIdentity();
+		int availableThreads = node.getAvailableThreads();
 		if (availableThreads == 0) {
 			return;
 		}
@@ -82,13 +61,12 @@ public class TaskPusher {
 			LOGGER.debug("taskTrackerIdentity:{} , availableThreads:{}", identity, availableThreads);
 		}
 		// 推送任务
-		TaskPushResult result = send(appContext.getRemotingClient(), taskExecuterNode);
+		TaskPushResult result = send(appContext.getRemotingClient(), node);
 		switch (result) {
 		case SUCCESS:
-			availableThreads = taskExecuterNode.getAvailableThread().decrementAndGet();
 			// 更新TaskExecuter的可用线程数
 			appContext.getTaskExecuterManager().updateTaskTrackerAvailableThreads(identity,
-					taskExecuterNode.getAvailableThreadInteger(), taskExecuterNode.getTimestamp());
+					node.getAvailableThreads() - 1);
 			stat.incPushJobNum();
 			break;
 		case FAILED:
@@ -106,8 +84,7 @@ public class TaskPusher {
 	/**
 	 * 是否推送成功
 	 */
-	private TaskPushResult send(final RemotingClientDelegate remotingClient,
-			final TaskExecuterNodeConfig taskTrackerNode) {
+	private TaskPushResult send(final RemotingClientDelegate remotingClient, final Node taskTrackerNode) {
 
 		final String identity = taskTrackerNode.getIdentity();
 
@@ -124,8 +101,8 @@ public class TaskPusher {
 
 				final CountDownLatch latch = new CountDownLatch(1);
 				try {
-					remotingClient.invokeAsync(taskTrackerNode.getIp() + ":" + taskTrackerNode.getPort(), commandRequest,
-							new AsyncCallback() {
+					remotingClient.invokeAsync(taskTrackerNode.getIp() + ":" + taskTrackerNode.getPort(),
+							commandRequest, new AsyncCallback() {
 								@Override
 								public void operationComplete(ResponseFuture responseFuture) {
 									try {
@@ -137,8 +114,7 @@ public class TaskPusher {
 										if (responseCommand.getCode() == TaskProtos.ResponseCode.TASK_PUSH_SUCCESS
 												.code()) {
 											if (LOGGER.isDebugEnabled()) {
-												LOGGER.debug("task push success! " + "identity=" + identity + ", task="
-														+ taskPo);
+												LOGGER.debug("task push success! " + ", task=" + taskPo);
 											}
 											pushSuccess.set(true);
 										}
@@ -150,6 +126,7 @@ public class TaskPusher {
 
 				} catch (Exception e) {
 					LOGGER.error("Remoting send error, taskPo={}", taskPo, e);
+					rollBackData(taskPo);
 					return new TaskSender.SendResult(false, TaskPushResult.SENT_ERROR);
 				}
 
@@ -160,17 +137,7 @@ public class TaskPusher {
 				}
 
 				if (!pushSuccess.get()) {
-					if (LOGGER.isDebugEnabled()) {
-						LOGGER.debug("task push failed!" + ", identity=" + identity + ", task=" + taskPo);
-					}
-					// 队列切回来
-					try {
-						taskPo.setUpdateDate(SystemClock.now());
-						appContext.getExecutableTaskQueue().add(taskPo);
-					} catch (DupEntryException e) {
-						LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(taskPo));
-					}
-					appContext.getExecutingTaskQueue().remove(taskPo.getId());
+					rollBackData(taskPo);
 					return new TaskSender.SendResult(false, TaskPushResult.SENT_ERROR);
 				}
 
@@ -180,4 +147,19 @@ public class TaskPusher {
 
 		return (TaskPushResult) sendResult.getReturnValue();
 	}
+
+	private void rollBackData(TaskPo taskPo) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("task push failed!" + ", identity=" + taskPo.getTaskExecuteNode() + ", task=" + taskPo);
+		}
+		// 队列切回来
+		try {
+			taskPo.setUpdateDate(SystemClock.now());
+			appContext.getExecutableTaskQueue().add(taskPo);
+		} catch (Exception e) {
+			LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(taskPo));
+		}
+		appContext.getExecutingTaskQueue().remove(taskPo.getId());
+	}
+
 }

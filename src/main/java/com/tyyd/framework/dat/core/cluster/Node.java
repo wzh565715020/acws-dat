@@ -17,8 +17,6 @@ public class Node implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -9065421335135662264L;
-	// 是否可用
-    private boolean available = true;
     private String clusterName;
     private NodeType nodeType;
     private String ip;
@@ -66,14 +64,6 @@ public class Node implements Serializable{
 
     public void setHostName(String hostName) {
         this.hostName = hostName;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean isAvailable) {
-        this.available = isAvailable;
     }
 
     public NodeType getNodeType() {
