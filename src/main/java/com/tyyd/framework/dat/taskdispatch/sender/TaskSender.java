@@ -3,7 +3,10 @@ package com.tyyd.framework.dat.taskdispatch.sender;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.alibaba.fastjson.JSON;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.admin.request.PoolQueueReq;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
@@ -26,6 +29,7 @@ public class TaskSender {
 		this.appContext = appContext;
 	}
 
+	@Transactional(isolation=Isolation.READ_COMMITTED,propagation=Propagation.REQUIRED,rollbackFor = Exception.class)
 	public SendResult send(String taskExecuterIdentity, SendInvoker invoker) {
 
 		// 取一个可运行的task
@@ -36,42 +40,41 @@ public class TaskSender {
 			}
 			return new SendResult(false, TaskPushResult.NO_TASK);
 		}
-		String poolId = getTaskPool(taskPo.getTaskId());
-		if (null == poolId) {
+		PoolPo poolPo = getTaskPool(taskPo.getTaskId());
+		if (null == poolPo) {
 			return new SendResult(false, TaskPushResult.NO_POOL);
 		}
-		if (appContext.getPreLoader().lockTask(taskPo.getId(), taskExecuterIdentity, taskPo.getTriggerTime(), taskPo.getUpdateDate())) {
+		if (appContext.getPreLoader().lockTask(taskPo.getId(), taskExecuterIdentity)) {
 			taskPo.setTaskExecuteNode(taskExecuterIdentity);
 			taskPo.setUpdateDate(SystemClock.now());
 		}
-		// IMPORTANT: 这里要先切换队列
-		try {
-			taskPo.setPoolId(poolId);
-			taskPo.setCreateDate(taskPo.getCreateDate());
-			appContext.getExecutingTaskQueue().add(taskPo);
-		} catch (Exception e) {
-			LOGGER.warn("ExecutingJobQueue already exist:" + JSON.toJSONString(taskPo));
-			appContext.getExecutableTaskQueue().resume(taskPo);
-			return new SendResult(false, TaskPushResult.FAILED);
-		}
+		// IMPORTANT: 切换队列
+		taskPo.setPoolId(poolPo.getPoolId());
+		taskPo.setCreateDate(taskPo.getCreateDate());
+		appContext.getExecutingTaskQueue().add(taskPo);
 		appContext.getExecutableTaskQueue().remove(taskPo.getId());
 
 		SendResult sendResult = invoker.invoke(taskPo);
 
 		if (sendResult.isSuccess()) {
 			// 记录日志
-			TaskLogPo taskLogPo = TaskDomainConverter.convertJobLog(taskPo);
-			taskLogPo.setSuccess(true);
-			taskLogPo.setLogType(LogType.SENT);
-			taskLogPo.setLogTime(SystemClock.now());
-			taskLogPo.setLevel(Level.INFO);
-			appContext.getTaskLogger().log(taskLogPo);
+			try {
+				TaskLogPo taskLogPo = TaskDomainConverter.convertTaskLog(taskPo);
+				taskLogPo.setSuccess(true);
+				taskLogPo.setLogType(LogType.SENT);
+				taskLogPo.setLogTime(SystemClock.now());
+				taskLogPo.setLevel(Level.INFO);
+				appContext.getTaskLogger().log(taskLogPo);
+			} catch (Exception e) {
+				LOGGER.error("记录日志失败");
+			}
+			
 		}
 
 		return sendResult;
 	}
 
-	private String getTaskPool(String taskId) {
+	private PoolPo getTaskPool(String taskId) {
 		ReentrantLock reentrantLock = new ReentrantLock();
 		reentrantLock.lock();
 		try {
@@ -88,9 +91,10 @@ public class TaskSender {
 			}
 			PoolQueueReq poolQueueReq = new PoolQueueReq();
 			poolQueueReq.setPoolId(taskPoolPo.getPoolId());
-			poolQueueReq.setAvailableCount(taskPoolPo.getAvailableCount()-1);
+			poolQueueReq.setAvailableCount(taskPoolPo.getAvailableCount() - 1);
+			taskPoolPo.setAvailableCount(taskPoolPo.getAvailableCount() - 1);
 			appContext.getPoolQueue().selectiveUpdate(poolQueueReq);
-			return taskPoolPo.getPoolId();
+			return taskPoolPo;
 		} finally {
 			reentrantLock.unlock();
 		}

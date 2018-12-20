@@ -7,7 +7,5 @@ import com.tyyd.framework.dat.queue.domain.TaskPo;
 public interface TaskQueueInterface {
 
     PaginationRsp<TaskPo> pageSelect(TaskQueueReq request);
-
     boolean selectiveUpdate(TaskQueueReq request);
-
 }

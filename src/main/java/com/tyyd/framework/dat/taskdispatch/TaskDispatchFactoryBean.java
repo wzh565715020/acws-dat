@@ -116,4 +116,13 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
     public void setConfigs(Properties configs) {
         this.configs = configs;
     }
+
+	public Integer getListenPort() {
+		return listenPort;
+	}
+
+	public void setListenPort(Integer listenPort) {
+		this.listenPort = listenPort;
+	}
+    
 }

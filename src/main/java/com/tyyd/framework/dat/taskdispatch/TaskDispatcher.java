@@ -8,8 +8,6 @@ import com.tyyd.framework.dat.ec.injvm.InjvmEventCenter;
 import com.tyyd.framework.dat.queue.TaskQueueFactory;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
 import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
-import com.tyyd.framework.dat.taskdispatch.cmd.AddTaskHttpCmd;
-import com.tyyd.framework.dat.taskdispatch.cmd.LoadTaskHttpCmd;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherNode;
 import com.tyyd.framework.dat.taskdispatch.monitor.TaskDispatcherMStatReporter;
@@ -18,7 +16,6 @@ import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
 import com.tyyd.framework.dat.taskdispatch.support.TaskPushMachine;
 import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
 import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
-import com.tyyd.framework.dat.taskdispatch.support.listener.TaskNodeChangeListener;
 import com.tyyd.framework.dat.taskdispatch.support.listener.TaskDispatcherMasterChangeListener;
 
 public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskDispatcherAppContext> {
@@ -34,7 +31,7 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
 		// TaskExecuter 管理者
 		appContext.setTaskExecuterManager(new TaskExecuterManager(appContext));
 		// 添加节点变化监听器
-		addNodeChangeListener(new TaskNodeChangeListener(appContext));
+		//addNodeChangeListener(new TaskNodeChangeListener(appContext));
 		// 添加master节点变化监听器
 		addMasterChangeListener(new TaskDispatcherMasterChangeListener(appContext));
 		
@@ -55,8 +52,7 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
 		appContext.setPreLoader(factory.getPreLoader(appContext));
 		appContext.setTaskSender(new TaskSender(appContext));
 		appContext.setExecutedTaskQueue(factory.getExecutedJobQueue(config));
-		appContext.getHttpCmdServer().registerCommands(new LoadTaskHttpCmd(appContext), // 手动加载任务
-				new AddTaskHttpCmd(appContext)); // 添加任务
+		
 	}
 
 	@Override

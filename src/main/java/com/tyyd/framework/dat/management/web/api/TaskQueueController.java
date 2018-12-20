@@ -1,6 +1,5 @@
 package com.tyyd.framework.dat.management.web.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,13 +21,11 @@ import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.support.CronExpression;
 import com.tyyd.framework.dat.core.support.TaskUtils;
-import com.tyyd.framework.dat.management.cluster.BackendAppContext;
-import com.tyyd.framework.dat.management.support.AppConfigurer;
-import com.tyyd.framework.dat.management.support.I18nManager;
 import com.tyyd.framework.dat.management.web.AbstractMVC;
 import com.tyyd.framework.dat.management.web.support.Builder;
 import com.tyyd.framework.dat.management.web.vo.RestfulResponse;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
+import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -38,8 +35,7 @@ import java.util.List;
 @RestController
 public class TaskQueueController extends AbstractMVC {
 
-    @Autowired
-    private BackendAppContext appContext;
+    private TaskDispatcherAppContext appContext;
 
     @RequestMapping("/taskQueue/getRepeatTask")
     public RestfulResponse getRepeatTask(TaskQueueReq request) {
@@ -62,7 +58,7 @@ public class TaskQueueController extends AbstractMVC {
         } catch (IllegalArgumentException e) {
             return Builder.build(false, e.getMessage());
         }
-        request.setCronExpression(null);
+        request.setCron(null);
         TaskPo jobPo = appContext.getTaskQueue().getTask(request.getTaskId());
         boolean success = appContext.getTaskQueue().selectiveUpdate(request);
         if (success) {
@@ -70,10 +66,10 @@ public class TaskQueueController extends AbstractMVC {
                 // 如果repeatInterval有修改,需要把triggerTime也要修改下
                 if (!request.getRepeatInterval().equals(jobPo.getRepeatInterval())) {
                     long nextTriggerTime = TaskUtils.getRepeatNextTriggerTime(jobPo);
-                    request.setTriggerTime(new Date(nextTriggerTime));
+                    request.setTriggerTime(nextTriggerTime);
                 }
                 // 把等待执行的队列也更新一下
-                appContext.getExecutableJobQueue().selectiveUpdate(request);
+                appContext.getExecutableTaskQueue().selectiveUpdate(request);
             } catch (Exception e) {
                 return Builder.build(false, "更新等待执行的任务失败，请手动更新! error:" + e.getMessage());
             }
@@ -91,7 +87,7 @@ public class TaskQueueController extends AbstractMVC {
         boolean success = appContext.getTaskQueue().remove(request.getTaskId());
         if (success) {
             try {
-                appContext.getExecutableJobQueue().remove(request.getTaskId());
+                appContext.getExecutableTaskQueue().remove(request.getTaskId());
             } catch (Exception e) {
                 return Builder.build(false, "删除等待执行的任务失败，请手动删除! error:{}" + e.getMessage());
             }
@@ -101,9 +97,9 @@ public class TaskQueueController extends AbstractMVC {
 
     @RequestMapping("/taskQueue/getExecutableTask")
     public RestfulResponse getExecutableTask(TaskQueueReq request) {
-        PaginationRsp<TaskPo> paginationRsp = appContext.getExecutableJobQueue().pageSelect(request);
+        PaginationRsp<TaskPo> paginationRsp = appContext.getExecutableTaskQueue().pageSelect(request);
 
-        boolean needClear = Boolean.valueOf(AppConfigurer.getProperty("dat.admin.remove.running.task.on.executable.search", "false"));
+        boolean needClear = Boolean.valueOf(appContext.getConfig().getParameter("dat.admin.remove.running.task.on.executable.search", "false"));
         if (needClear) {
             paginationRsp = clearRunningJob(paginationRsp);
         }
@@ -124,7 +120,7 @@ public class TaskQueueController extends AbstractMVC {
         PaginationRsp<TaskPo> rsp = new PaginationRsp<TaskPo>();
         List<TaskPo> rows = new ArrayList<TaskPo>();
         for (TaskPo jobPo : paginationRsp.getRows()) {
-            if (appContext.getExecutingJobQueue().getTask(jobPo.getTaskExecuteNode(), jobPo.getTaskId()) == null) {
+            if (appContext.getExecutingTaskQueue().getTask(jobPo.getTaskExecuteNode(), jobPo.getTaskId()) == null) {
                 // 没有正在执行, 则显示在等待执行列表中
                 rows.add(jobPo);
             }
@@ -136,7 +132,7 @@ public class TaskQueueController extends AbstractMVC {
 
     @RequestMapping("/taskQueue/getExecutingTask")
     public RestfulResponse getExecutingTask(TaskQueueReq request) {
-        PaginationRsp<TaskPo> paginationRsp = appContext.getExecutingJobQueue().pageSelect(request);
+        PaginationRsp<TaskPo> paginationRsp = appContext.getExecutingTaskQueue().pageSelect(request);
         RestfulResponse response = new RestfulResponse();
         response.setSuccess(true);
         response.setResults(paginationRsp.getResults());
@@ -148,11 +144,11 @@ public class TaskQueueController extends AbstractMVC {
     public RestfulResponse updateExecutableTask(TaskQueueReq request) {
         // 检查参数
         // 1. 检测 cronExpression是否是正确的
-        if (StringUtils.isNotEmpty(request.getCronExpression())) {
+        if (StringUtils.isNotEmpty(request.getCron())) {
             try {
-                CronExpression expression = new CronExpression(request.getCronExpression());
+                CronExpression expression = new CronExpression(request.getCron());
                 if (expression.getTimeAfter(new Date()) == null) {
-                    return Builder.build(false, StringUtils.format("该CronExpression={} 已经没有执行时间点!", request.getCronExpression()));
+                    return Builder.build(false, StringUtils.format("该CronExpression={} 已经没有执行时间点!", request.getCron()));
                 }
             } catch (ParseException e) {
                 return Builder.build(false, "请输入正确的 CronExpression!");
@@ -163,7 +159,7 @@ public class TaskQueueController extends AbstractMVC {
         } catch (IllegalArgumentException e) {
             return Builder.build(false, e.getMessage());
         }
-        boolean success = appContext.getExecutableJobQueue().selectiveUpdate(request);
+        boolean success = appContext.getExecutableTaskQueue().selectiveUpdate(request);
         RestfulResponse response = new RestfulResponse();
         if (success) {
             response.setSuccess(true);
@@ -182,9 +178,9 @@ public class TaskQueueController extends AbstractMVC {
             return Builder.build(false, e.getMessage());
         }
 
-        boolean success = appContext.getExecutableJobQueue().remove(request.getTaskId());
+        boolean success = appContext.getExecutableTaskQueue().remove(request.getTaskId());
         if (success) {
-            if (StringUtils.isNotEmpty(request.getCronExpression())) {
+            if (StringUtils.isNotEmpty(request.getCron())) {
                 // 是Cron任务, Cron任务队列的也要被删除
                 try {
                     appContext.getTaskQueue().remove(request.getTaskId());
@@ -202,7 +198,7 @@ public class TaskQueueController extends AbstractMVC {
     public RestfulResponse jobLoggerGet(TaskLoggerRequest request) {
         RestfulResponse response = new RestfulResponse();
 
-        PaginationRsp<TaskLogPo> paginationRsp = appContext.getJobLogger().search(request);
+        PaginationRsp<TaskLogPo> paginationRsp = appContext.getTaskLogger().search(request);
         response.setResults(paginationRsp.getResults());
         response.setRows(paginationRsp.getRows());
 
@@ -216,19 +212,15 @@ public class TaskQueueController extends AbstractMVC {
         // 表单check
         try {
             Assert.hasLength(request.getTaskId(), "taskId不能为空!");
-            Assert.hasLength(request.getTaskTrackerNodeGroup(), "taskTrackerNodeGroup不能为空!");
-            if (request.getNeedFeedback()) {
-                Assert.hasLength(request.getSubmitNode(), "submitNodeGroup不能为空!");
-            }
 
-            if (StringUtils.isNotEmpty(request.getCronExpression())) {
+            if (StringUtils.isNotEmpty(request.getCron())) {
                 try {
-                    CronExpression expression = new CronExpression(request.getCronExpression());
+                    CronExpression expression = new CronExpression(request.getCron());
                     Date nextTime = expression.getTimeAfter(new Date());
                     if (nextTime == null) {
-                        return Builder.build(false, StringUtils.format("该CronExpression={} 已经没有执行时间点!", request.getCronExpression()));
+                        return Builder.build(false, StringUtils.format("该CronExpression={} 已经没有执行时间点!", request.getCron()));
                     } else {
-                        request.setTriggerTime(nextTime);
+                        request.setTriggerTime(nextTime.getTime());
                     }
                 } catch (ParseException e) {
                     return Builder.build(false, "请输入正确的 CronExpression!");
@@ -247,15 +239,12 @@ public class TaskQueueController extends AbstractMVC {
 
         Task task = new Task();
         task.setTaskId(request.getTaskId());
-        if (CollectionUtils.isNotEmpty(request.getExtParams())) {
-            task.setParams(JSON.toJSONString(request.getExtParams()));
-        }
         // 执行节点的group名称
         task.setSubmitNode(request.getSubmitNode());
         // 这个是 cron expression 和 quartz 一样，可选
-        task.setCron(request.getCronExpression());
+        task.setCron(request.getCron());
         if (request.getTriggerTime() != null) {
-            task.setTriggerTime(request.getTriggerTime().getTime());
+            task.setTriggerTime(request.getTriggerTime());
         }
         task.setRepeatCount(request.getRepeatCount() == null ? 0 : request.getRepeatCount());
         task.setRepeatInterval(request.getRepeatInterval());
@@ -287,7 +276,7 @@ public class TaskQueueController extends AbstractMVC {
 
         List<Node> jobTrackerNodeList = null;//appContext.getNodeMemCacheAccess().getNodeByNodeType(NodeType.TASK_DISPATCH);
         if (CollectionUtils.isEmpty(jobTrackerNodeList)) {
-            return new Pair<Boolean, String>(false, I18nManager.getMessage("task.tracker.not.found"));
+            return new Pair<Boolean, String>(false, "task.tracker.not.found");
         }
 
         HttpCmdResponse response = null;

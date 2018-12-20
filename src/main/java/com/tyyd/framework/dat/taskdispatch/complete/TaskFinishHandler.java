@@ -3,6 +3,10 @@ package com.tyyd.framework.dat.taskdispatch.complete;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.admin.request.PoolQueueReq;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
@@ -31,7 +35,7 @@ public class TaskFinishHandler {
 	public TaskFinishHandler(TaskDispatcherAppContext appContext) {
 		this.appContext = appContext;
 	}
-
+	@Transactional(isolation=Isolation.READ_COMMITTED,propagation=Propagation.REQUIRED,rollbackFor = Exception.class)
 	public void onComplete(List<TaskRunResult> results) {
 		if (CollectionUtils.isEmpty(results)) {
 			return;
@@ -62,13 +66,16 @@ public class TaskFinishHandler {
 			// 加入到历史队列
 			TaskPo taskPo = TaskDomainConverter.convert(taskMeta.getTask());
 			taskPo.setId(taskMeta.getId());
-			appContext.getExecutedTaskQueue().add(taskPo);
+			try {
+				appContext.getExecutedTaskQueue().add(taskPo);
+			} catch (DupEntryException e) {
+			}
+			taskMeta.getTaskExecuteNode();
 		}
 	}
 
-	private void finishCronTask(String id) {
-
-		TaskPo taskPo = appContext.getTaskQueue().getTask(id);
+	private void finishCronTask(String taskId) {
+		TaskPo taskPo = appContext.getTaskQueue().getTask(taskId);
 		if (taskPo == null) {
 			// 可能任务队列中改条记录被删除了
 			return;
@@ -76,7 +83,7 @@ public class TaskFinishHandler {
 		Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(taskPo.getCron());
 		if (nextTriggerTime == null) {
 			// 从CronJob队列中移除
-			appContext.getTaskQueue().remove(id);
+			appContext.getTaskQueue().remove(taskId);
 			return;
 		}
 		// 表示下次还要执行
@@ -126,7 +133,7 @@ public class TaskFinishHandler {
 	}
 
 	private void repeatTaskRemoveLog(TaskPo taskPo) {
-		TaskLogPo taskLogPo = TaskDomainConverter.convertJobLog(taskPo);
+		TaskLogPo taskLogPo = TaskDomainConverter.convertTaskLog(taskPo);
 		taskLogPo.setSuccess(true);
 		taskLogPo.setLogType(LogType.DEL);
 		taskLogPo.setLogTime(SystemClock.now());

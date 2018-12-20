@@ -23,14 +23,12 @@ public class MysqlPreLoader extends AbstractPreLoader {
 
     public MysqlPreLoader(AppContext appContext) {
         super(appContext);
-        this.sqlTemplate = SqlTemplateFactory.create(appContext.getConfig());
+        this.sqlTemplate = SqlTemplateFactory.create();
     }
 
     @Override
     public boolean lockTask(String id,
-                              String taskTrackerIdentity,
-                              Long triggerTime,
-                              Long gmtModified) {
+                              String taskTrackerIdentity) {
         try {
             return new UpdateSql(sqlTemplate)
                     .update()

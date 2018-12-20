@@ -14,11 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Config implements Serializable {
 
     private static final long serialVersionUID = -8283382582968938472L;
-    // 节点是否可用
-    private boolean available = true;
     // 唯一标识
     private String identity;
-    // 工作线程, 目前只对 TaskTracker 有效
+    // 工作线程
     private int workThreads;
     // 节点类型
     private NodeType nodeType;
@@ -29,7 +27,7 @@ public class Config implements Serializable {
     // 监听端口
     private int listenPort;
     private String ip;
-    // 任务信息存储路径(譬如TaskTracker反馈任务信息给JobTracker, JobTracker down掉了, 那么存储下来等待JobTracker可用时再发送)
+    // 任务信息存储路径
     private String dataPath;
     // 集群名字
     private String clusterName;
@@ -115,14 +113,6 @@ public class Config implements Serializable {
 
     public void setDataPath(String dataPath) {
         this.dataPath = dataPath;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
     }
 
     public void setParameter(String key, String value) {

@@ -97,12 +97,14 @@ public class TaskReceiver {
     /**
      * 添加任务
      */
-    private void addJob(TaskPo taskPo) throws DupEntryException {
+    public void addJob(TaskPo taskPo) throws DupEntryException {
         if (taskPo.isCron()) {
             addCronJob(taskPo);
         } else if (taskPo.isRepeatable()) {
             addRepeatTask(taskPo);
-        } 
+        }else {
+        	 appContext.getExecutableTaskQueue().add(taskPo);
+        }
     }
     /**
      * 添加Cron 任务
@@ -110,6 +112,7 @@ public class TaskReceiver {
     private void addCronJob(TaskPo taskPo) throws DupEntryException {
         Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(taskPo.getCron());
         if (nextTriggerTime != null) {
+        	 appContext.getTaskQueue().add(taskPo);
             // 没有正在执行, 则添加
             if (appContext.getExecutableTaskQueue().getTask(taskPo.getTaskId()) == null) {
                 // 2. add to executable queue
@@ -122,6 +125,7 @@ public class TaskReceiver {
      * 添加Repeat 任务
      */
     private void addRepeatTask(TaskPo taskPo) throws DupEntryException {
+    	appContext.getTaskQueue().add(taskPo);
         // 没有正在执行, 则添加
         if (appContext.getExecutableTaskQueue().getTask(taskPo.getTaskId()) == null) {
             // 2. add to executable queue
@@ -134,6 +138,9 @@ public class TaskReceiver {
 			taskQueueReq.setLimit(Integer.MAX_VALUE);
 			List<TaskPo> taskPos = appContext.getTaskQueue().pageSelect(taskQueueReq).getRows();
 			for (TaskPo taskPo : taskPos) {
+				if (taskPo.getId() == null) {
+					 taskPo.setId(idGenerator.generate(taskPo));
+				}
 				addJob(taskPo);
 			}
 		}

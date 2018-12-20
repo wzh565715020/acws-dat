@@ -1,6 +1,5 @@
 package com.tyyd.framework.dat.queue.mysql;
 
-import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.commons.utils.CharacterUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.queue.PoolQueueInterface;
@@ -18,10 +17,6 @@ import com.tyyd.framework.dat.admin.response.PaginationRsp;
 import java.util.List;
 
 public abstract class AbstractMysqlPoolQueue extends JdbcAbstractAccess implements PoolQueueInterface {
-
-	public AbstractMysqlPoolQueue(Config config) {
-		super(config);
-	}
 
 	protected boolean add(String tableName, PoolPo poolPo) {
 		return new InsertSql(getSqlTemplate()).insert(tableName)

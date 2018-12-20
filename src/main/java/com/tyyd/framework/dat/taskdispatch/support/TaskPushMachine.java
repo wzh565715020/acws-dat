@@ -39,7 +39,7 @@ public class TaskPushMachine {
 	private int taskPushFrequency;
 	// 是否启用机器资源检查
 	private boolean machineResCheckEnable = true;
-    
+
 	private TaskPusher taskPusher;
 
 	public TaskPushMachine(final TaskDispatcherAppContext appContext) {
@@ -84,12 +84,13 @@ public class TaskPushMachine {
 
 	public void start() {
 		try {
-			if (appContext.getConfig().getIdentity().equals(appContext.getMasterNode().getIdentity()) && start.compareAndSet(false, true)) {
+			if (appContext.getConfig().getIdentity().equals(appContext.getMasterNode().getIdentity())
+					&& start.compareAndSet(false, true)) {
 				PoolQueueReq request = new PoolQueueReq();
 				request.setLimit(Integer.MAX_VALUE);
 				List<PoolPo> list = appContext.getPoolQueue().pageSelect(request).getRows();
 				appContext.setPoolPoList(new CopyOnWriteArrayList<PoolPo>());
-				if (list!=null && list.size()>0) {
+				if (list != null && list.size() > 0) {
 					appContext.getPoolPoList().addAll(list);
 				}
 				if (scheduledFuture == null) {
@@ -103,11 +104,9 @@ public class TaskPushMachine {
 		}
 	}
 
-	private void stop() {
+	public void stop() {
 		try {
 			if (start.compareAndSet(true, false)) {
-				scheduledFuture.cancel(true);
-				// SCHEDULED_CHECKER.shutdown();
 				LOGGER.info("Stop task push  machine success!");
 			}
 		} catch (Throwable t) {
@@ -119,7 +118,12 @@ public class TaskPushMachine {
 	 * 发送task push 请求
 	 */
 	private void sendRequest() throws RemotingCommandFieldCheckException {
-		taskPusher.push();
+		try {
+			taskPusher.push();
+		} catch (Exception e) {
+			LOGGER.error("发送任务失败");
+		}
+		
 	}
 
 	/**
@@ -131,9 +135,7 @@ public class TaskPushMachine {
 			// 如果没有启用,直接返回
 			return true;
 		}
-
 		boolean enough = true;
-
 		try {
 			// 1. Cpu usage
 			Double maxCpuTimeRate = appContext.getConfig().getParameter(Constants.LB_CPU_USED_RATE_MAX, 90d);

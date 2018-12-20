@@ -27,10 +27,10 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
     @Override
     public RemotingCommand processRequest(Channel channel, RemotingCommand request) throws RemotingCommandException {
 
-        TaskCancelRequest jobCancelRequest = request.getBody();
+        TaskCancelRequest taskCancelRequest = request.getBody();
 
-        String taskId = jobCancelRequest.getTaskId();
-        String taskTrackerNodeGroup = jobCancelRequest.getTaskTrackerNodeGroup();
+        String taskId = taskCancelRequest.getTaskId();
+        String taskTrackerNodeGroup = taskCancelRequest.getTaskTrackerNodeGroup();
         TaskPo task = appContext.getTaskQueue().getTask(taskId);
         if (task == null) {
             task = appContext.getExecutableTaskQueue().getTask(taskId);
@@ -42,7 +42,7 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
                 appContext.getTaskQueue().remove(task.getTaskId());
             }
             // 记录日志
-            TaskLogPo jobLogPo = TaskDomainConverter.convertJobLog(task);
+            TaskLogPo jobLogPo = TaskDomainConverter.convertTaskLog(task);
             jobLogPo.setSuccess(true);
             jobLogPo.setLogType(LogType.DEL);
             jobLogPo.setLogTime(SystemClock.now());

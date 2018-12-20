@@ -1,6 +1,5 @@
 package com.tyyd.framework.dat.queue.mysql;
 
-import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
@@ -12,11 +11,7 @@ import com.tyyd.framework.dat.store.jdbc.builder.UpdateSql;
 
 import java.util.List;
 
-public class MysqlExecutableTaskQueue extends AbstractMysqlTaskQueue implements ExecutableTaskQueue {
-
-    public MysqlExecutableTaskQueue(Config config) {
-        super(config);
-    }
+public class MysqlExecutableTaskQueue extends AbstractMysqlTaskExecuteQueue implements ExecutableTaskQueue {
 
     @Override
     protected String getTableName() {
@@ -65,13 +60,13 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskQueue implements 
     }
 
     @Override
-    public TaskPo getTask(String id) {
+    public TaskPo getTask(String taskId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
-                .where("id = ?", id)
+                .where("task_id = ?", taskId)
                 .single(RshHolder.TASK_PO_RSH);
     }
 

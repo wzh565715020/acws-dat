@@ -2,7 +2,6 @@ package com.tyyd.framework.dat.queue.mysql;
 
 import com.tyyd.framework.dat.core.commons.utils.CharacterUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.queue.TaskQueueInterface;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
@@ -12,14 +11,13 @@ import com.tyyd.framework.dat.store.jdbc.builder.OrderByType;
 import com.tyyd.framework.dat.store.jdbc.builder.SelectSql;
 import com.tyyd.framework.dat.store.jdbc.builder.UpdateSql;
 import com.tyyd.framework.dat.store.jdbc.builder.WhereSql;
-import com.tyyd.framework.dat.store.jdbc.dbutils.JdbcTypeUtils;
 import com.tyyd.framework.dat.store.jdbc.exception.JdbcException;
 import com.tyyd.framework.dat.admin.request.TaskQueueReq;
 import com.tyyd.framework.dat.admin.response.PaginationRsp;
 
 import java.util.List;
 
-public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implements TaskQueueInterface {
+public abstract class AbstractMysqlTaskExecuteQueue extends JdbcAbstractAccess implements TaskQueueInterface {
 
     protected boolean add(String tableName, TaskPo taskPo) {
         return new InsertSql(getSqlTemplate())
@@ -39,7 +37,8 @@ public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implemen
                         "trigger_time",
                         "repeat_count",
                         "repeated_count",
-                        "repeat_interval")
+                        "repeat_interval",
+                        "is_running")
                 .values(taskPo.getId(),
                 		taskPo.getTaskId(),
                 		taskPo.getTaskName(),
@@ -56,7 +55,8 @@ public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implemen
                         taskPo.getTriggerTime(),
                         taskPo.getRepeatCount(),
                         taskPo.getRepeatedCount(),
-                        taskPo.getRepeatInterval())
+                        taskPo.getRepeatInterval(),
+                        taskPo.getIsRunning())
                 .doInsert() == 1;
     }
 
@@ -108,12 +108,13 @@ public abstract class AbstractMysqlTaskQueue extends JdbcAbstractAccess implemen
                 .setOnNotNull("submit_node", request.getSubmitNode())
                 .setOnNotNull("repeat_count", request.getRepeatCount())
                 .setOnNotNull("repeat_interval", request.getRepeatInterval())
-                .where("task_id = ?", request.getTaskId())
+                .where("id = ?", request.getId())
                 .doUpdate() == 1;
     }
 
     private WhereSql buildWhereSql(TaskQueueReq request) {
         return new WhereSql()
+                .andOnNotEmpty("id = ?", request.getId())
                 .andOnNotEmpty("task_id = ?", request.getTaskId())
                 .andOnNotEmpty("submit_node = ?", request.getSubmitNode())
                 .andBetween("create_date", request.getCreateDate(), request.getCreateDate())

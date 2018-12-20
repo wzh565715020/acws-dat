@@ -8,17 +8,17 @@ public class MysqlTaskQueueFactory implements TaskQueueFactory {
 
     @Override
     public TaskQueue getTaskQueue(Config config) {
-        return new MysqlTaskQueue(config);
+        return new MysqlTaskQueue();
     }
 
     @Override
     public ExecutableTaskQueue getExecutableJobQueue(Config config) {
-        return new MysqlExecutableTaskQueue(config);
+        return new MysqlExecutableTaskQueue();
     }
 
     @Override
     public ExecutingTaskQueue getExecutingJobQueue(Config config) {
-        return new MysqlExecutingTaskQueue(config);
+        return new MysqlExecutingTaskQueue();
     }
 
 
@@ -28,11 +28,11 @@ public class MysqlTaskQueueFactory implements TaskQueueFactory {
     }
     @Override
     public PoolQueue getPoolQueue(Config config) {
-        return new MysqlPoolQueue(config);
+        return new MysqlPoolQueue();
     }
 
 	@Override
 	public ExecutedTaskQueue getExecutedJobQueue(Config config) {
-		return new MysqlExecutedTaskQueue(config);
+		return new MysqlExecutedTaskQueue();
 	}
 }

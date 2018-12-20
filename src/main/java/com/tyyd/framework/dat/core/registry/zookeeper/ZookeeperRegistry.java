@@ -191,8 +191,10 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
 	@Override
 	public void updateRegister(String path, Node data) {
+		if (!zkClient.exists(path)) {
+			zkClient.create(path, true, false);
+		}
 		zkClient.setData(path, data);
-
 	}
 
 	@Override

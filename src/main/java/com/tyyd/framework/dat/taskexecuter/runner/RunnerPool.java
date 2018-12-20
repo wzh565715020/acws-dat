@@ -158,13 +158,13 @@ public class RunnerPool {
 			return notExistList;
 		}
 
-		public void terminateJob(String jobId) {
-			TaskRunnerDelegate taskRunnerDelegate = TASKS.get(jobId);
+		public void terminateJob(String id) {
+			TaskRunnerDelegate taskRunnerDelegate = TASKS.get(id);
 			if (taskRunnerDelegate != null) {
 				try {
 					taskRunnerDelegate.currentThread().interrupt();
 				} catch (Throwable e) {
-					LOGGER.error("terminateJob [" + jobId + "]  error", e);
+					LOGGER.error("terminateJob [" + id + "]  error", e);
 				}
 			}
 		}

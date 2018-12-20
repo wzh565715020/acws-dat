@@ -40,7 +40,7 @@ import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 import com.tyyd.framework.dat.taskdispatch.monitor.TaskDispatcherMStatReporter;
 
 /**
- * 死掉的任务 1. 分发出去的，并且执行节点不存在的任务 2. 分发出去，执行节点还在, 但是没有在执行的任务
+ * 死掉的任务 1. 分发出去的，并且执行节点不存在的任务  2. 分发出去，执行节点还在, 但是没有在执行的任务
  */
 public class ExecutingDeadTaskChecker {
 
@@ -70,7 +70,6 @@ public class ExecutingDeadTaskChecker {
 				} else if (fixCheckPeriodSeconds > 5 * 60) {
 					fixCheckPeriodSeconds = 5 * 60;
 				}
-
 				scheduledFuture = FIXED_EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
 					@Override
 					public void run() {
@@ -110,7 +109,7 @@ public class ExecutingDeadTaskChecker {
 		if (CollectionUtils.isEmpty(maybeDeadJobPos)) {
 			return;
 		}
-		Map<String/* taskTrackerIdentity */, List<TaskPo>> taskMap = new HashMap<String, List<TaskPo>>();
+		Map<String, List<TaskPo>> taskMap = new HashMap<String, List<TaskPo>>();
 		for (TaskPo taskPo : maybeDeadJobPos) {
 			List<TaskPo> taskPos = taskMap.get(taskPo.getTaskExecuteNode());
 			if (taskPos == null) {
@@ -193,7 +192,7 @@ public class ExecutingDeadTaskChecker {
 
 	private void fixDeadTask(TaskPo taskPo) {
 		try {
-
+			taskPo.setIsRunning(0);
 			taskPo.setUpdateDate(SystemClock.now());
 			taskPo.setTaskExecuteNode(null);
 			// 1. add to executable queue
@@ -207,7 +206,7 @@ public class ExecutingDeadTaskChecker {
 			// 2. remove from executing queue
 			appContext.getExecutingTaskQueue().remove(taskPo.getId());
 
-			TaskLogPo jobLogPo = TaskDomainConverter.convertJobLog(taskPo);
+			TaskLogPo jobLogPo = TaskDomainConverter.convertTaskLog(taskPo);
 			jobLogPo.setSuccess(true);
 			jobLogPo.setLevel(Level.WARN);
 			jobLogPo.setLogType(LogType.FIXED_DEAD);

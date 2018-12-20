@@ -147,6 +147,9 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
 		node = NodeFactory.create(getNodeClass(), config);
 		config.setNodeType(node.getNodeType());
 		appContext.setNode(node);
+		String identity = config.getParameter("identity", StringUtils.generateUUID());
+		node.setIdentity(identity);
+		setIdentity(identity);
 		LOGGER.info("Current Node config :{}", config);
 
 		// 订阅的node管理
@@ -240,8 +243,9 @@ public abstract class AbstractTaskClientNode<T extends Node, Context extends App
 				}
 			}
 		});
-		if (registry.exists(MASTER) && registry.getData(MASTER) != null) {
-			appContext.setMasterNode(registry.getData(MASTER));
+		Node node = registry.getData(MASTER);
+		if (registry.exists(MASTER) && node != null) {
+			appContext.setMasterNode(node);
 		}
 	}
 

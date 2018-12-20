@@ -5,7 +5,6 @@ import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
 import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
-import com.tyyd.framework.dat.taskexecuter.monitor.StopWorkingMonitor;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerFactory;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerPool;
 
@@ -23,7 +22,6 @@ public class TaskExecuterAppContext extends AppContext {
     //
     private RunnerFactory runnerFactory;
 
-    private StopWorkingMonitor stopWorkingMonitor;
     /**
      * 业务日志记录级别
      */
@@ -33,13 +31,6 @@ public class TaskExecuterAppContext extends AppContext {
      */
     private Class<?> jobRunnerClass;
 
-    public StopWorkingMonitor getStopWorkingMonitor() {
-        return stopWorkingMonitor;
-    }
-
-    public void setStopWorkingMonitor(StopWorkingMonitor stopWorkingMonitor) {
-        this.stopWorkingMonitor = stopWorkingMonitor;
-    }
 
     public RunnerPool getRunnerPool() {
         return runnerPool;

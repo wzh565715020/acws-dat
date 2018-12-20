@@ -1,21 +1,27 @@
 package com.tyyd.framework.dat.store.jdbc;
 
-import com.tyyd.framework.dat.core.cluster.Config;
-import com.tyyd.framework.dat.store.jdbc.datasource.DataSourceProviderFactory;
 
 import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * 保证一个DataSource对应一个SqlTemplate
- */
+@Component
 public class SqlTemplateFactory {
 
     private static final ConcurrentMap<DataSource, SqlTemplate> HOLDER = new ConcurrentHashMap<DataSource, SqlTemplate>();
+    
+    private static DataSource dataSource;
+    
+    @Autowired
+	public void setDataSource(DataSource dataSource) {
+		SqlTemplateFactory.dataSource = dataSource;
+	}
 
-    public static SqlTemplate create(Config config) {
-        DataSource dataSource = DataSourceProviderFactory.create(config).getDataSource(config);
+	public static SqlTemplate create() {
         SqlTemplate sqlTemplate = HOLDER.get(dataSource);
 
         if (sqlTemplate != null) {

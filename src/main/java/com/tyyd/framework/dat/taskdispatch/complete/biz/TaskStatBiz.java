@@ -52,7 +52,7 @@ public class TaskStatBiz implements TaskCompletedBiz {
         for (TaskRunResult result : results) {
 
             // 记录日志
-            TaskLogPo jobLogPo = TaskDomainConverter.convertJobLog(result.getTaskMeta());
+            TaskLogPo jobLogPo = TaskDomainConverter.convertTaskLog(result.getTaskMeta());
             jobLogPo.setMsg(result.getMsg());
             jobLogPo.setLogType(logType);
             jobLogPo.setSuccess(Action.EXECUTE_SUCCESS.equals(result.getAction()));

@@ -5,7 +5,6 @@ import com.tyyd.framework.dat.core.commons.utils.*;
 import com.tyyd.framework.dat.core.commons.utils.Callable;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.core.support.NodeShutdownHook;
-import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 
 import java.util.List;
@@ -69,7 +68,7 @@ public abstract class AbstractPreLoader implements PreLoader {
 	/**
 	 * 锁定任务
 	 */
-	public abstract boolean lockTask(String id, String taskTrackerIdentity, Long triggerTime, Long gmtModified);
+	public abstract boolean lockTask(String id, String taskTrackerIdentity);
 
 	/**
 	 * 加载任务

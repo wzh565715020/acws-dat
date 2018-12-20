@@ -137,32 +137,6 @@ public class TaskPriorityBlockingQueue {
         array[k] = x;
     }
 
-    private boolean replace(TaskPo o) {
-        final ReentrantLock lock = this.lock;
-        lock.lock();
-        try {
-            int i = indexOf(o);
-            if (i != -1) {
-                this.queue[i] = o;
-                return true;
-            }
-        } finally {
-            lock.unlock();
-        }
-        return false;
-    }
-
-    private int indexOf(TaskPo o) {
-        if (o != null) {
-            TaskPo[] array = queue;
-            int n = size;
-            for (int i = 0; i < n; i++)
-                if (o.getTaskId().equals(array[i].getTaskId()))
-                    return i;
-        }
-        return -1;
-    }
-
     public String toString() {
         final ReentrantLock lock = this.lock;
         lock.lock();

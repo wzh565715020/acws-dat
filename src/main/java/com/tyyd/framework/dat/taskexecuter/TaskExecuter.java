@@ -1,7 +1,6 @@
 package com.tyyd.framework.dat.taskexecuter;
 
 import com.tyyd.framework.dat.core.cluster.AbstractClientNode;
-import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.ec.injvm.InjvmEventCenter;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
@@ -9,7 +8,6 @@ import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
 import com.tyyd.framework.dat.taskexecuter.cmd.TaskTerminateCmd;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterNode;
-import com.tyyd.framework.dat.taskexecuter.monitor.StopWorkingMonitor;
 import com.tyyd.framework.dat.taskexecuter.monitor.TaskExecuterMStatReporter;
 import com.tyyd.framework.dat.taskexecuter.processor.RemotingDispatcher;
 import com.tyyd.framework.dat.taskexecuter.runner.TaskRunner;
@@ -35,7 +33,6 @@ public class TaskExecuter extends AbstractClientNode<TaskExecuterNode, TaskExecu
         // 设置 线程池
         appContext.setRunnerPool(new RunnerPool(appContext));
         appContext.setMStatReporter(new TaskExecuterMStatReporter(appContext));
-        appContext.setStopWorkingMonitor(new StopWorkingMonitor(appContext));
 		
 
         appContext.getHttpCmdServer().registerCommands(
@@ -45,15 +42,11 @@ public class TaskExecuter extends AbstractClientNode<TaskExecuterNode, TaskExecu
     @Override
     protected void afterStart() {
     	appContext.getMStatReporter().start();
-        if (config.getParameter(Constants.TASK_EXECUTER_STOP_WORKING_ENABLE, false)) {
-            appContext.getStopWorkingMonitor().start();
-        }
     }
 
     @Override
     protected void afterStop() {
         appContext.getMStatReporter().stop();
-        appContext.getStopWorkingMonitor().stop();
         appContext.getRunnerPool().shutDown();
     }
 

@@ -28,6 +28,8 @@ public class TaskPo {
 	 * 重复次数
 	 */
 	private Integer repeatCount = 0;
+	
+	private Integer isRunning;
 
 	private String memo;
 	/**
@@ -244,6 +246,14 @@ public class TaskPo {
 
 	public void setPoolId(String poolId) {
 		this.poolId = poolId;
+	}
+
+	public Integer getIsRunning() {
+		return isRunning;
+	}
+
+	public void setIsRunning(Integer isRunning) {
+		this.isRunning = isRunning;
 	}
 
 }

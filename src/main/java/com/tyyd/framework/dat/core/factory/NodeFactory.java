@@ -46,7 +46,6 @@ public class NodeFactory {
 		newNode.setHttpCmdPort(node.getHttpCmdPort());
 		newNode.setIdentity(node.getIdentity());
 		newNode.setIp(node.getIp());
-		newNode.setTask(node.getTask());
 		newNode.setListenNodeTypes(node.getListenNodeTypes());
 		newNode.setNodeType(node.getNodeType());
 		newNode.setPort(node.getPort());

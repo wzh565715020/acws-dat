@@ -19,7 +19,6 @@ import com.tyyd.framework.dat.remoting.exception.RemotingSendRequestException;
 import com.tyyd.framework.dat.remoting.exception.RemotingTimeoutException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -29,11 +28,11 @@ public class RemotingClientDelegate {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RemotingClientDelegate.class);
 
 	private RemotingClient remotingClient;
-	
+
 	private AppContext appContext;
 
 	private volatile boolean serverEnable = false;
-	
+
 	private List<Node> taskExecuters;
 
 	public RemotingClientDelegate(RemotingClient remotingClient, AppContext appContext) {
@@ -104,7 +103,8 @@ public class RemotingClientDelegate {
 	/**
 	 * 异步调用
 	 */
-	public void invokeAsync(RemotingCommand request, AsyncCallback asyncCallback) throws TaskDispatcherNotFoundException {
+	public void invokeAsync(RemotingCommand request, AsyncCallback asyncCallback)
+			throws TaskDispatcherNotFoundException {
 
 		Node taskExecuter = getTaskExecuterNode();
 
@@ -163,23 +163,21 @@ public class RemotingClientDelegate {
 	}
 
 	public void invokeAsync(String address, RemotingCommand request, AsyncCallback asyncCallback) throws Exception {
-		try {
-			remotingClient.invokeAsync(address, request,
-					appContext.getConfig().getInvokeTimeoutMillis(), asyncCallback);
-		} catch (Exception e) {
-			throw e;
-		}
+		remotingClient.invokeAsync(address, request, appContext.getConfig().getInvokeTimeoutMillis(), asyncCallback);
 	}
+
 	/**
 	 * 同步调用
-	 * @throws InterruptedException 
-	 * @throws RemotingTimeoutException 
-	 * @throws RemotingSendRequestException 
-	 * @throws RemotingConnectException 
+	 * 
+	 * @throws InterruptedException
+	 * @throws RemotingTimeoutException
+	 * @throws RemotingSendRequestException
+	 * @throws RemotingConnectException
 	 */
-	public RemotingCommand invokeSync(String address, RemotingCommand request) throws RemotingConnectException, RemotingSendRequestException, RemotingTimeoutException, InterruptedException {
+	public RemotingCommand invokeSync(String address, RemotingCommand request) throws RemotingConnectException,
+			RemotingSendRequestException, RemotingTimeoutException, InterruptedException {
 		RemotingCommand response = remotingClient.invokeSync(address, request,
-					appContext.getConfig().getInvokeTimeoutMillis());
+				appContext.getConfig().getInvokeTimeoutMillis());
 		return response;
 	}
 }

@@ -22,7 +22,6 @@ import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
 import com.tyyd.framework.dat.remoting.ResponseFuture;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
-import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 import com.tyyd.framework.dat.taskdispatch.monitor.TaskDispatcherMStatReporter;
 import com.tyyd.framework.dat.taskdispatch.sender.TaskPushResult;
@@ -65,8 +64,7 @@ public class TaskPusher {
 		switch (result) {
 		case SUCCESS:
 			// 更新TaskExecuter的可用线程数
-			appContext.getTaskExecuterManager().updateTaskTrackerAvailableThreads(identity,
-					node.getAvailableThreads() - 1);
+			appContext.getTaskExecuterManager().updateTaskTrackerAvailableThreads(node);
 			stat.incPushJobNum();
 			break;
 		case FAILED:

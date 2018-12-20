@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.store.jdbc.exception;
 
-/**
- * @author   on 3/8/16.
- */
 public class JdbcException extends RuntimeException {
 
     public JdbcException() {

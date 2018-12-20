@@ -3,9 +3,6 @@ package com.tyyd.framework.dat.store.jdbc.dbutils;
 import java.sql.*;
 import java.util.Arrays;
 
-/**
- * from dbutils
- */
 public class DbRunner {
 
     private volatile boolean pmdKnownBroken = false;

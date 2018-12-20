@@ -88,6 +88,7 @@ public class RshHolder {
         taskPo.setRepeatedCount(rs.getInt("repeated_count"));
         taskPo.setRepeatInterval(rs.getLong("repeat_interval"));
         taskPo.setId(rs.getString("id"));
+        taskPo.setIsRunning(rs.getInt("is_running"));
         return taskPo;
     }
 

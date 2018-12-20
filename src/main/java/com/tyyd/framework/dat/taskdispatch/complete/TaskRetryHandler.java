@@ -4,6 +4,10 @@ package com.tyyd.framework.dat.taskdispatch.complete;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.alibaba.fastjson.JSON;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.domain.TaskMeta;
@@ -28,7 +32,8 @@ public class TaskRetryHandler {
         this.appContext = appContext;
         this.retryInterval = appContext.getConfig().getParameter("jobtracker.task.retry.interval.millis", 30 * 1000);
     }
-
+    
+	@Transactional(isolation=Isolation.READ_COMMITTED,propagation=Propagation.REQUIRED,rollbackFor = Exception.class)
     public void onComplete(List<TaskRunResult> results) {
 
         if (CollectionUtils.isEmpty(results)) {

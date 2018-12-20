@@ -1,6 +1,5 @@
 package com.tyyd.framework.dat.core.cluster;
 
-import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.registry.NodeRegistryUtils;
 
@@ -26,10 +25,8 @@ public class Node implements Serializable{
     private Long createTime;
     // 线程个数
     private Integer threads;
-    
     // 线程个数
     private Integer availableThreads;
-    
     // 唯一标识
     private String identity;
     // 命令端口
@@ -39,16 +36,6 @@ public class Node implements Serializable{
     private List<NodeType> listenNodeTypes;
 
     private String fullString;
-
-    private Task task;
-
-    public Task getTask() {
-        return task;
-    }
-
-    public void setTask(Task task) {
-        this.task = task;
-    }
 
     public Integer getHttpCmdPort() {
         return httpCmdPort;

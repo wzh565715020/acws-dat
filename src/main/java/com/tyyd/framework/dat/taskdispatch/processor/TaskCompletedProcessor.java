@@ -25,9 +25,8 @@ public class TaskCompletedProcessor extends AbstractRemotingProcessor {
         super(appContext);
 
         this.bizChain = new CopyOnWriteArrayList<TaskCompletedBiz>();
-        this.bizChain.add(new TaskStatBiz(appContext));        // 统计
         this.bizChain.add(new TaskProcBiz(appContext));          // 完成处理
-        //this.bizChain.add(new PushNewJobBiz(appContext));           // 获取新任务
+        this.bizChain.add(new TaskStatBiz(appContext));        // 统计
     }
 
     @Override

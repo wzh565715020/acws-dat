@@ -20,11 +20,13 @@ public class SpringAnnotationJobRunner implements TaskRunner {
             System.out.println("我是SpringBean，我执行了");
 
             LOGGER.info("我要执行：" + task);
+            Thread.sleep(60000L);
+            LOGGER.info("执行完成：" + task);
         } catch (Exception e) {
             LOGGER.info("Run task failed!", e);
             return new Result(Action.EXECUTE_LATER, e.getMessage());
         }
-        return new Result(Action.EXECUTE_SUCCESS, "执行成功了，哈哈");
+        return new Result(Action.EXECUTE_SUCCESS, "执行成功了");
     }
 
 }

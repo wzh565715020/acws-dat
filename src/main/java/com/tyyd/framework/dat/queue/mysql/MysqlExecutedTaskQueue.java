@@ -1,6 +1,5 @@
 package com.tyyd.framework.dat.queue.mysql;
 
-import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.queue.ExecutedTaskQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
@@ -10,10 +9,10 @@ import com.tyyd.framework.dat.store.jdbc.builder.SelectSql;
 
 import java.util.List;
 
-public class MysqlExecutedTaskQueue extends AbstractMysqlTaskQueue implements ExecutedTaskQueue {
+public class MysqlExecutedTaskQueue extends AbstractMysqlTaskExecuteQueue implements ExecutedTaskQueue {
 
-    public MysqlExecutedTaskQueue(Config config) {
-        super(config);
+    public MysqlExecutedTaskQueue() {
+        super();
     }
 
     @Override

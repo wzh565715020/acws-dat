@@ -64,10 +64,11 @@
 		<property name="clusterName" value="TEST_CLUSTER" />
 		<property name="registryAddress"
 			value="zookeeper://172.23.2.101:2181" />
+		<property name="listenPort" value="30006"/>
 		<property name="configs">
 			<props>
 				<prop key="zk.client">zkclient</prop>
-				<prop key="identity">dispatch</prop>
+				<prop key="identity">dispatch2</prop>
 				<prop key="mongo.password">Yakexilog_user@123</prop>
 				<prop key="mongo.username">yakexilog_user</prop>
 				<prop key="mongo.database">yakexilog</prop>

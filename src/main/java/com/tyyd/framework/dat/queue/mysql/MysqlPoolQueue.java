@@ -1,6 +1,5 @@
 package com.tyyd.framework.dat.queue.mysql;
 
-import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.queue.PoolQueue;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
@@ -10,10 +9,6 @@ import com.tyyd.framework.dat.store.jdbc.builder.SelectSql;
 
 
 public  class MysqlPoolQueue extends AbstractMysqlPoolQueue implements PoolQueue {
-
-    public MysqlPoolQueue(Config config) {
-        super(config);
-    }
 
     @Override
     public boolean add(PoolPo poolPo) {

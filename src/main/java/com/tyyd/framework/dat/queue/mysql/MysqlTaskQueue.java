@@ -1,6 +1,5 @@
 package com.tyyd.framework.dat.queue.mysql;
 
-import com.tyyd.framework.dat.core.cluster.Config;
 import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.queue.TaskQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
@@ -11,41 +10,37 @@ import com.tyyd.framework.dat.store.jdbc.builder.UpdateSql;
 
 public class MysqlTaskQueue extends AbstractMysqlTaskQueue implements TaskQueue {
 
-    public MysqlTaskQueue(Config config) {
-        super(config);
-    }
-
     @Override
     public boolean add(TaskPo taskPo) {
         return super.add(getTableName(), taskPo);
     }
 
     @Override
-    public TaskPo getTask(String id) {
+    public TaskPo getTask(String taskId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
-                .where("id = ?", id)
+                .where("task_id = ?", taskId)
                 .single(RshHolder.TASK_PO_RSH);
     }
 
     @Override
-    public boolean remove(String id) {
+    public boolean remove(String taskId) {
         return new DeleteSql(getSqlTemplate())
                 .delete()
                 .from()
                 .table(getTableName())
-                .where("id = ?", id)
+                .where("task_id = ?", taskId)
                 .doDelete() == 1;
     }
 
 
     @Override
-    public int incRepeatedCount(String id) {
+    public int incRepeatedCount(String taskId) {
         while (true) {
-            TaskPo taskPo = getTask(id);
+            TaskPo taskPo = getTask(taskId);
             if (taskPo == null) {
                 return -1;
             }
@@ -53,7 +48,7 @@ public class MysqlTaskQueue extends AbstractMysqlTaskQueue implements TaskQueue 
                     .update()
                     .table(getTableName())
                     .set("repeated_count", taskPo.getRepeatedCount() + 1)
-                    .where("id = ?", id)
+                    .where("task_id = ?", taskId)
                     .and("repeated_count = ?", taskPo.getRepeatedCount())
                     .doUpdate() == 1) {
                 return taskPo.getRepeatedCount() + 1;

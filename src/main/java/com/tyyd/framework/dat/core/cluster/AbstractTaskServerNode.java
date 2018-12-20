@@ -154,7 +154,9 @@ public abstract class AbstractTaskServerNode<T extends Node, Context extends App
 		node = NodeFactory.create(getNodeClass(), config);
 		config.setNodeType(node.getNodeType());
 		appContext.setNode(node);
-
+		String identity = config.getParameter("identity", StringUtils.generateUUID());
+		node.setIdentity(identity);
+		setIdentity(identity);
 		LOGGER.info("Current Node config :{}", config);
 
 		// 订阅的node管理
@@ -252,7 +254,7 @@ public abstract class AbstractTaskServerNode<T extends Node, Context extends App
 		Node newNode = NodeFactory.deepCopy(node);
 		Node registerNode = registry.getData(MASTER);
 		if (!registry.exists(MASTER) ||  registerNode == null) {
-			registry.createNewRegister(MASTER, newNode);
+			registry.updateRegister(MASTER, newNode);
 			appContext.setMasterNode(newNode);
 			notifyListener(newNode);
 		}else if(registerNode != null && registerNode.getAddress().equals(appContext.getNode().getAddress())){
@@ -264,7 +266,7 @@ public abstract class AbstractTaskServerNode<T extends Node, Context extends App
 
 	private void notifyListener(Node master) {
 		boolean isMaster = false;
-		if (appContext.getConfig().getIdentity().equals(appContext.getMasterNode().getIdentity())) {
+		if (appContext.getConfig().getIdentity().equals(master.getIdentity())) {
 			LOGGER.info("Current node become the master node:{}", appContext.getMasterNode());
 			isMaster = true;
 		} else {
@@ -286,7 +288,7 @@ public abstract class AbstractTaskServerNode<T extends Node, Context extends App
 	private void takeMaster() {
 		try {
 			Node newNode = NodeFactory.deepCopy(node);
-			registry.createNewRegister(MASTER, newNode);
+			registry.updateRegister(MASTER, newNode);
 		} catch (Exception e) {
 		}
 

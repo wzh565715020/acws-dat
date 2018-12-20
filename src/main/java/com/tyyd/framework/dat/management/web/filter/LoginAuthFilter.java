@@ -4,19 +4,12 @@ import org.springframework.util.AntPathMatcher;
 
 import com.tyyd.framework.dat.core.commons.utils.Base64;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.management.support.AppConfigurer;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * Created by ztajy on 2015-11-11.
- *
- * @author ztajy
- * @author  
- */
 public class LoginAuthFilter implements Filter {
     private static final String AUTH_PREFIX = "Basic ";
     private AntPathMatcher pathMatcher = new AntPathMatcher();
@@ -29,9 +22,6 @@ public class LoginAuthFilter implements Filter {
 
     @Override
     public void init(final FilterConfig filterConfig) throws ServletException {
-        username = AppConfigurer.getProperty("console.username", username);
-        password = AppConfigurer.getProperty("console.password", password);
-
         String excludedURLs = filterConfig.getInitParameter("excludedURLs");
         if (StringUtils.isNotEmpty(excludedURLs)) {
             String[] arr = excludedURLs.split(",");

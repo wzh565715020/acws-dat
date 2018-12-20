@@ -23,7 +23,6 @@ public abstract class AbstractClientNode<T extends Node, Context extends AppCont
 
     protected void remotingStart() {
         remotingClient.start();
-        //heartBeatMonitor.start();
         remotingServer.start();
         RemotingProcessor defaultProcessor = getDefaultProcessor();
         if (defaultProcessor != null) {

@@ -1,22 +1,18 @@
 package com.tyyd.framework.dat.management.web.view;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.commons.utils.DateUtils;
-import com.tyyd.framework.dat.management.cluster.BackendAppContext;
+import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
 import java.util.Date;
-import java.util.List;
 
 @Controller
 public class CommonView {
 
-    @Autowired
-    private BackendAppContext appContext;
+    private TaskDispatcherAppContext appContext;
 
     @RequestMapping("index")
     public String index(){

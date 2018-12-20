@@ -31,16 +31,16 @@ public class TaskTerminateCmd implements HttpCmdProc {
     @Override
     public HttpCmdResponse execute(HttpCmdRequest request) throws Exception {
 
-        String jobId = request.getParam("jobId");
-        if (StringUtils.isEmpty(jobId)) {
-            return HttpCmdResponse.newResponse(false, "jobId can't be empty");
+        String id = request.getParam("id");
+        if (StringUtils.isEmpty(id)) {
+            return HttpCmdResponse.newResponse(false, "id can't be empty");
         }
 
-        if (!appContext.getRunnerPool().getRunningTaskManager().running(jobId)) {
-            return HttpCmdResponse.newResponse(false, "jobId dose not running in this TaskTracker now");
+        if (!appContext.getRunnerPool().getRunningTaskManager().running(id)) {
+            return HttpCmdResponse.newResponse(false, "id dose not running in this TaskTracker now");
         }
 
-        appContext.getRunnerPool().getRunningTaskManager().terminateJob(jobId);
+        appContext.getRunnerPool().getRunningTaskManager().terminateJob(id);
 
         return HttpCmdResponse.newResponse(true, "Execute terminate Command success");
     }

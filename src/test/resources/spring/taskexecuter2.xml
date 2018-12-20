@@ -14,12 +14,12 @@
         <property name="jobRunnerClass" value="com.tyyd.framework.dat.taskexecuter.example.SpringAnnotationJobRunner"/>
         <property name="clusterName" value="TEST_CLUSTER"/>
         <property name="registryAddress" value="zookeeper://172.23.2.101:2181"/>
-        <property name="workThreads" value="20"/>
-        <property name="listenPort" value="30005"/>
+        <property name="workThreads" value="30"/>
+        <property name="listenPort" value="30007"/>
         <property name="configs">
             <props>
                 <prop key="task.fail.store">leveldb</prop>
-                <prop key="identity">execute</prop>
+                <prop key="identity">execute2</prop>
             </props>
         </property>
     </bean>

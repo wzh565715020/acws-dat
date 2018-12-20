@@ -13,6 +13,7 @@ public class TaskMeta implements Serializable {
     private String id;
     private Map<String, String> internalExtParams;
 
+    private String taskExecuteNode;
     private Task task;
 
     public TaskMeta() {
@@ -56,7 +57,15 @@ public class TaskMeta implements Serializable {
         internalExtParams.put(key, value);
     }
 
-    @Override
+    public String getTaskExecuteNode() {
+		return taskExecuteNode;
+	}
+
+	public void setTaskExecuteNode(String taskExecuteNode) {
+		this.taskExecuteNode = taskExecuteNode;
+	}
+
+	@Override
     public String toString() {
         return JSON.toJSONString(this);
     }
