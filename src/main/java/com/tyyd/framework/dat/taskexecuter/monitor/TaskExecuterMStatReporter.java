@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.domain.monitor.MData;
-import com.tyyd.framework.dat.core.domain.monitor.TaskTrackerMData;
+import com.tyyd.framework.dat.core.domain.monitor.TaskExecuterMData;
 import com.tyyd.framework.dat.core.monitor.AbstractMStatReporter;
 
 /**
@@ -56,7 +56,7 @@ public class TaskExecuterMStatReporter extends AbstractMStatReporter {
 
     @Override
     protected MData collectMData() {
-        TaskTrackerMData mData = new TaskTrackerMData();
+        TaskExecuterMData mData = new TaskExecuterMData();
         mData.setExeSuccessNum(exeSuccessNum.getAndSet(0));
         mData.setExeFailedNum(exeFailedNum.getAndSet(0));
         mData.setExeLaterNum(exeLaterNum.getAndSet(0));

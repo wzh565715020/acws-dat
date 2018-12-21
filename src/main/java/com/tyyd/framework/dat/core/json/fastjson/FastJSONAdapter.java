@@ -3,7 +3,6 @@ package com.tyyd.framework.dat.core.json.fastjson;
 import com.tyyd.framework.dat.core.json.JSONAdapter;
 import com.tyyd.framework.dat.core.json.JSONArray;
 import com.tyyd.framework.dat.core.json.JSONObject;
-import com.tyyd.framework.dat.core.logger.LoggerFactory;
 
 import java.lang.reflect.Type;
 import java.util.List;

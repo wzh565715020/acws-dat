@@ -17,6 +17,7 @@ public class TaskDomainConverter {
         taskPo.setTaskExecType(task.getTaskExecType());
         taskPo.setTaskName(task.getTaskName());
         taskPo.setTaskType(task.getTaskType());
+        taskPo.setParams(task.getParams());
         taskPo.setCreateDate(SystemClock.now());
         taskPo.setUpdateDate(taskPo.getCreateDate());
         taskPo.setSubmitNode(task.getSubmitNode());
@@ -76,6 +77,8 @@ public class TaskDomainConverter {
         taskLogPo.setTaskType(task.getTaskType());
         taskLogPo.setId(taskMeta.getId());
         taskLogPo.setCron(task.getCron());
+        taskLogPo.setTaskExecuteNode(taskMeta.getTaskExecuteNode());
+        taskLogPo.setParams(task.getParams());
         taskLogPo.setTriggerTime(task.getTriggerTime());
         taskLogPo.setRepeatCount(task.getRepeatCount());
         taskLogPo.setRepeatedCount(task.getRepeatedCount());

@@ -2,7 +2,6 @@ package com.tyyd.framework.dat.biz.logger.domain;
 
 import com.tyyd.framework.dat.core.constant.Level;
 
-import java.util.Map;
 
 /**
  *         任务执行 日志

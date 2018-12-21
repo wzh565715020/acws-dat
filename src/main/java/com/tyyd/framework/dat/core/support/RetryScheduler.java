@@ -5,7 +5,6 @@ import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.commons.utils.GenericsUtils;
 import com.tyyd.framework.dat.core.domain.Pair;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
-import com.tyyd.framework.dat.core.failstore.AbstractFailStore;
 import com.tyyd.framework.dat.core.failstore.FailStore;
 import com.tyyd.framework.dat.core.failstore.FailStoreException;
 import com.tyyd.framework.dat.core.failstore.FailStoreFactory;

@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.domain;
 
-/**
- * @author   on 3/6/15.
- */
 public class Pair<Key, Value> {
     private Key key;
     private Value value;

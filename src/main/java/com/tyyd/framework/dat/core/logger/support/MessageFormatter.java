@@ -5,7 +5,6 @@ import java.util.Map;
 
 /**
  * 来自 slf4j
- * @author   on 5/19/15.
  */
 @SuppressWarnings("rawtypes")
 public class MessageFormatter {

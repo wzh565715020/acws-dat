@@ -223,6 +223,8 @@ public abstract class AbstractTaskServerNode<T extends Node, Context extends App
 						}
 					}
 					break;
+				default:
+					break;
 				}
 			}
 		});

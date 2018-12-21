@@ -105,8 +105,8 @@ public class TaskRunnerDelegate implements Runnable {
 		if (!interrupted.compareAndSet(false, true)) {
 			return;
 		}
-		if (this.curTaskRunner != null && this.curTaskRunner instanceof InterruptibleJobRunner) {
-			((InterruptibleJobRunner) this.curTaskRunner).interrupt();
+		if (this.curTaskRunner != null && this.curTaskRunner instanceof InterruptibleTaskRunner) {
+			((InterruptibleTaskRunner) this.curTaskRunner).interrupt();
 		}
 	}
 

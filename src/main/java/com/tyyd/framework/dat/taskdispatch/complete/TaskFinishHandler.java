@@ -66,11 +66,12 @@ public class TaskFinishHandler {
 			// 加入到历史队列
 			TaskPo taskPo = TaskDomainConverter.convert(taskMeta.getTask());
 			taskPo.setId(taskMeta.getId());
+			taskPo.setSubmitNode(taskMeta.getTaskExecuteNode());
+			
 			try {
 				appContext.getExecutedTaskQueue().add(taskPo);
 			} catch (DupEntryException e) {
 			}
-			taskMeta.getTaskExecuteNode();
 		}
 	}
 
