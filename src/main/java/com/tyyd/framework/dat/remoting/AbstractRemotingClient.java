@@ -1,5 +1,7 @@
 package com.tyyd.framework.dat.remoting;
 
+import com.tyyd.framework.dat.core.cluster.Node;
+import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.domain.Pair;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.core.logger.Logger;
@@ -7,6 +9,10 @@ import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.remoting.common.RemotingHelper;
 import com.tyyd.framework.dat.remoting.exception.*;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
+import com.tyyd.framework.dat.taskdispatch.channel.ChannelWrapper;
+import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
+
+import sun.misc.Cache;
 
 import java.net.SocketAddress;
 import java.util.Timer;
@@ -26,7 +32,7 @@ public abstract class AbstractRemotingClient extends AbstractRemoting implements
 	protected final RemotingClientConfig remotingClientConfig;
 
 	private final Lock lockChannelTables = new ReentrantLock();
-	private final ConcurrentHashMap<String /* addr */, ChannelWrapper> channelTables = new ConcurrentHashMap<String, ChannelWrapper>();
+	private final ConcurrentHashMap<String /* addr */, InnerChannelWrapper> channelTables = new ConcurrentHashMap<String, InnerChannelWrapper>();
 	// 定时器
 	private final Timer timer = new Timer("ClientHouseKeepingService", true);
 	// 处理Callback应答器
@@ -78,7 +84,7 @@ public abstract class AbstractRemotingClient extends AbstractRemoting implements
 		try {
 			this.timer.cancel();
 
-			for (ChannelWrapper cw : this.channelTables.values()) {
+			for (InnerChannelWrapper cw : this.channelTables.values()) {
 				this.closeChannel(null, cw.getChannel());
 			}
 
@@ -108,7 +114,7 @@ public abstract class AbstractRemotingClient extends AbstractRemoting implements
 	@Override
 	public Channel getAndCreateChannel(final String addr) throws InterruptedException {
 
-		ChannelWrapper cw = this.channelTables.get(addr);
+		InnerChannelWrapper cw = this.channelTables.get(addr);
 		if (cw != null && cw.isConnected()) {
 			return cw.getChannel();
 		}
@@ -117,7 +123,7 @@ public abstract class AbstractRemotingClient extends AbstractRemoting implements
 	}
 
 	private Channel createChannel(final String addr) throws InterruptedException {
-		ChannelWrapper cw = this.channelTables.get(addr);
+		InnerChannelWrapper cw = this.channelTables.get(addr);
 		if (cw != null && cw.isConnected()) {
 			return cw.getChannel();
 		}
@@ -150,7 +156,7 @@ public abstract class AbstractRemotingClient extends AbstractRemoting implements
 				if (createNewConnection) {
 					ChannelFuture channelFuture = connect(RemotingHelper.string2SocketAddress(addr));
 					LOGGER.info("createChannel: begin to connect remote host[{}] asynchronously", addr);
-					cw = new ChannelWrapper(channelFuture);
+					cw = new InnerChannelWrapper(channelFuture);
 					this.channelTables.put(addr, cw);
 				}
 			} catch (Exception e) {
@@ -194,7 +200,7 @@ public abstract class AbstractRemotingClient extends AbstractRemoting implements
 			if (this.lockChannelTables.tryLock(LockTimeoutMillis, TimeUnit.MILLISECONDS)) {
 				try {
 					boolean removeItemFromTable = true;
-					final ChannelWrapper prevCW = this.channelTables.get(addrRemote);
+					final InnerChannelWrapper prevCW = this.channelTables.get(addrRemote);
 
 					LOGGER.info("closeChannel: begin close the channel[{}] Found: {}", addrRemote, (prevCW != null));
 
@@ -236,11 +242,11 @@ public abstract class AbstractRemotingClient extends AbstractRemoting implements
 			if (this.lockChannelTables.tryLock(LockTimeoutMillis, TimeUnit.MILLISECONDS)) {
 				try {
 					boolean removeItemFromTable = true;
-					ChannelWrapper prevCW = null;
+					InnerChannelWrapper prevCW = null;
 					String addrRemote = null;
 
 					for (String key : channelTables.keySet()) {
-						ChannelWrapper prev = this.channelTables.get(key);
+						InnerChannelWrapper prev = this.channelTables.get(key);
 						if (prev.getChannel() != null) {
 							if (prev.getChannel() == channel) {
 								prevCW = prev;
@@ -334,6 +340,27 @@ public abstract class AbstractRemotingClient extends AbstractRemoting implements
 		}
 	}
 	@Override
+	public void invokeAsync(TaskDispatcherAppContext appcontext,Node node, RemotingCommand request, long timeoutMillis, AsyncCallback asyncCallback)
+			throws InterruptedException, RemotingConnectException, RemotingTooMuchRequestException,
+			RemotingTimeoutException, RemotingSendRequestException {
+		String addr = node.getAddress();
+		final Channel channel = this.getAndCreateChannel(addr);
+		if (channel != null && channel.isConnected()) {
+			ChannelWrapper channelWrapper = new ChannelWrapper(channel, node.getNodeType(), node.getIdentity());
+			appcontext.getChannelManager().offerChannel(channelWrapper);
+			try {
+				this.invokeAsyncImpl(channel, request, timeoutMillis, asyncCallback);
+			} catch (RemotingSendRequestException e) {
+				LOGGER.warn("invokeAsync: send request exception, so close the channel[{}]", addr);
+				this.closeChannel(addr, channel);
+				throw e;
+			}
+		} else {
+			this.closeChannel(addr, channel);
+			throw new RemotingConnectException(addr);
+		}
+	}
+	@Override
 	public void invokeAsync(Channel channel, RemotingCommand request, long timeoutMillis, AsyncCallback asyncCallback)
 			throws InterruptedException, RemotingConnectException, RemotingTooMuchRequestException,
 			RemotingTimeoutException, RemotingSendRequestException {
@@ -373,10 +400,10 @@ public abstract class AbstractRemotingClient extends AbstractRemoting implements
 		return this.publicExecutor;
 	}
 
-	private class ChannelWrapper {
+	private class InnerChannelWrapper {
 		private final ChannelFuture channelFuture;
 
-		public ChannelWrapper(ChannelFuture channelFuture) {
+		public InnerChannelWrapper(ChannelFuture channelFuture) {
 			this.channelFuture = channelFuture;
 		}
 

@@ -19,7 +19,6 @@ import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
 import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
 import com.tyyd.framework.dat.taskdispatch.support.TaskPushMachine;
 import com.tyyd.framework.dat.taskdispatch.support.checker.ExecutingDeadTaskChecker;
-import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
 
 /**
  * JobTracker Application
@@ -31,8 +30,6 @@ public class TaskDispatcherAppContext extends AppContext {
     private RemotingServerDelegate remotingServer;
     // channel manager
     private ChannelManager channelManager;
-    // TaskTracker manager for task tracker
-    private TaskExecuterManager taskExecuterManager;
     // dead task checker
     private ExecutingDeadTaskChecker executingDeadJobChecker;
     // biz logger
@@ -113,14 +110,6 @@ public class TaskDispatcherAppContext extends AppContext {
 
     public void setChannelManager(ChannelManager channelManager) {
         this.channelManager = channelManager;
-    }
-
-    public TaskExecuterManager getTaskExecuterManager() {
-        return taskExecuterManager;
-    }
-
-    public void setTaskExecuterManager(TaskExecuterManager taskExecuterManager) {
-        this.taskExecuterManager = taskExecuterManager;
     }
 
     public ExecutingDeadTaskChecker getExecutingDeadJobChecker() {

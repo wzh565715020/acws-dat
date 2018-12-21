@@ -23,8 +23,8 @@ public class Response {
         return taskMeta;
     }
 
-    public void setJobMeta(TaskMeta jobMeta) {
-        this.taskMeta = jobMeta;
+    public void setTaskMeta(TaskMeta taskMeta) {
+        this.taskMeta = taskMeta;
     }
 
     public Action getAction() {

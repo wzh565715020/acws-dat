@@ -18,6 +18,7 @@ import com.tyyd.framework.dat.remoting.exception.RemotingException;
 import com.tyyd.framework.dat.remoting.exception.RemotingSendRequestException;
 import com.tyyd.framework.dat.remoting.exception.RemotingTimeoutException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
+import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -31,8 +32,6 @@ public class RemotingClientDelegate {
 
 	private AppContext appContext;
 
-	private volatile boolean serverEnable = false;
-
 	private List<Node> taskExecuters;
 
 	public RemotingClientDelegate(RemotingClient remotingClient, AppContext appContext) {
@@ -43,7 +42,6 @@ public class RemotingClientDelegate {
 
 	public Node getTaskExecuterNode() {
 		if (taskExecuters.size() == 0) {
-			this.serverEnable = false;
 			EventInfo eventInfo = new EventInfo(EcTopic.NO_TASK_EXECUTER_AVAILABLE);
 			appContext.getEventCenter().publishAsync(eventInfo);
 			return null;
@@ -85,7 +83,6 @@ public class RemotingClientDelegate {
 		try {
 			RemotingCommand response = remotingClient.invokeSync(taskExecuter.getAddress(), request,
 					appContext.getConfig().getInvokeTimeoutMillis());
-			this.serverEnable = true;
 			return response;
 		} catch (Exception e) {
 			// 将这个JobTracker移除
@@ -111,7 +108,6 @@ public class RemotingClientDelegate {
 		try {
 			remotingClient.invokeAsync(taskExecuter.getAddress(), request,
 					appContext.getConfig().getInvokeTimeoutMillis(), asyncCallback);
-			this.serverEnable = true;
 		} catch (Throwable e) {
 			// 将这个JobTracker移除
 			taskExecuters.remove(taskExecuter);
@@ -133,7 +129,6 @@ public class RemotingClientDelegate {
 		try {
 			remotingClient.invokeAsync(channel, request, appContext.getConfig().getInvokeTimeoutMillis(),
 					asyncCallback);
-			this.serverEnable = true;
 		} catch (Throwable e) {
 		}
 	}
@@ -146,14 +141,6 @@ public class RemotingClientDelegate {
 		remotingClient.registerDefaultProcessor(processor, executor);
 	}
 
-	public boolean isServerEnable() {
-		return serverEnable;
-	}
-
-	public void setServerEnable(boolean serverEnable) {
-		this.serverEnable = serverEnable;
-	}
-
 	public void shutdown() {
 		remotingClient.shutdown();
 	}
@@ -164,6 +151,24 @@ public class RemotingClientDelegate {
 
 	public void invokeAsync(String address, RemotingCommand request, AsyncCallback asyncCallback) throws Exception {
 		remotingClient.invokeAsync(address, request, appContext.getConfig().getInvokeTimeoutMillis(), asyncCallback);
+	}
+
+	public void invokeAsync(TaskDispatcherAppContext appcontext, Node node, RemotingCommand request,
+			AsyncCallback asyncCallback) throws Exception {
+		try {
+			remotingClient.invokeAsync(appcontext, node, request, appContext.getConfig().getInvokeTimeoutMillis(),
+					asyncCallback);
+		} catch (Exception e) {
+			// 将这个taskExecuter移除
+			taskExecuters.remove(node);
+			try {
+				Thread.sleep(100L);
+			} catch (InterruptedException e1) {
+				LOGGER.error(e1.getMessage(), e1);
+			}
+			// 只要不是节点 不可用, 轮询所有节点请求
+			invokeAsync(appcontext,getTaskExecuterNode(),request, asyncCallback);
+		}
 	}
 
 	/**

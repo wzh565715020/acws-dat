@@ -63,8 +63,6 @@ public class TaskPusher {
 		TaskPushResult result = send(appContext.getRemotingClient(), node);
 		switch (result) {
 		case SUCCESS:
-			// 更新TaskExecuter的可用线程数
-			appContext.getTaskExecuterManager().updateTaskTrackerAvailableThreads(node);
 			stat.incPushJobNum();
 			break;
 		case FAILED:
@@ -99,28 +97,26 @@ public class TaskPusher {
 
 				final CountDownLatch latch = new CountDownLatch(1);
 				try {
-					remotingClient.invokeAsync(taskTrackerNode.getIp() + ":" + taskTrackerNode.getPort(),
-							commandRequest, new AsyncCallback() {
-								@Override
-								public void operationComplete(ResponseFuture responseFuture) {
-									try {
-										RemotingCommand responseCommand = responseFuture.getResponseCommand();
-										if (responseCommand == null) {
-											LOGGER.warn("task push failed! response command is null!");
-											return;
-										}
-										if (responseCommand.getCode() == TaskProtos.ResponseCode.TASK_PUSH_SUCCESS
-												.code()) {
-											if (LOGGER.isDebugEnabled()) {
-												LOGGER.debug("task push success! " + ", task=" + taskPo);
-											}
-											pushSuccess.set(true);
-										}
-									} finally {
-										latch.countDown();
-									}
+					remotingClient.invokeAsync(appContext,taskTrackerNode, commandRequest, new AsyncCallback() {
+						@Override
+						public void operationComplete(ResponseFuture responseFuture) {
+							try {
+								RemotingCommand responseCommand = responseFuture.getResponseCommand();
+								if (responseCommand == null) {
+									LOGGER.warn("task push failed! response command is null!");
+									return;
 								}
-							});
+								if (responseCommand.getCode() == TaskProtos.ResponseCode.TASK_PUSH_SUCCESS.code()) {
+									if (LOGGER.isDebugEnabled()) {
+										LOGGER.debug("task push success! " + ", task=" + taskPo);
+									}
+									pushSuccess.set(true);
+								}
+							} finally {
+								latch.countDown();
+							}
+						}
+					});
 
 				} catch (Exception e) {
 					LOGGER.error("Remoting send error, taskPo={}", taskPo, e);

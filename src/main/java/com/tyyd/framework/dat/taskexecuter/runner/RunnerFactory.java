@@ -5,6 +5,6 @@ package com.tyyd.framework.dat.taskexecuter.runner;
  */
 public interface RunnerFactory {
 
-    public TaskRunner newRunner();
+    public TaskRunner newRunner(String taskRunnerBeanName);
 
 }

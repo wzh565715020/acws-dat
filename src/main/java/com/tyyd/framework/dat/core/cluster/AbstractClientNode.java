@@ -46,10 +46,6 @@ public abstract class AbstractClientNode<T extends Node, Context extends AppCont
         remotingClient.shutdown();
         remotingServer.shutdown();
     }
-
-    public boolean isServerEnable() {
-        return remotingClient.isServerEnable();
-    }
     
     public void setListenPort(int listenPort) {
         config.setListenPort(listenPort);

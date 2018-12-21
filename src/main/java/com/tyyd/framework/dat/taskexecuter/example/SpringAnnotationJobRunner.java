@@ -1,13 +1,15 @@
 package com.tyyd.framework.dat.taskexecuter.example;
 
 
+import org.springframework.stereotype.Service;
+
 import com.tyyd.framework.dat.core.domain.Action;
 import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.taskexecuter.Result;
 import com.tyyd.framework.dat.taskexecuter.runner.TaskRunner;
-
+@Service("defaultRunner")
 public class SpringAnnotationJobRunner implements TaskRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpringAnnotationJobRunner.class);

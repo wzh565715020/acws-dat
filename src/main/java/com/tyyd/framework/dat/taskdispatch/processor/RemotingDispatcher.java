@@ -46,7 +46,6 @@ public class RemotingDispatcher extends AbstractRemotingProcessor {
     public RemotingCommand processRequest(Channel channel, RemotingCommand request) throws RemotingCommandException {
         // 心跳
         if (request.getCode() == TaskProtos.RequestCode.HEART_BEAT.code()) {
-            offerHandler(channel, request);
             return RemotingCommand.createResponseCommand(TaskProtos.ResponseCode.HEART_BEAT_SUCCESS.code(), "");
         }
         if (reqLimitEnable) {
@@ -74,21 +73,6 @@ public class RemotingDispatcher extends AbstractRemotingProcessor {
         if (processor == null) {
             return RemotingCommand.createResponseCommand(RemotingProtos.ResponseCode.REQUEST_CODE_NOT_SUPPORTED.code(), "request code not supported!");
         }
-        offerHandler(channel, request);
         return processor.processRequest(channel, request);
     }
-
-    /**
-     * 1. 将 channel 纳入管理中(不存在就加入)
-     * 2. 更新 TaskTracker 节点信息(可用线程数)
-     */
-    private void offerHandler(Channel channel, RemotingCommand request) {
-        AbstractRemotingCommandBody commandBody = request.getBody();
-        String identity = commandBody.getIdentity();
-        NodeType nodeType = NodeType.valueOf(commandBody.getNodeType());
-
-        // 1. 将 channel 纳入管理中(不存在就加入)
-        appContext.getChannelManager().offerChannel(new ChannelWrapper(channel, nodeType, identity));
-    }
-
 }

@@ -15,7 +15,6 @@ import com.tyyd.framework.dat.taskdispatch.processor.RemotingDispatcher;
 import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
 import com.tyyd.framework.dat.taskdispatch.support.TaskPushMachine;
 import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
-import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
 import com.tyyd.framework.dat.taskdispatch.support.listener.TaskDispatcherMasterChangeListener;
 
 public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskDispatcherAppContext> {
@@ -28,8 +27,6 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
 		appContext.setEventCenter(new InjvmEventCenter());
 		appContext.setTaskPushMachine(new TaskPushMachine(appContext));
 		appContext.setTaskReceiver(new TaskReceiver(appContext));
-		// TaskExecuter 管理者
-		appContext.setTaskExecuterManager(new TaskExecuterManager(appContext));
 		// 添加节点变化监听器
 		//addNodeChangeListener(new TaskNodeChangeListener(appContext));
 		// 添加master节点变化监听器

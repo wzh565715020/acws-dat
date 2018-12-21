@@ -53,10 +53,6 @@ public class ChannelManager {
 					@Override
 					public void run() {
 						try {
-							checkCloseChannel(NodeType.TASK_DISPATCH, taskDispatcherChannelList);
-							if (LOGGER.isDebugEnabled()) {
-								LOGGER.debug("TASK_DISPATCH Channel Pool " + taskDispatcherChannelList);
-							}
 							checkCloseChannel(NodeType.TASK_EXECUTER, taskExecuterChannelList);
 							if (LOGGER.isDebugEnabled()) {
 								LOGGER.debug("TASK_EXECUTER Channel Pool " + taskExecuterChannelList);

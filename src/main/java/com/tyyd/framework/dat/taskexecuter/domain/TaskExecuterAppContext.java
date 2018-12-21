@@ -26,11 +26,6 @@ public class TaskExecuterAppContext extends AppContext {
      * 业务日志记录级别
      */
     private Level bizLogLevel;
-    /**
-     * 执行任务的class
-     */
-    private Class<?> jobRunnerClass;
-
 
     public RunnerPool getRunnerPool() {
         return runnerPool;
@@ -48,13 +43,6 @@ public class TaskExecuterAppContext extends AppContext {
         this.bizLogLevel = bizLogLevel;
     }
 
-    public Class<?> getJobRunnerClass() {
-        return jobRunnerClass;
-    }
-
-    public void setJobRunnerClass(Class<?> jobRunnerClass) {
-        this.jobRunnerClass = jobRunnerClass;
-    }
 
     public RunnerFactory getRunnerFactory() {
         return runnerFactory;

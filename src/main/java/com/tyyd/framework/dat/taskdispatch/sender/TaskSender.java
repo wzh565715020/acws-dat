@@ -51,6 +51,8 @@ public class TaskSender {
 		// IMPORTANT: 切换队列
 		taskPo.setPoolId(poolPo.getPoolId());
 		taskPo.setCreateDate(taskPo.getCreateDate());
+		taskPo.setTaskExecuteNode(taskExecuterIdentity);
+		taskPo.setIsRunning(1);
 		appContext.getExecutingTaskQueue().add(taskPo);
 		appContext.getExecutableTaskQueue().remove(taskPo.getId());
 

@@ -86,7 +86,7 @@ public interface Constants {
     int DEFAULT_TASK_PUSH_FREQUENCY = 1;
 
     // TaskTracker 离线(网络隔离)时间 10s，超过10s，自动停止当前执行任务
-    long DEFAULT_TASK_EXECUTER_OFFLINE_LIMIT_MILLIS = 10 * 1000;
+    long DEFAULT_TASK_EXECUTER_OFFLINE_LIMIT_MILLIS = 60 * 60 * 1000;
     // 当TaskTracker离线超过了这个时间,那么就会进入自杀流程,停止当前所有线程
 //    String TASK_TRACKER_OFFLINE_LIMIT_MILLIS = "tasktracker.offline.limit.millis";
     // TaskTracker超过一定时间断线JobTracker，自动停止当前的所有任务

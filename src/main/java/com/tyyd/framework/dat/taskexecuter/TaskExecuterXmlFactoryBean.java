@@ -98,8 +98,8 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
 
         taskExecuter.setRunnerFactory(new RunnerFactory() {
             @Override
-            public TaskRunner newRunner() {
-                return createTaskRunner();
+            public TaskRunner newRunner(String taskRunnerBeanName) {
+                return createTaskRunner(taskRunnerBeanName);
             }
         });
 
@@ -121,7 +121,7 @@ public abstract class TaskExecuterXmlFactoryBean implements FactoryBean<TaskExec
         }
     }
 
-    protected abstract TaskRunner createTaskRunner();
+    protected abstract TaskRunner createTaskRunner(String taskRunnerBeanName);
 
     @Override
     public void destroy() throws Exception {

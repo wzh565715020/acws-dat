@@ -34,9 +34,6 @@ public class RunnerPool {
 		threadPoolExecutor = initThreadPoolExecutor();
 
 		runnerFactory = appContext.getRunnerFactory();
-		if (runnerFactory == null) {
-			runnerFactory = new DefaultRunnerFactory(appContext);
-		}
 		// 向事件中心注册事件, 改变工作线程大小
 		appContext.getEventCenter().subscribe(new EventSubscriber(appContext.getConfig().getIdentity(), new Observer() {
 			@Override
@@ -53,12 +50,12 @@ public class RunnerPool {
 				new ThreadPoolExecutor.AbortPolicy());
 	}
 
-	public void execute(TaskMeta jobMeta, RunnerCallback callback)
+	public void execute(TaskMeta taskMeta, RunnerCallback callback)
 			throws NoAvailableTaskRunnerException {
 		try {
-			threadPoolExecutor.execute(new TaskRunnerDelegate(appContext, jobMeta, callback));
+			threadPoolExecutor.execute(new TaskRunnerDelegate(appContext, taskMeta, callback));
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Receive task success ! " + jobMeta);
+				LOGGER.debug("Receive task success ! " + taskMeta);
 			}
 		} catch (RejectedExecutionException e) {
 			LOGGER.warn("No more thread to run task .");

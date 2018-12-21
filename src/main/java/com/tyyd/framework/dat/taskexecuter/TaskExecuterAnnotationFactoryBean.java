@@ -4,18 +4,16 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ConfigurableApplicationContext;
 
 import com.tyyd.framework.dat.core.commons.utils.Assert;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.listener.MasterChangeListener;
 import com.tyyd.framework.dat.taskexecuter.runner.TaskRunner;
-import com.tyyd.framework.dat.taskexecuter.task.TaskExecuterDispatcher;
+import com.tyyd.framework.dat.taskexecuter.runner.AcwsTask;
+import com.tyyd.framework.dat.taskexecuter.runner.AcwsTaskRunner;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerFactory;
 
 import java.util.Map;
@@ -26,7 +24,6 @@ import java.util.Properties;
  * 如果用这个工厂类，那么JobRunner中引用SpringBean的话,只有通过注解的方式注入
  *
  */
-@SuppressWarnings("rawtypes")
 public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecuter>, ApplicationContextAware,
         InitializingBean, DisposableBean {
 
@@ -50,17 +47,9 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
      */
     private int workThreads;
     /**
-     * 任务执行类
-     */
-    private Class jobRunnerClass;
-    /**
      * 业务日志级别
      */
     private Level bizLoggerLevel;
-    /**
-     * spring中taskRunner的bean name
-     */
-    private String taskRunnerBeanName;
     /**
      * master节点变化监听器
      */
@@ -95,12 +84,8 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
         Assert.hasText(clusterName, "clusterName must have value.");
         Assert.hasText(registryAddress, "registryAddress must have value.");
         Assert.isTrue(workThreads > 0, "workThreads must > 0.");
-        Assert.notNull(jobRunnerClass, "jobRunnerClass must have value");
-        Assert.isAssignable(TaskRunner.class, jobRunnerClass,
-                StringUtils.format("jobRunnerClass should be implements {}.", TaskRunner.class.getName()));
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void afterPropertiesSet() throws Exception {
 
@@ -112,7 +97,6 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
         taskExecuter.setDataPath(dataPath);
         taskExecuter.setWorkThreads(workThreads);
         taskExecuter.setRegistryAddress(registryAddress);
-        taskExecuter.setJobRunnerClass(jobRunnerClass);
         if (listenPort != null) {
         	taskExecuter.setListenPort(listenPort);
         }
@@ -121,8 +105,6 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
             taskExecuter.setBizLoggerLevel(bizLoggerLevel);
         }
 
-        registerRunnerBeanDefinition();
-
         // 设置config
         for (Map.Entry<Object, Object> entry : configs.entrySet()) {
             taskExecuter.addConfig(entry.getKey().toString(), entry.getValue().toString());
@@ -130,8 +112,16 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
 
         taskExecuter.setRunnerFactory(new RunnerFactory() {
             @Override
-            public TaskRunner newRunner() {
-                return (TaskRunner) applicationContext.getBean(taskRunnerBeanName);
+            public TaskRunner newRunner(String taskRunnerBeanName) {
+            	if (taskRunnerBeanName == null || taskRunnerBeanName.equals("")) {
+            		taskRunnerBeanName = "defaultRunner";
+				}
+            	Object object = applicationContext.getBean(taskRunnerBeanName);
+            	if (object instanceof AcwsTask) {
+            		return new AcwsTaskRunner((AcwsTask)object);
+				}else {
+					 return (TaskRunner) applicationContext.getBean(taskRunnerBeanName);
+				}
             }
         });
 
@@ -143,25 +133,6 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
 
     }
 
-    /**
-     * 将 JobRunner 生成Bean放入spring容器中管理
-     * 采用原型 scope， 所以可以在JobRunner中使用@Autowired
-     */
-    private void registerRunnerBeanDefinition() {
-        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory)
-                ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
-        taskRunnerBeanName = "LTS_".concat(jobRunnerClass.getName());
-        if (!beanFactory.containsBean(taskRunnerBeanName)) {
-            BeanDefinitionBuilder builder = BeanDefinitionBuilder.rootBeanDefinition(jobRunnerClass);
-            if (jobRunnerClass == TaskExecuterDispatcher.class) {
-                builder.setScope("singleton");
-                builder.setLazyInit(false);
-            } else {
-                builder.setScope("prototype");
-            }
-            beanFactory.registerBeanDefinition(taskRunnerBeanName, builder.getBeanDefinition());
-        }
-    }
 
     /**
      * 可以自己得到TaskTracker对象后调用，也可以直接使用spring配置中的init属性指定该方法
@@ -199,9 +170,6 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
         this.workThreads = workThreads;
     }
 
-    public void setJobRunnerClass(Class jobRunnerClass) {
-        this.jobRunnerClass = jobRunnerClass;
-    }
 
     public void setMasterChangeListeners(MasterChangeListener[] masterChangeListeners) {
         this.masterChangeListeners = masterChangeListeners;

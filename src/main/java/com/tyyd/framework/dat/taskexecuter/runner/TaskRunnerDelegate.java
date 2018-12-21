@@ -58,10 +58,12 @@ public class TaskRunnerDelegate implements Runnable {
 			long startTime = SystemClock.now();
 			// 设置当前context中的jobId
 			Response response = new Response();
-			response.setJobMeta(taskMeta);
+			response.setTaskMeta(taskMeta);
 			try {
 				appContext.getRunnerPool().getRunningTaskManager().in(taskMeta.getId(), this);
-				this.curTaskRunner = appContext.getRunnerPool().getRunnerFactory().newRunner();
+				
+				this.curTaskRunner = appContext.getRunnerFactory().newRunner(taskMeta.getTask().getTaskClass());
+				
 				Result result = this.curTaskRunner.run(taskMeta.getTask());
 
 				if (result == null) {

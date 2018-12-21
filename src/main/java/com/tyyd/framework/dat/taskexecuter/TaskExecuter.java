@@ -10,7 +10,6 @@ import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterNode;
 import com.tyyd.framework.dat.taskexecuter.monitor.TaskExecuterMStatReporter;
 import com.tyyd.framework.dat.taskexecuter.processor.RemotingDispatcher;
-import com.tyyd.framework.dat.taskexecuter.runner.TaskRunner;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerFactory;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerPool;
 
@@ -59,9 +58,6 @@ public class TaskExecuter extends AbstractClientNode<TaskExecuterNode, TaskExecu
         return new RemotingDispatcher(appContext);
     }
 
-    public <JRC extends TaskRunner> void setJobRunnerClass(Class<JRC> clazz) {
-        appContext.setJobRunnerClass(clazz);
-    }
 
     public void setWorkThreads(int workThreads) {
         config.setWorkThreads(workThreads);
