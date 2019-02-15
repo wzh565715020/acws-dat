@@ -10,7 +10,6 @@ import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
 import com.tyyd.framework.dat.queue.ExecutedTaskQueue;
 import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
 import com.tyyd.framework.dat.queue.PoolQueue;
-import com.tyyd.framework.dat.queue.PreLoader;
 import com.tyyd.framework.dat.queue.TaskQueue;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
@@ -19,6 +18,7 @@ import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
 import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
 import com.tyyd.framework.dat.taskdispatch.support.TaskPushMachine;
 import com.tyyd.framework.dat.taskdispatch.support.checker.ExecutingDeadTaskChecker;
+import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskDispatcherManager;
 
 /**
  * JobTracker Application
@@ -46,7 +46,6 @@ public class TaskDispatcherAppContext extends AppContext {
     private PoolQueue poolQueue;
     // task id generator
     private IdGenerator idGenerator;
-    private PreLoader preLoader;
     private TaskReceiver taskReceiver;
     private TaskSender taskSender;
 
@@ -55,7 +54,17 @@ public class TaskDispatcherAppContext extends AppContext {
     
     private List<PoolPo> poolPoList;
     
-    public List<PoolPo> getPoolPoList() {
+    private TaskDispatcherManager taskDispatcherManager;
+    
+    public TaskDispatcherManager getTaskDispatcherManager() {
+		return taskDispatcherManager;
+	}
+
+	public void setTaskDispatcherManager(TaskDispatcherManager taskDispatcherManager) {
+		this.taskDispatcherManager = taskDispatcherManager;
+	}
+
+	public List<PoolPo> getPoolPoList() {
 		return poolPoList;
 	}
 
@@ -77,14 +86,6 @@ public class TaskDispatcherAppContext extends AppContext {
 
     public void setTaskReceiver(TaskReceiver taskReceiver) {
         this.taskReceiver = taskReceiver;
-    }
-
-    public PreLoader getPreLoader() {
-        return preLoader;
-    }
-
-    public void setPreLoader(PreLoader preLoader) {
-        this.preLoader = preLoader;
     }
 
     public TaskLogger getTaskLogger() {

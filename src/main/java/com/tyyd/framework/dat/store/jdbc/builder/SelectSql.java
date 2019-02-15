@@ -88,7 +88,11 @@ public class SelectSql {
         params.add(value);
         return this;
     }
-
+    public SelectSql where(String condition) {
+        sql.append(" WHERE ").append(condition);
+        return this;
+    }
+    
     public SelectSql and(String condition, Object value) {
         sql.append(" AND ").append(condition);
         params.add(value);

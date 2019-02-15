@@ -60,7 +60,7 @@ public class RshHolder {
     	poolPo.setPoolName(rs.getString("pool_name"));
     	poolPo.setMaxCount(rs.getInt("max_count"));
     	poolPo.setAvailableCount(rs.getInt("available_count"));
-    	poolPo.setTaskIds(rs.getString("task_ids"));
+    	poolPo.setNodeId(rs.getString("node_id"));
     	poolPo.setMemo(rs.getString("memo"));
     	poolPo.setCreateDate(rs.getLong("create_date"));
     	poolPo.setUpdateDate(rs.getLong("update_date"));

@@ -23,8 +23,8 @@ public class MysqlTaskQueueFactory implements TaskQueueFactory {
 
 
     @Override
-    public PreLoader getPreLoader(AppContext appContext) {
-        return new MysqlPreLoader(appContext);
+    public PreLoader getPreLoader(AppContext appContext,String poolId) {
+        return new MysqlPreLoader(appContext,poolId);
     }
     @Override
     public PoolQueue getPoolQueue(Config config) {

@@ -21,12 +21,15 @@ public abstract class AbstractPreLoader implements PreLoader {
 	private double factor;
 
 	private TaskPriorityBlockingQueue queue = null;
+	
 	private ScheduledExecutorService LOAD_EXECUTOR_SERVICE = Executors
 			.newSingleThreadScheduledExecutor(new NamedThreadFactory("DAT-PreLoader", true));
+	
 	private ScheduledFuture<?> scheduledFuture;
+	
 	private AtomicBoolean start = new AtomicBoolean(false);
 
-	public AbstractPreLoader(final AppContext appContext) {
+	public AbstractPreLoader(final AppContext appContext, String poolId) {
 		if (start.compareAndSet(false, true)) {
 			loadSize = appContext.getConfig().getParameter("task.preloader.size", 300);
 			factor = appContext.getConfig().getParameter("task.preloader.factor", 0.2);
@@ -36,7 +39,7 @@ public abstract class AbstractPreLoader implements PreLoader {
 				public void run() {
 					if (queue.size() / loadSize < factor) {
 						// load
-						List<TaskPo> loads = load(loadSize - queue.size());
+						List<TaskPo> loads = load(poolId, loadSize - queue.size());
 						// 加入到内存中
 						if (CollectionUtils.isNotEmpty(loads)) {
 							for (TaskPo load : loads) {
@@ -61,6 +64,13 @@ public abstract class AbstractPreLoader implements PreLoader {
 		}
 	}
 
+	public void stop() {
+		if(start.compareAndSet(true, false)) {
+			scheduledFuture.cancel(false);
+			LOAD_EXECUTOR_SERVICE.shutdown();
+		}
+	}
+
 	public TaskPo take() {
 		return queue.poll();
 	}
@@ -73,5 +83,5 @@ public abstract class AbstractPreLoader implements PreLoader {
 	/**
 	 * 加载任务
 	 */
-	protected abstract List<TaskPo> load(int loadSize);
+	protected abstract List<TaskPo> load(String poolId, int loadSize);
 }

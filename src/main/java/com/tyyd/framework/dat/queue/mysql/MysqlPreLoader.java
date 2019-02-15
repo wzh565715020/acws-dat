@@ -21,8 +21,8 @@ public class MysqlPreLoader extends AbstractPreLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(MysqlPreLoader.class);
     private SqlTemplate sqlTemplate;
 
-    public MysqlPreLoader(AppContext appContext) {
-        super(appContext);
+    public MysqlPreLoader(AppContext appContext,String poolId) {
+        super(appContext,poolId);
         this.sqlTemplate = SqlTemplateFactory.create();
     }
 
@@ -47,7 +47,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
 
 
     @Override
-    protected List<TaskPo> load(int loadSize) {
+    protected List<TaskPo> load(String poolId,int loadSize) {
         try {
             return new SelectSql(sqlTemplate)
                     .select()
@@ -55,6 +55,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
                     .from()
                     .table(getTableName())
                     .where("is_running = ?", 0)
+                    .where("pool_id = ?", poolId)
                     .and("trigger_time< ?", SystemClock.now())
                     .orderBy()
                     .column("trigger_time", OrderByType.ASC)

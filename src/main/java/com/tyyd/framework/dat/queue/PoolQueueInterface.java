@@ -8,6 +8,6 @@ public interface PoolQueueInterface {
 
     PaginationRsp<PoolPo> pageSelect(PoolQueueReq request);
 
-    boolean selectiveUpdate(PoolQueueReq request);
-
+    boolean updateByPoolId(PoolQueueReq request);
+    
 }

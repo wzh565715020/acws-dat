@@ -15,6 +15,7 @@ import com.tyyd.framework.dat.taskdispatch.processor.RemotingDispatcher;
 import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
 import com.tyyd.framework.dat.taskdispatch.support.TaskPushMachine;
 import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
+import com.tyyd.framework.dat.taskdispatch.support.listener.TaskDispatcherChangeListener;
 import com.tyyd.framework.dat.taskdispatch.support.listener.TaskDispatcherMasterChangeListener;
 
 public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskDispatcherAppContext> {
@@ -28,7 +29,7 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
 		appContext.setTaskPushMachine(new TaskPushMachine(appContext));
 		appContext.setTaskReceiver(new TaskReceiver(appContext));
 		// 添加节点变化监听器
-		//addNodeChangeListener(new TaskNodeChangeListener(appContext));
+		addNodeChangeListener(new TaskDispatcherChangeListener(appContext));
 		// 添加master节点变化监听器
 		addMasterChangeListener(new TaskDispatcherMasterChangeListener(appContext));
 		
@@ -46,7 +47,6 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
 		appContext.setExecutableTaskQueue(factory.getExecutableJobQueue(config));
 		appContext.setExecutingTaskQueue(factory.getExecutingJobQueue(config));
 		appContext.setTaskQueue(factory.getTaskQueue(config));
-		appContext.setPreLoader(factory.getPreLoader(appContext));
 		appContext.setTaskSender(new TaskSender(appContext));
 		appContext.setExecutedTaskQueue(factory.getExecutedJobQueue(config));
 		
@@ -56,6 +56,7 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
 	protected void afterStart() {
 		appContext.getChannelManager().start();
 		appContext.getMStatReporter().start();
+		appContext.getTaskPushMachine().start();
 	}
 
 
@@ -64,6 +65,7 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
 		appContext.getChannelManager().stop();
 		appContext.getMStatReporter().stop();
 		appContext.getHttpCmdServer().stop();
+		appContext.getTaskPushMachine().stop();
 	}
 
 	@Override

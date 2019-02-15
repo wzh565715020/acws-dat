@@ -6,9 +6,6 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author   on 8/17/14.
- */
 public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E> {
 
     private transient ConcurrentHashMap<E, Object> map;

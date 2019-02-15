@@ -20,9 +20,9 @@ public abstract class AbstractMysqlPoolQueue extends JdbcAbstractAccess implemen
 
 	protected boolean add(String tableName, PoolPo poolPo) {
 		return new InsertSql(getSqlTemplate()).insert(tableName)
-				.columns("pool_id", "pool_name", "max_count","available_count", "task_ids", "memo", "create_date", "update_date",
+				.columns("pool_id", "pool_name", "max_count","available_count", "node_id", "memo", "create_date", "update_date",
 						"create_userid", "update_userid")
-				.values(poolPo.getPoolId(), poolPo.getPoolName(), poolPo.getMaxCount(),poolPo.getAvailableCount(), poolPo.getTaskIds(),
+				.values(poolPo.getPoolId(), poolPo.getPoolName(), poolPo.getMaxCount(),poolPo.getAvailableCount(), poolPo.getNodeId(),
 						poolPo.getMemo(), poolPo.getCreateDate(), poolPo.getUpdateDate(), poolPo.getCreateUserId(),
 						poolPo.getUpdateUserId())
 				.doInsert() == 1;
@@ -46,7 +46,7 @@ public abstract class AbstractMysqlPoolQueue extends JdbcAbstractAccess implemen
 
 	protected abstract String getTableName();
 	
-	public boolean selectiveUpdate(PoolQueueReq request) {
+	public boolean updateByPoolId(PoolQueueReq request) {
 
 		if (StringUtils.isEmpty(request.getPoolId())) {
 			throw new JdbcException("Only allow update by poolId");
@@ -55,10 +55,11 @@ public abstract class AbstractMysqlPoolQueue extends JdbcAbstractAccess implemen
 				.setOnNotNull("pool_name", request.getPoolName())
 				.setOnNotNull("max_count", request.getMaxCount())
 				.setOnNotNull("available_count", request.getAvailableCount())
-				.setOnNotNull("task_ids", request.getTaskIds())
+				.setOnNotNull("node_id", request.getNodeId())
 				.setOnNotNull("memo", request.getMemo())
 				.setOnNotNull("update_date", request.getUpdateDate())
 				.setOnNotNull("update_userid", request.getUpdateUserId()).where("pool_id = ?", request.getPoolId())
 				.doUpdate() == 1;
 	}
+	
 }

@@ -35,7 +35,8 @@ public class TaskFinishHandler {
 	public TaskFinishHandler(TaskDispatcherAppContext appContext) {
 		this.appContext = appContext;
 	}
-	@Transactional(isolation=Isolation.READ_COMMITTED,propagation=Propagation.REQUIRED,rollbackFor = Exception.class)
+
+	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void onComplete(List<TaskRunResult> results) {
 		if (CollectionUtils.isEmpty(results)) {
 			return;
@@ -58,16 +59,15 @@ public class TaskFinishHandler {
 			// 从正在执行的队列中移除
 			appContext.getExecutingTaskQueue().remove(taskMeta.getId());
 			// 修改队列可用数量
-			PoolPo poolPo = appContext.getPoolQueue().getPool(taskMeta.getTask().getPoolId());
 			PoolQueueReq poolQueueReq = new PoolQueueReq();
 			poolQueueReq.setPoolId(taskMeta.getTask().getPoolId());
-			poolQueueReq.setAvailableCount(poolPo.getAvailableCount() + 1);
-			appContext.getPoolQueue().selectiveUpdate(poolQueueReq);
+			poolQueueReq.setChangeAvailableCount(1);
+			appContext.getPoolQueue().changeAvailableCount(poolQueueReq);
 			// 加入到历史队列
 			TaskPo taskPo = TaskDomainConverter.convert(taskMeta.getTask());
 			taskPo.setId(taskMeta.getId());
 			taskPo.setSubmitNode(taskMeta.getTaskExecuteNode());
-			
+
 			try {
 				appContext.getExecutedTaskQueue().add(taskPo);
 			} catch (DupEntryException e) {

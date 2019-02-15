@@ -5,7 +5,7 @@ public class PoolPo {
 	private String poolName;
 	private Integer maxCount;
 	private Integer availableCount;
-	private String taskIds;
+	private String nodeId;
 	private String memo;
 	private Long createDate;
 	private Long updateDate;
@@ -36,12 +36,13 @@ public class PoolPo {
 		this.maxCount = maxCount;
 	}
 
-	public String getTaskIds() {
-		return taskIds;
+
+	public String getNodeId() {
+		return nodeId;
 	}
 
-	public void setTaskIds(String taskIds) {
-		this.taskIds = taskIds;
+	public void setNodeId(String nodeId) {
+		this.nodeId = nodeId;
 	}
 
 	public String getMemo() {

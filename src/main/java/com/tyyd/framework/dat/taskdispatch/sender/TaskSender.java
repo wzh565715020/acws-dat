@@ -1,7 +1,5 @@
 package com.tyyd.framework.dat.taskdispatch.sender;
 
-import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -15,7 +13,7 @@ import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.domain.PoolPo;
+import com.tyyd.framework.dat.queue.PreLoader;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
@@ -30,26 +28,27 @@ public class TaskSender {
 	}
 
 	@Transactional(isolation=Isolation.READ_COMMITTED,propagation=Propagation.REQUIRED,rollbackFor = Exception.class)
-	public SendResult send(String taskExecuterIdentity, SendInvoker invoker) {
-
+	public SendResult send(PreLoader preLoader, String taskExecuterIdentity, SendInvoker invoker) {
 		// 取一个可运行的task
-		final TaskPo taskPo = appContext.getPreLoader().take();
+		final TaskPo taskPo = preLoader.take();
 		if (taskPo == null) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("Task push failed: no Task!identity " + taskExecuterIdentity);
 			}
 			return new SendResult(false, TaskPushResult.NO_TASK);
 		}
-		PoolPo poolPo = getTaskPool(taskPo.getTaskId());
-		if (null == poolPo) {
+		PoolQueueReq poolQueueReq = new PoolQueueReq();
+		poolQueueReq.setPoolId(taskPo.getPoolId());
+		poolQueueReq.setChangeAvailableCount(-1);
+		if (!appContext.getPoolQueue().decreaseAvailableCount(poolQueueReq)) {
 			return new SendResult(false, TaskPushResult.NO_POOL);
 		}
-		if (appContext.getPreLoader().lockTask(taskPo.getId(), taskExecuterIdentity)) {
+		if (preLoader.lockTask(taskPo.getId(), taskExecuterIdentity)) {
 			taskPo.setTaskExecuteNode(taskExecuterIdentity);
 			taskPo.setUpdateDate(SystemClock.now());
 		}
 		// IMPORTANT: 切换队列
-		taskPo.setPoolId(poolPo.getPoolId());
+		taskPo.setPoolId(taskPo.getPoolId());
 		taskPo.setCreateDate(taskPo.getCreateDate());
 		taskPo.setTaskExecuteNode(taskExecuterIdentity);
 		taskPo.setIsRunning(1);
@@ -74,32 +73,6 @@ public class TaskSender {
 		}
 
 		return sendResult;
-	}
-
-	private PoolPo getTaskPool(String taskId) {
-		ReentrantLock reentrantLock = new ReentrantLock();
-		reentrantLock.lock();
-		try {
-			List<PoolPo> list = appContext.getPoolPoList();
-			PoolPo taskPoolPo = null;
-			for (PoolPo poolPo : list) {
-				if (poolPo.getTaskIds().contains(taskId)) {
-					taskPoolPo = poolPo;
-					break;
-				}
-			}
-			if (null == taskPoolPo) {
-				return null;
-			}
-			PoolQueueReq poolQueueReq = new PoolQueueReq();
-			poolQueueReq.setPoolId(taskPoolPo.getPoolId());
-			poolQueueReq.setAvailableCount(taskPoolPo.getAvailableCount() - 1);
-			taskPoolPo.setAvailableCount(taskPoolPo.getAvailableCount() - 1);
-			appContext.getPoolQueue().selectiveUpdate(poolQueueReq);
-			return taskPoolPo;
-		} finally {
-			reentrantLock.unlock();
-		}
 	}
 
 	public interface SendInvoker {
