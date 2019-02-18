@@ -1,13 +1,15 @@
 package com.tyyd.framework.dat.remoting.mina;
 
+import org.apache.mina.core.future.CloseFuture;
+import org.apache.mina.core.future.ConnectFuture;
+import org.apache.mina.core.future.IoFuture;
+import org.apache.mina.core.future.IoFutureListener;
+import org.apache.mina.core.future.WriteFuture;
+
 import com.tyyd.framework.dat.remoting.ChannelHandler;
 import com.tyyd.framework.dat.remoting.ChannelHandlerListener;
 import com.tyyd.framework.dat.remoting.Future;
-import org.apache.mina.core.future.*;
 
-/**
- * @author   on 11/4/15.
- */
 public class MinaChannelHandler implements ChannelHandler {
 
     private IoFuture ioFuture;

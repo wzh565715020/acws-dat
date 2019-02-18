@@ -26,7 +26,8 @@ public class SerializableSerializer implements ZkSerializer {
         }
     }
 
-    @Override
+    @SuppressWarnings("resource")
+	@Override
     public Object deserialize(byte[] bytes) throws ZkMarshallingException {
         if (bytes == null) {
             return null;

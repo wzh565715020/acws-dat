@@ -1,6 +1,12 @@
 package com.tyyd.framework.dat.store.jdbc.dbutils;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ParameterMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import java.util.Arrays;
 
 public class DbRunner {

@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.jvmmonitor;
 
-/**
- * @author   on 3/14/16.
- */
 public interface ReferenceCount {
 
     /**

@@ -182,7 +182,7 @@ public class HttpCmdExecutor implements Runnable {
                 pw.print("Date: " + DateUtils.formatYMD_HMS(new Date()) + "\r\n");
 
             if (header != null) {
-                Enumeration e = header.keys();
+                Enumeration<?> e = header.keys();
                 while (e.hasMoreElements()) {
                     String key = (String) e.nextElement();
                     String value = header.getProperty(key);

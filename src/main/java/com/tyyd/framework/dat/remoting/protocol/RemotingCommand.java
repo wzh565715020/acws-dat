@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author  
  *         Remoting模块中，服务器与客户端通过传递RemotingCommand来交互
  */
 public class RemotingCommand implements Serializable{

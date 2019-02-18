@@ -5,9 +5,6 @@ import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author   on 3/9/16.
- */
 public class WhereSql {
 
     private StringBuilder sql = new StringBuilder();

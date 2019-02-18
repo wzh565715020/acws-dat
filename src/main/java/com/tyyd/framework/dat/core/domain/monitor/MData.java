@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.domain.monitor;
 
-/**
- * @author   on 8/30/15.
- */
 public class MData {
 
     private Long timestamp;

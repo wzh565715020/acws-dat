@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.jvmmonitor.mbean;
 
-/**
- * @author   on 9/15/15.
- */
 public interface JVMGCMBean {
 
     long getYoungGCCollectionCount();

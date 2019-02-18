@@ -116,7 +116,7 @@ public class JVMMonitor {
         }
     }
 
-    private static Class loadClass(String classname) throws ClassNotFoundException {
+    private static Class<?> loadClass(String classname) throws ClassNotFoundException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         if (classLoader == null)

@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.constant;
 
-/**
- * @author   on 5/11/15.
- */
 public interface EcTopic {
 
     // 工作线程变化

@@ -58,6 +58,7 @@ public class TaskDispatcherManager {
 
 	public void addNodeRedistribution(Node node) {
 		globalLock.lock();
+		LOGGER.info("新增任务调度中心节点，重新分配任务线程池开始");
 		try {
 			PoolQueueReq request = new PoolQueueReq();
 			request.setLimit(Integer.MAX_VALUE);
@@ -129,6 +130,7 @@ public class TaskDispatcherManager {
 				}
 			}
 		} finally {
+			LOGGER.info("新增任务调度中心节点，重新分配任务线程池结束");
 			globalLock.unlock();
 		}
 
@@ -136,6 +138,7 @@ public class TaskDispatcherManager {
 
 	public void removeNodeRedistribution(Node node) {
 		globalLock.lock();
+		LOGGER.info("删除任务调度中心节点" + node.getIdentity() +"开始");
 		try {
 			List<PoolPo> poolPos = appContext.getPoolQueue().getPoolByNodeId(node.getIdentity());
 			if (poolPos == null || poolPos.isEmpty()) {
@@ -145,12 +148,14 @@ public class TaskDispatcherManager {
 			request.setNodeId(node.getIdentity());
 			appContext.getPoolQueue().clearNodeByNodeId(request);
 		} finally {
+			LOGGER.info("删除任务调度中心节点" + node.getIdentity() +"结束");
 			globalLock.unlock();
 		}
 	}
 
 	public void poolChangeRedistribution() {
 		globalLock.lock();
+		LOGGER.info("删除任务调度中心节点，重新分配任务线程池开始");
 		try {
 			List<PoolPo> poolPos = appContext.getPoolQueue().getUndistributedPool();
 			if (poolPos == null || poolPos.isEmpty()) {
@@ -192,6 +197,7 @@ public class TaskDispatcherManager {
 				}
 			}
 		} finally {
+			LOGGER.info("删除任务调度中心节点，重新分配任务线程池结束");
 			globalLock.unlock();
 		}
 	}

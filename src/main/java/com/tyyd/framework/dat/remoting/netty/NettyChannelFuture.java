@@ -3,9 +3,6 @@ package com.tyyd.framework.dat.remoting.netty;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.ChannelFuture;
 
-/**
- * @author   on 11/4/15.
- */
 public class NettyChannelFuture implements ChannelFuture {
 
     private io.netty.channel.ChannelFuture channelFuture;

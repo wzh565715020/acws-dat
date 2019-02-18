@@ -8,9 +8,6 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.core.write.WriteRequest;
 import org.apache.mina.filter.logging.LogLevel;
 
-/**
- * @author   on 11/4/15.
- */
 public class MinaLogger extends IoFilterAdapter {
     /**
      * The logger name

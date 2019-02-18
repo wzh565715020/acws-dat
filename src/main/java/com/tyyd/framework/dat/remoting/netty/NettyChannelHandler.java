@@ -6,9 +6,6 @@ import com.tyyd.framework.dat.remoting.Future;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
-/**
- * @author   on 11/3/15.
- */
 public class NettyChannelHandler implements ChannelHandler {
 
     private ChannelFuture channelFuture;

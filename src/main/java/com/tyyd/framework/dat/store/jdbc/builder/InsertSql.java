@@ -12,9 +12,6 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author   on 3/8/16.
- */
 public class InsertSql {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertSql.class);

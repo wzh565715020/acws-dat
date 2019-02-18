@@ -11,9 +11,6 @@ import com.tyyd.framework.dat.store.jdbc.exception.JdbcException;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * @author   on 3/8/16.
- */
 public class SelectSql {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SelectSql.class);

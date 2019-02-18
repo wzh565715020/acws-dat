@@ -2,7 +2,6 @@ package com.tyyd.framework.dat.queue.mysql;
 
 import com.tyyd.framework.dat.core.commons.utils.CharacterUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
-import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.queue.TaskQueueInterface;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.support.RshHolder;
@@ -12,7 +11,6 @@ import com.tyyd.framework.dat.store.jdbc.builder.OrderByType;
 import com.tyyd.framework.dat.store.jdbc.builder.SelectSql;
 import com.tyyd.framework.dat.store.jdbc.builder.UpdateSql;
 import com.tyyd.framework.dat.store.jdbc.builder.WhereSql;
-import com.tyyd.framework.dat.store.jdbc.dbutils.JdbcTypeUtils;
 import com.tyyd.framework.dat.store.jdbc.exception.JdbcException;
 import com.tyyd.framework.dat.admin.request.TaskQueueReq;
 import com.tyyd.framework.dat.admin.response.PaginationRsp;

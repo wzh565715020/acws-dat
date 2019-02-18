@@ -11,9 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author   on 9/15/15.
- */
 public class JVMCollector {
 
     /**

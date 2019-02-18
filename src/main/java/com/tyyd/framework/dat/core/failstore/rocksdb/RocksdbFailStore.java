@@ -6,7 +6,16 @@ import com.tyyd.framework.dat.core.domain.Pair;
 import com.tyyd.framework.dat.core.failstore.AbstractFailStore;
 import com.tyyd.framework.dat.core.failstore.FailStoreException;
 import com.tyyd.framework.dat.core.json.JSON;
-import org.rocksdb.*;
+
+import org.rocksdb.BlockBasedTableConfig;
+import org.rocksdb.BloomFilter;
+import org.rocksdb.CompactionStyle;
+import org.rocksdb.CompressionType;
+import org.rocksdb.Filter;
+import org.rocksdb.Options;
+import org.rocksdb.RocksDB;
+import org.rocksdb.RocksIterator;
+import org.rocksdb.WriteOptions;
 import org.rocksdb.util.SizeUnit;
 
 import java.io.File;

@@ -1,6 +1,10 @@
 package com.tyyd.framework.dat.store.jdbc;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * 格式化SQL

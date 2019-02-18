@@ -6,7 +6,11 @@ import com.tyyd.framework.dat.core.json.JSONObject;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class FastJSONArray implements JSONArray {
 

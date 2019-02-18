@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
  * <bean class="com.dat.web.support.csrf.CSRFHandlerInterceptor"/>
  * </mvc:interceptors>
  *
- * @author   on 11/10/15.
  */
 public class CSRFHandlerInterceptor extends HandlerInterceptorAdapter {
 

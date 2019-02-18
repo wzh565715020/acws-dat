@@ -6,9 +6,6 @@ import io.netty.util.internal.logging.InternalLogLevel;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
-/**
- * @author   on 11/5/15.
- */
 public class NettyLogger {
 
     public static void setNettyLoggerFactory() {

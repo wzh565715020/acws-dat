@@ -2,9 +2,6 @@ package com.tyyd.framework.dat.core.domain.monitor;
 
 import java.util.Map;
 
-/**
- * @author   on 9/27/15.
- */
 public class JvmMData {
 
     private Map<String, Object> memoryMap;

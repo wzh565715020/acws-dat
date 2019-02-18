@@ -6,9 +6,6 @@ import com.tyyd.framework.dat.store.jdbc.SQLFormatter;
 import com.tyyd.framework.dat.store.jdbc.SqlTemplate;
 import com.tyyd.framework.dat.store.jdbc.exception.JdbcException;
 
-/**
- * @author   on 3/9/16.
- */
 public class DropTableSql {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DropTableSql.class);

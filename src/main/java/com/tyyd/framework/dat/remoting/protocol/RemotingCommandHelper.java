@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.remoting.protocol;
 
-/**
- * @author   on 11/6/15.
- */
 public class RemotingCommandHelper {
 
     private static final int RPC_TYPE = 0; // 0, REQUEST_COMMAND

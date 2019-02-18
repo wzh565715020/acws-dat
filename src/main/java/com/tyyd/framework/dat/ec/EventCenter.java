@@ -6,7 +6,6 @@ import com.tyyd.framework.dat.core.spi.SpiExtensionKey;
 /**
  * 事件中心接口
  *
- * @author   on 5/11/15.
  */
 @SPI(key = SpiExtensionKey.EVENT_CENTER, dftValue = "injvm")
 public interface EventCenter {

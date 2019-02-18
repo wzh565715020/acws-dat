@@ -7,7 +7,6 @@ import com.tyyd.framework.dat.remoting.serialize.RemotingSerializable;
 import java.nio.ByteBuffer;
 
 /**
- * @author   on 11/5/15.
  *
  * 协议格式
  *    | <length> | <serializable id> | <header length> | <header data> | <body length> | <body data> | <body class> |

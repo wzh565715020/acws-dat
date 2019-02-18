@@ -5,9 +5,6 @@ import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryPoolMXBean;
 import java.util.List;
 
-/**
- * @author   on 9/15/15.
- */
 public class JVMMemory implements JVMMemoryMBean {
 
     private static final JVMMemory instance = new JVMMemory();

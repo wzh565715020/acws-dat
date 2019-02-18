@@ -144,6 +144,8 @@ public class TaskPusher {
 		case SENT_ERROR:
 			// TaskTracker链接失败
 			return;
+		default:
+			break;
 		}
 	}
 

@@ -12,9 +12,6 @@ import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 
-/**
- * @author   on 11/6/15.
- */
 public class MinaHandler extends IoHandlerAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RemotingHelper.RemotingLogName);

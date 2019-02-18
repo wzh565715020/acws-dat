@@ -4,9 +4,6 @@ import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.spi.SPI;
 import com.tyyd.framework.dat.core.spi.SpiExtensionKey;
 
-/**
- * @author   on 11/6/15.
- */
 @SPI(key = SpiExtensionKey.REMOTING, dftValue = "netty")
 public interface RemotingTransporter {
 

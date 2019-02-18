@@ -2,9 +2,6 @@ package com.tyyd.framework.dat.jvmmonitor;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * @author   on 3/14/16.
- */
 public class JVMMonitorReferenceCount implements ReferenceCount {
 
     // 这里必须为static, 保证所有实例引用的都是一个REF_COUNT

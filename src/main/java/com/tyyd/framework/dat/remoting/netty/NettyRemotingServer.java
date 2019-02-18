@@ -3,7 +3,11 @@ package com.tyyd.framework.dat.remoting.netty;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.core.logger.Logger;
-import com.tyyd.framework.dat.remoting.*;
+import com.tyyd.framework.dat.remoting.AbstractRemotingServer;
+import com.tyyd.framework.dat.remoting.ChannelEventListener;
+import com.tyyd.framework.dat.remoting.RemotingEvent;
+import com.tyyd.framework.dat.remoting.RemotingEventType;
+import com.tyyd.framework.dat.remoting.RemotingServerConfig;
 import com.tyyd.framework.dat.remoting.common.RemotingHelper;
 import com.tyyd.framework.dat.remoting.exception.RemotingException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
@@ -24,9 +28,6 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 
 import java.net.InetSocketAddress;
 
-/**
- * @author   on 11/3/15.
- */
 public class NettyRemotingServer extends AbstractRemotingServer {
 
     public static final Logger LOGGER = AbstractRemotingServer.LOGGER;

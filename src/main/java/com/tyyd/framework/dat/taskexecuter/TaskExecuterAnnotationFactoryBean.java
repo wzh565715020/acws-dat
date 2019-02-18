@@ -112,15 +112,15 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
 
         taskExecuter.setRunnerFactory(new RunnerFactory() {
             @Override
-            public TaskRunner newRunner(String taskRunnerBeanName) {
-            	if (taskRunnerBeanName == null || taskRunnerBeanName.equals("")) {
-            		taskRunnerBeanName = "defaultRunner";
+            public TaskRunner newRunner(String taskBeanName) {
+            	if (taskBeanName == null || taskBeanName.equals("")) {
+            		taskBeanName = "defaultRunner";
 				}
-            	Object object = applicationContext.getBean(taskRunnerBeanName);
+            	Object object = applicationContext.getBean(taskBeanName);
             	if (object instanceof AcwsTask) {
             		return new AcwsTaskRunner((AcwsTask)object);
 				}else {
-					 return (TaskRunner) applicationContext.getBean(taskRunnerBeanName);
+					 return (TaskRunner) applicationContext.getBean(taskBeanName);
 				}
             }
         });

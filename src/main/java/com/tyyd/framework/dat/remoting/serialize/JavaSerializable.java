@@ -6,9 +6,6 @@ import com.tyyd.framework.dat.core.commons.io.UnsafeByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-/**
- * @author   on 11/6/15.
- */
 public class JavaSerializable implements RemotingSerializable {
 
     @Override

@@ -3,9 +3,6 @@ package com.tyyd.framework.dat.jvmmonitor.mbean;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 
-/**
- * @author   on 9/15/15.
- */
 public class JVMGC implements JVMGCMBean {
 
     private static final JVMGC instance = new JVMGC();

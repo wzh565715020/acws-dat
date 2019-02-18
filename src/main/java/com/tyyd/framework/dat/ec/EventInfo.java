@@ -5,7 +5,6 @@ import java.util.Map;
 
 /**
  * 事件信息
- * @author   on 5/11/15.
  */
 public class EventInfo {
 

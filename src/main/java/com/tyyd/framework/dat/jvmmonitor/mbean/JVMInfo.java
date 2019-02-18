@@ -9,9 +9,6 @@ import java.lang.management.RuntimeMXBean;
 import java.util.Date;
 import java.util.Properties;
 
-/**
- * @author   on 9/15/15.
- */
 public class JVMInfo implements JVMInfoMBean {
 
     private static final JVMInfo instance = new JVMInfo();

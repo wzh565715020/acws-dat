@@ -5,9 +5,6 @@ import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.remoting.serialize.AdaptiveSerializable;
 import com.tyyd.framework.dat.remoting.serialize.RemotingSerializable;
 
-/**
- * @author   on 11/6/15.
- */
 public abstract class AbstractCodec implements Codec {
 
     protected RemotingSerializable getRemotingSerializable(int serializableTypeId) {

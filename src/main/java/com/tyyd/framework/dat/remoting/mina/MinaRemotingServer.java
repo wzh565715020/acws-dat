@@ -13,9 +13,6 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-/**
- * @author   on 11/4/15.
- */
 public class MinaRemotingServer extends AbstractRemotingServer {
 
     private IoAcceptor acceptor;

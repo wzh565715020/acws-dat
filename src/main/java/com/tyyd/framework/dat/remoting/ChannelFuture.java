@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.remoting;
 
-/**
- * @author   on 11/4/15.
- */
 public interface ChannelFuture {
 
     boolean isConnected();

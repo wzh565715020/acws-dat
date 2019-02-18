@@ -13,9 +13,6 @@ import org.apache.mina.transport.socket.nio.NioSocketConnector;
 
 import java.net.SocketAddress;
 
-/**
- * @author   on 11/4/15.
- */
 public class MinaRemotingClient extends AbstractRemotingClient {
 
     private NioSocketConnector connector;

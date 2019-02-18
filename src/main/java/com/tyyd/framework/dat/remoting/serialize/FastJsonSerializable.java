@@ -4,9 +4,6 @@ import com.alibaba.fastjson.JSON;
 
 import java.nio.charset.Charset;
 
-/**
- * @author   on 11/6/15.
- */
 public class FastJsonSerializable implements RemotingSerializable {
 
     @Override

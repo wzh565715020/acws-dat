@@ -4,9 +4,6 @@ import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.ChannelFuture;
 import org.apache.mina.core.future.ConnectFuture;
 
-/**
- * @author   on 11/4/15.
- */
 public class MinaChannelFuture implements ChannelFuture {
 
     private ConnectFuture connectFuture;

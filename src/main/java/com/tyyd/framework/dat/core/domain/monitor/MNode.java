@@ -2,9 +2,6 @@ package com.tyyd.framework.dat.core.domain.monitor;
 
 import com.tyyd.framework.dat.core.cluster.NodeType;
 
-/**
- * @author   on 3/11/16.
- */
 public class MNode {
 
     private NodeType nodeType;

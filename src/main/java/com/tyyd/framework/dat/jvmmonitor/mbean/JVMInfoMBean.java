@@ -2,9 +2,6 @@ package com.tyyd.framework.dat.jvmmonitor.mbean;
 
 import java.util.Date;
 
-/**
- * @author   on 9/15/15.
- */
 public interface JVMInfoMBean {
 
     Date getStartTime();

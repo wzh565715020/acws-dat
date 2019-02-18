@@ -5,14 +5,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.tyyd.framework.dat.core.commons.utils.DateUtils;
-import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
 import java.util.Date;
 
 @Controller
 public class CommonView {
 
-    private TaskDispatcherAppContext appContext;
 
     @RequestMapping("index")
     public String index(){

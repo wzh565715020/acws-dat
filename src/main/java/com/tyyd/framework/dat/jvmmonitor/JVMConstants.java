@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.jvmmonitor;
 
-/**
- * @author   on 9/15/15.
- */
 public interface JVMConstants {
 
     String JMX_JVM_INFO_NAME = "com.tyyd.framework.dat.jvmmonitor:type=JVMInfo";

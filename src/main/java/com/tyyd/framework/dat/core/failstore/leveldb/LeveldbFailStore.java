@@ -6,7 +6,12 @@ import com.tyyd.framework.dat.core.failstore.AbstractFailStore;
 import com.tyyd.framework.dat.core.failstore.FailStoreException;
 import com.tyyd.framework.dat.core.json.JSON;
 import org.fusesource.leveldbjni.JniDBFactory;
-import org.iq80.leveldb.*;
+import org.iq80.leveldb.DB;
+import org.iq80.leveldb.DBIterator;
+import org.iq80.leveldb.Options;
+import org.iq80.leveldb.ReadOptions;
+import org.iq80.leveldb.Snapshot;
+import org.iq80.leveldb.WriteBatch;
 
 import java.io.File;
 import java.io.IOException;

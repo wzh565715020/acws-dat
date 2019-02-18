@@ -9,9 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * @author   on 11/6/15.
- */
 public class AdaptiveSerializable implements RemotingSerializable {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(RemotingSerializable.class);
