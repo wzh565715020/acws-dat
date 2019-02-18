@@ -120,7 +120,7 @@ public class TaskQueueController extends AbstractMVC {
         PaginationRsp<TaskPo> rsp = new PaginationRsp<TaskPo>();
         List<TaskPo> rows = new ArrayList<TaskPo>();
         for (TaskPo jobPo : paginationRsp.getRows()) {
-            if (appContext.getExecutingTaskQueue().getTask(jobPo.getTaskExecuteNode(), jobPo.getTaskId()) == null) {
+            if (appContext.getExecutingTaskQueue().getTask(jobPo.getTaskId()) == null) {
                 // 没有正在执行, 则显示在等待执行列表中
                 rows.add(jobPo);
             }

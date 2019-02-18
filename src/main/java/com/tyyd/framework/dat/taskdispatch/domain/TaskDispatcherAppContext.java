@@ -19,6 +19,7 @@ import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
 import com.tyyd.framework.dat.taskdispatch.support.TaskPushMachine;
 import com.tyyd.framework.dat.taskdispatch.support.checker.ExecutingDeadTaskChecker;
 import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskDispatcherManager;
+import com.tyyd.framework.dat.taskdispatch.support.cluster.TaskExecuterManager;
 
 /**
  * JobTracker Application
@@ -56,7 +57,17 @@ public class TaskDispatcherAppContext extends AppContext {
     
     private TaskDispatcherManager taskDispatcherManager;
     
-    public TaskDispatcherManager getTaskDispatcherManager() {
+    private TaskExecuterManager taskExecuterManager;
+    
+    public TaskExecuterManager getTaskExecuterManager() {
+		return taskExecuterManager;
+	}
+
+	public void setTaskExecuterManager(TaskExecuterManager taskExecuterManager) {
+		this.taskExecuterManager = taskExecuterManager;
+	}
+
+	public TaskDispatcherManager getTaskDispatcherManager() {
 		return taskDispatcherManager;
 	}
 

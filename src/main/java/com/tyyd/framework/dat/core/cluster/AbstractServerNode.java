@@ -26,7 +26,7 @@ public abstract class AbstractServerNode<T extends Node, App extends AppContext>
     private HeartBeatMonitor heartBeatMonitor;
     
     protected void remotingStart() {
-    	heartBeatMonitor.start();
+    	//heartBeatMonitor.start();
         remotingServer.start();
         remotingClient.start();
         RemotingProcessor defaultProcessor = getDefaultProcessor();
@@ -46,7 +46,8 @@ public abstract class AbstractServerNode<T extends Node, App extends AppContext>
 
     protected void remotingStop() {
         remotingServer.shutdown();
-        heartBeatMonitor.stop();
+        remotingClient.shutdown();
+       // heartBeatMonitor.stop();
     }
 
     @Override

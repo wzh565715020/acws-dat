@@ -56,7 +56,6 @@ public abstract class Recycler<T> {
         private int size;
         private final Map<T, Boolean> map = new IdentityHashMap<T, Boolean>(INITIAL_CAPACITY);
 
-        @SuppressWarnings({"unchecked", "SuspiciousArrayCast"})
         Stack(Recycler<T> parent, Thread thread) {
             this.parent = parent;
             this.thread = thread;

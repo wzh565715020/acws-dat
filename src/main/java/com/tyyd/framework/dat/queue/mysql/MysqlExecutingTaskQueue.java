@@ -49,15 +49,14 @@ public class MysqlExecutingTaskQueue extends AbstractMysqlTaskExecuteQueue imple
     }
 
     @Override
-    public TaskPo getTask(String taskTrackerNode, String taskId) {
+    public List<TaskPo> getTaskByTaskId(String taskId) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
                 .where("task_id = ?", taskId)
-                .and("task_execute_node = ?", taskTrackerNode)
-                .single(RshHolder.TASK_PO_RSH);
+                .list(RshHolder.TASK_PO_LIST_RSH);
     }
 
     @Override
@@ -74,4 +73,5 @@ public class MysqlExecutingTaskQueue extends AbstractMysqlTaskExecuteQueue imple
     protected String getTableName() {
         return TaskQueueUtils.EXECUTING_TASK_QUEUE;
     }
+
 }

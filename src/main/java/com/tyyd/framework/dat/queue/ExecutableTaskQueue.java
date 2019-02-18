@@ -13,25 +13,27 @@ public interface ExecutableTaskQueue extends TaskQueueInterface{
     /**
      * 入队列
      */
-    boolean add(TaskPo jobPo);
+    boolean add(TaskPo taskPo);
 
     /**
      * 出队列
      */
-    boolean remove(String jobId);
+    boolean remove(String id);
 
     /**
      * reset , runnable
      */
-    void resume(TaskPo jobPo);
+    void resume(TaskPo taskPo);
 
     /**
      * 得到死任务
      */
     List<TaskPo> getDeadJob(long deadline);
+    
+    List<TaskPo> getTaskByTaskId(String taskId);
 
     /**
      * 得到JobPo
      */
-    TaskPo getTask(String taskId);
+    TaskPo getTask(String id);
 }

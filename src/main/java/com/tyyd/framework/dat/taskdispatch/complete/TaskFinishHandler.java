@@ -21,7 +21,6 @@ import com.tyyd.framework.dat.core.support.CronExpressionUtils;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.core.support.TaskUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
-import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;

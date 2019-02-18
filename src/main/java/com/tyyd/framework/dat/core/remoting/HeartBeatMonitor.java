@@ -181,13 +181,10 @@ public class HeartBeatMonitor {
 	private void check(Node taskExecuter) {
 		// 每个taskExecuter 都要发送心跳
 		if (beat(remotingClient, taskExecuter.getAddress())) {
-			remotingClient.addTaskExecuter(taskExecuter);
 			appContext.getEventCenter().publishAsync(new EventInfo(EcTopic.TASK_EXECUTER_AVAILABLE));
 			stopFastPing();
 			startPing();
-		} else {
-			remotingClient.removeTaskExecuter(taskExecuter);
-		}
+		} 
 	}
 
 	/**

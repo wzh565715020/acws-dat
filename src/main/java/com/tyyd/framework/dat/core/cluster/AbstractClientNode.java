@@ -42,7 +42,6 @@ public abstract class AbstractClientNode<T extends Node, Context extends AppCont
     protected abstract RemotingProcessor getDefaultProcessor();
 
     protected void remotingStop() {
-       
         remotingClient.shutdown();
         remotingServer.shutdown();
     }

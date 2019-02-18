@@ -99,7 +99,7 @@ public class TaskPushMachine {
 	}
 
 	public void stop() {
-		if (taskPushers.isEmpty()) {
+		if (taskPushers == null || taskPushers.isEmpty()) {
 			return;
 		}
 		for (TaskPusher taskPusher : taskPushers) {

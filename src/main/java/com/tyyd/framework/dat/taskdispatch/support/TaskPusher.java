@@ -91,7 +91,6 @@ public class TaskPusher {
 				if (scheduledFuture == null) {
 					scheduledFuture = SCHEDULED_CHECKER.scheduleWithFixedDelay(worker, 1, taskPushFrequency,
 							TimeUnit.SECONDS);
-					
 				}
 				LOGGER.info("Start task push machine success!");
 			}
@@ -115,7 +114,7 @@ public class TaskPusher {
 	}
 
 	public void push() {
-		Node node = appContext.getRemotingClient().getTaskExecuterNode();
+		Node node = appContext.getTaskExecuterManager().getTaskExecuterNode();
 		if (node == null) {
 			if (LOGGER.isDebugEnabled()) {
 				LOGGER.debug("taskExecuter didn't have node.");

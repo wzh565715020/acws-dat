@@ -33,7 +33,8 @@ public interface ExecutingTaskQueue extends TaskQueueInterface {
     /**
      * 得到JobPo
      */
-    TaskPo getTask(String taskTrackerNodeGroup, String taskId);
+    List<TaskPo> getTaskByTaskId(String taskId);
 
-    TaskPo getTask(String jobId);
+    TaskPo getTask(String id);
+    
 }

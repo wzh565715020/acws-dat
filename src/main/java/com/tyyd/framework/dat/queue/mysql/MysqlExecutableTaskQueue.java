@@ -66,8 +66,19 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskExecuteQueue impl
                 .all()
                 .from()
                 .table(getTableName())
-                .where("task_id = ?", taskId)
+                .where("id = ?", taskId)
                 .single(RshHolder.TASK_PO_RSH);
     }
+
+	@Override
+	public List<TaskPo> getTaskByTaskId(String taskId) {
+		return new SelectSql(getSqlTemplate())
+                .select()
+                .all()
+                .from()
+                .table(getTableName())
+                .where("task_id = ?", taskId)
+                .list(RshHolder.TASK_PO_LIST_RSH);
+	}
 
 }
