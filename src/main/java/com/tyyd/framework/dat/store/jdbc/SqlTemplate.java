@@ -4,9 +4,6 @@ import com.tyyd.framework.dat.store.jdbc.dbutils.ResultSetHandler;
 
 import java.sql.SQLException;
 
-/**
- * @author   on 3/8/16.
- */
 public interface SqlTemplate {
 
     void createTable(final String sql) throws SQLException;

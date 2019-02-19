@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.exception;
 
-/**
- * @author   on 8/18/14.
- */
 public class RemotingSendException extends Exception{
 
 	private static final long serialVersionUID = -8901776781734789960L;

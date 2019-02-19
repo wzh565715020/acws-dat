@@ -8,9 +8,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- * @author   on 5/20/15.
- */
 class SqlTemplateImpl implements SqlTemplate {
 
     private final DataSource dataSource;

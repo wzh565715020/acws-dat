@@ -6,14 +6,21 @@ import com.tyyd.framework.dat.core.json.JSON;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.URLDecoder;
-import java.util.*;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
-/**
- * @author    on 2/17/16.
- */
 public class HttpCmdExecutor implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpCmdExecutor.class);

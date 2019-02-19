@@ -4,7 +4,6 @@ import java.util.Random;
 
 /**
  * copy from jdk1.7
- * author Doug Lea
  */
 public class ThreadLocalRandom extends Random {
     // same constants as Random, but must be redeclared because private

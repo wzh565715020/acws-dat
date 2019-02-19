@@ -7,9 +7,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * @author    on 2/17/16.
- */
 public class HttpCmdContext {
 
     private ReentrantLock lock = new ReentrantLock();

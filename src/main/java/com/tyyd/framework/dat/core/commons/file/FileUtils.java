@@ -2,13 +2,19 @@ package com.tyyd.framework.dat.core.commons.file;
 
 import com.tyyd.framework.dat.core.constant.Constants;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
+import java.io.Writer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
-/**
- * @author   on 3/6/15.
- */
 public class FileUtils {
 
     public static File createFileIfNotExist(File file) {

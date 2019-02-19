@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * 内部根据用户参数决定是否采用延迟批量刷盘的策略,来提高吞吐量
  *
- * @author   on 10/2/15.
  */
 public class SmartJobLogger implements TaskLogger {
 

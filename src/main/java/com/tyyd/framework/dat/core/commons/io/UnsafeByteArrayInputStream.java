@@ -2,9 +2,6 @@ package com.tyyd.framework.dat.core.commons.io;
 
 import java.io.InputStream;
 
-/**
- * @author  
- */
 public class UnsafeByteArrayInputStream extends InputStream {
 
     protected byte buf[];

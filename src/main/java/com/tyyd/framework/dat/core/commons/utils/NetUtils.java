@@ -1,14 +1,15 @@
 package com.tyyd.framework.dat.core.commons.utils;
 
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-/**
- * @author   on 7/23/14.
- */
 public class NetUtils {
 
     public static final String LOCALHOST = "127.0.0.1";

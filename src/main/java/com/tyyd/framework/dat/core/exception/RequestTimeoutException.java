@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.exception;
 
-/**
- * @author   on 5/30/15.
- */
 public class RequestTimeoutException extends RuntimeException {
 
 	private static final long serialVersionUID = 7216536669163975612L;

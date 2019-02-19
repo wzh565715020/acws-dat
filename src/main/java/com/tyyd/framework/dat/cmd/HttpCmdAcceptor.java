@@ -13,9 +13,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * @author    on 2/17/16.
- */
 public class HttpCmdAcceptor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpCmdAcceptor.class);

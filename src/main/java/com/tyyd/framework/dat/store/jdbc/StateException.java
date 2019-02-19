@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.store.jdbc;
 
-/**
- * @author   on 5/20/15.
- */
 public class StateException extends RuntimeException {
 
 	private static final long serialVersionUID = -1431221683278943387L;

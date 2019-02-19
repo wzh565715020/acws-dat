@@ -4,9 +4,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author   on 7/24/14.
- */
 @SuppressWarnings("rawtypes")
 public class ReflectionUtils {
 

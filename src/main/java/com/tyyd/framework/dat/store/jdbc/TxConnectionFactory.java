@@ -7,9 +7,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- * @author   on 5/20/15.
- */
 public class TxConnectionFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TxConnectionFactory.class);

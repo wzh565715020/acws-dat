@@ -5,9 +5,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
-/**
- * @author  
- */
 public class UnsafeByteArrayOutputStream extends OutputStream {
 
     protected byte buf[];

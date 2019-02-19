@@ -3,9 +3,6 @@ package com.tyyd.framework.dat.core.commons.utils;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * @author   on 11/9/15.
- */
 public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
     private static final long serialVersionUID = 1L;

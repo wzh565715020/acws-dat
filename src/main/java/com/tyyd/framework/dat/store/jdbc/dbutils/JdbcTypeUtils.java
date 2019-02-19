@@ -2,9 +2,6 @@ package com.tyyd.framework.dat.store.jdbc.dbutils;
 
 import java.util.Date;
 
-/**
- * @author   on 3/8/16.
- */
 public class JdbcTypeUtils {
 
     public static Long toTimestamp(Date date) {

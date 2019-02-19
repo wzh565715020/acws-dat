@@ -10,7 +10,6 @@ import java.util.StringTokenizer;
  * 格式化SQL
  * 来自hibernate更改
  *
- * @author   on 3/9/16.
  */
 public class SQLFormatter {
 

@@ -8,9 +8,6 @@ import org.mongodb.morphia.Morphia;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * @author   on 10/24/14.
- */
 public class DataStoreProvider {
 
     // 同一配置, 始终保持同一个连接

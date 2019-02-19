@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.commons.utils;
 
-/**
- * @author   on 5/18/15.
- */
 public class Holder<T> {
 
     private volatile T value;

@@ -5,9 +5,6 @@ import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author   on 10/26/15.
- */
 public class HttpCmdRequest {
 
     private String command;

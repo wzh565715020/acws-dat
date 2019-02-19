@@ -3,9 +3,6 @@ package com.tyyd.framework.dat.core.commons.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author   on 8/28/14.
- */
 public class ListUtils {
 
     /**

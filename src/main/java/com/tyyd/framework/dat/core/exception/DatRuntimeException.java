@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.exception;
 
-/**
- * @author   on 3/2/16.
- */
 public class DatRuntimeException extends RuntimeException {
 
     public DatRuntimeException() {

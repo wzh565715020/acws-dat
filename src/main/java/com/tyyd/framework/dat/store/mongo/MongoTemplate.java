@@ -14,9 +14,6 @@ import org.mongodb.morphia.query.QueryImpl;
 import org.mongodb.morphia.query.UpdateOperations;
 import org.mongodb.morphia.query.UpdateResults;
 
-/**
- * @author   on 5/28/15.
- */
 public class MongoTemplate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoTemplate.class);

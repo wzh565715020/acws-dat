@@ -2,7 +2,6 @@ package com.tyyd.framework.dat.core.logger.support;
 
 /**
  * 来自 slf4j
- * @author   on 5/19/15.
  */
 public class FormattingTuple {
 

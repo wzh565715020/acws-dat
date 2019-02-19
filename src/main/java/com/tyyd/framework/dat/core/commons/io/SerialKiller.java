@@ -1,5 +1,10 @@
 package com.tyyd.framework.dat.core.commons.io;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InvalidClassException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 /*
  * SerialKiller.java
  *
@@ -33,7 +38,6 @@ package com.tyyd.framework.dat.core.commons.io;
  * @see https://github.com/ikkisoft/SerialKiller
  * @see http://www.infoq.com/cn/articles/java-deserialization-nsfocus
  */
-import java.io.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -6,9 +6,6 @@ import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import java.net.URLEncoder;
 import java.util.Map;
 
-/**
- * @author   on 10/26/15.
- */
 public class HttpCmdClient {
 
     /**

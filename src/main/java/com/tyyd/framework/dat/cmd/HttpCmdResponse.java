@@ -2,9 +2,6 @@ package com.tyyd.framework.dat.cmd;
 
 import java.io.Serializable;
 
-/**
- * @author   on 2/17/16.
- */
 public class HttpCmdResponse implements Serializable {
 
     private boolean success = false;

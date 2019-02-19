@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.biz.logger;
 
-/**
- * @author   on 5/21/15.
- */
 public class JobLogException extends RuntimeException {
 
 	private static final long serialVersionUID = -7907389604614654285L;

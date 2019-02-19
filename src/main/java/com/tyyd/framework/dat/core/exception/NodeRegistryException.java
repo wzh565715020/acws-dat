@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.exception;
 
-/**
- * @author   on 5/17/15.
- */
 public class NodeRegistryException extends RuntimeException {
 
 	private static final long serialVersionUID = 3113597129620580907L;

@@ -4,9 +4,6 @@ package com.tyyd.framework.dat.core.commons.utils;
 import com.tyyd.framework.dat.core.logger.Logger;
 import com.tyyd.framework.dat.core.logger.LoggerFactory;
 
-/**
- * @author   on 9/26/15.
- */
 public class QuietUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuietUtils.class);

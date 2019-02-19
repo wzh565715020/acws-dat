@@ -1,8 +1,5 @@
 package com.tyyd.framework.dat.core.cmd;
 
-/**
- * @author   on 10/27/15.
- */
 public interface HttpCmdNames {
 
     String HTTP_CMD_LOAD_JOB = "job_load_cmd";

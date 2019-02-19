@@ -8,9 +8,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.regex.Pattern;
 
-/**
- * @author   on 7/24/14.
- */
 public final class StringUtils {
 
     private StringUtils() {

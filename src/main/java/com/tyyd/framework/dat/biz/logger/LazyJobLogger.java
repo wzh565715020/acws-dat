@@ -14,7 +14,12 @@ import com.tyyd.framework.dat.core.support.NodeShutdownHook;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -23,7 +28,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 1. 内存的日志量超过了设置的阀值
  * 2. 每3S检查一次内存中是否有日志,如果有就那么刷盘
  *
- * @author   on 10/2/15.
  */
 public class LazyJobLogger implements TaskLogger {
 

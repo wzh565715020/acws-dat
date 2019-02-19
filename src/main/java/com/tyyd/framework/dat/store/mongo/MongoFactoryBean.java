@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author   on 8/8/14.
  *         Mongo 工厂类
  */
 public class MongoFactoryBean {
