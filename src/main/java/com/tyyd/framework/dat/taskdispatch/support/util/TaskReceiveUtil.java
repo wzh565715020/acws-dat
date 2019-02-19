@@ -41,7 +41,7 @@ public class TaskReceiveUtil {
 				return;
 			}
 			// 设置 id
-			taskPo.setId(idGenerator.generate(taskPo));
+			taskPo.setId(idGenerator.generate());
 
 			// 添加任务
 			addJob(taskPo);

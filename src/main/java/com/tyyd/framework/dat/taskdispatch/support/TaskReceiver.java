@@ -76,7 +76,7 @@ public class TaskReceiver {
                 taskPo.setSubmitNode(request.getIdentity());
             }
             // 设置 jobId
-            taskPo.setId(idGenerator.generate(taskPo));
+            taskPo.setId(idGenerator.generate());
 
             // 添加任务
             addJob(taskPo);
@@ -139,7 +139,7 @@ public class TaskReceiver {
 			List<TaskPo> taskPos = appContext.getTaskQueue().pageSelect(taskQueueReq).getRows();
 			for (TaskPo taskPo : taskPos) {
 				if (taskPo.getId() == null) {
-					 taskPo.setId(idGenerator.generate(taskPo));
+					 taskPo.setId(idGenerator.generate());
 				}
 				addJob(taskPo);
 			}
