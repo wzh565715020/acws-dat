@@ -15,6 +15,7 @@ public class TaskExecuterNode extends Node {
 
 	public TaskExecuterNode() {
         this.setNodeType(NodeType.TASK_EXECUTER);
+        this.addListenNodeType(NodeType.TASK_DISPATCH);
     }
 
 }

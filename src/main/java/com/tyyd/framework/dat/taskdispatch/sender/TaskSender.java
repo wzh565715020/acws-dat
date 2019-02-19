@@ -32,9 +32,7 @@ public class TaskSender {
 		// 取一个可运行的task
 		final TaskPo taskPo = preLoader.take();
 		if (taskPo == null) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Task push failed: no Task!identity " + taskExecuterIdentity);
-			}
+			LOGGER.info("Task push failed: no Task!identity:" + taskExecuterIdentity + "    poolId:" + preLoader.getPoolId());
 			return new SendResult(false, TaskPushResult.NO_TASK);
 		}
 		PoolQueueReq poolQueueReq = new PoolQueueReq();
@@ -53,8 +51,9 @@ public class TaskSender {
 		taskPo.setTaskExecuteNode(taskExecuterIdentity);
 		taskPo.setIsRunning(1);
 		appContext.getExecutingTaskQueue().add(taskPo);
-		appContext.getExecutableTaskQueue().remove(taskPo.getId());
-
+		if (!taskPo.isCron() && !taskPo.isRepeatable()) {
+			appContext.getExecutableTaskQueue().remove(taskPo.getId());
+		}
 		SendResult sendResult = invoker.invoke(taskPo);
 
 		if (sendResult.isSuccess()) {

@@ -114,11 +114,10 @@ public class TaskPusher {
 	}
 
 	public void push() {
+		LOGGER.info(appContext.getConfig().getIdentity() + "分发任务开始");
 		Node node = appContext.getTaskExecuterManager().getTaskExecuterNode();
 		if (node == null) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("taskExecuter didn't have node.");
-			}
+			LOGGER.info("taskExecuter didn't have node.");
 			return;
 		}
 		String identity = node.getIdentity();
@@ -126,9 +125,7 @@ public class TaskPusher {
 		if (availableThreads == 0) {
 			return;
 		}
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("taskTrackerIdentity:{} , availableThreads:{}", identity, availableThreads);
-		}
+		LOGGER.info("taskTrackerIdentity:{} , availableThreads:{}", identity, availableThreads);
 		// 推送任务
 		TaskPushResult result = send(appContext.getRemotingClient(), node);
 		switch (result) {
@@ -147,6 +144,7 @@ public class TaskPusher {
 		default:
 			break;
 		}
+		LOGGER.info(appContext.getConfig().getIdentity() + "分发任务结束");
 	}
 
 	/**
@@ -219,9 +217,7 @@ public class TaskPusher {
 	}
 
 	private void rollBackData(TaskPo taskPo) {
-		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("task push failed!" + ", identity=" + taskPo.getTaskExecuteNode() + ", task=" + taskPo);
-		}
+		LOGGER.info("task push failed!" + ", identity=" + taskPo.getTaskExecuteNode() + ", task=" + taskPo);
 		// 队列切回来
 		try {
 			taskPo.setUpdateDate(SystemClock.now());

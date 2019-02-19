@@ -4,6 +4,9 @@ package com.tyyd.framework.dat.taskdispatch.processor;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.tyyd.framework.dat.core.protocol.command.TaskCompletedRequest;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandException;
@@ -19,6 +22,8 @@ import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
  */
 public class TaskCompletedProcessor extends AbstractRemotingProcessor {
 
+	private final Logger LOGGER = LoggerFactory.getLogger(TaskCompletedProcessor.class);
+	
     private List<TaskCompletedBiz> bizChain;
 
     public TaskCompletedProcessor(final TaskDispatcherAppContext appContext) {
@@ -34,7 +39,7 @@ public class TaskCompletedProcessor extends AbstractRemotingProcessor {
             throws RemotingCommandException {
 
         TaskCompletedRequest requestBody = request.getBody();
-
+        LOGGER.info("获取到反馈" + requestBody);
         for (TaskCompletedBiz biz : bizChain) {
             RemotingCommand remotingCommand = biz.doBiz(requestBody);
             if (remotingCommand != null) {

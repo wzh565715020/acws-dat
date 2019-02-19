@@ -36,4 +36,8 @@ public interface ExecutableTaskQueue extends TaskQueueInterface{
      * 得到JobPo
      */
     TaskPo getTask(String id);
+
+	int incRepeatedCount(String taskId);
+
+	boolean update(TaskPo taskPo);
 }

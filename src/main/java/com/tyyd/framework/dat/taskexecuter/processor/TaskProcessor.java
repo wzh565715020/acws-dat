@@ -63,7 +63,7 @@ public class TaskProcessor extends AbstractProcessor {
 
 		// JobTracker 分发来的 task
 		final TaskMeta taskMeta = requestBody.getTaskMeta();
-
+		LOGGER.info("收到task："  + taskMeta);
 		try {
 			appContext.getRunnerPool().execute(taskMeta, taskRunnerCallback);
 		} catch (NoAvailableTaskRunnerException e) {
@@ -102,9 +102,7 @@ public class TaskProcessor extends AbstractProcessor {
 				if (node == null) {
 					throw new Exception("调度中心节点不存在，不能发送");
 				}
-				ChannelWrapper chanelWrapper = appContext.getChannelManager().getChannel(NodeType.TASK_DISPATCH,
-						node.getIdentity());
-				appContext.getRemotingClient().invokeAsync(chanelWrapper == null ? null : chanelWrapper.getChannel(),
+				appContext.getRemotingClient().invokeAsync(node.getAddress(),
 						request, new AsyncCallback() {
 							@Override
 							public void operationComplete(ResponseFuture responseFuture) {
@@ -125,7 +123,7 @@ public class TaskProcessor extends AbstractProcessor {
 									latch.countDown();
 								}
 							}
-						}, node.getAddress());
+						});
 
 				try {
 					latch.await(Constants.LATCH_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);

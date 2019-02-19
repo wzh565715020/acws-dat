@@ -55,7 +55,7 @@ public class MysqlPreLoader extends AbstractPreLoader {
                     .from()
                     .table(getTableName())
                     .where("is_running = ?", 0)
-                    .where("pool_id = ?", poolId)
+                    .and("pool_id = ?", poolId)
                     .and("trigger_time< ?", SystemClock.now())
                     .orderBy()
                     .column("trigger_time", OrderByType.ASC)

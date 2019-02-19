@@ -9,4 +9,6 @@ public interface PreLoader {
 	public boolean lockTask(String id, String taskExecuterIdentity);
 
 	public void stop();
+	
+	public String getPoolId();
 }

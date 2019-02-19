@@ -9,6 +9,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.tyyd.framework.dat.admin.request.PoolQueueReq;
+import com.tyyd.framework.dat.admin.response.PaginationRsp;
+import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
@@ -46,13 +50,27 @@ public class TaskPoolChecker {
 					}
 				}, checkPeriodSeconds, checkPeriodSeconds, TimeUnit.SECONDS);
 			}
-			LOGGER.info("Executing dead task checker started!");
+			LOGGER.info("Executing task pool checker started!");
 		} catch (Throwable e) {
 			LOGGER.error("Executing dead task checker start failed!", e);
 		}
 	}
 
 	private void checkAndDistribute() {
+		PoolQueueReq request = new PoolQueueReq();
+		request.setLimit(Integer.MAX_VALUE);
+		PaginationRsp<PoolPo> paginationRsp = appContext.getPoolQueue().pageSelect(request);
+		if (paginationRsp !=null && paginationRsp.getRows() != null && ! paginationRsp.getRows().isEmpty()) {
+			List<PoolPo> list = paginationRsp.getRows();
+			for (PoolPo poolPo : list) {
+				if(poolPo.getNodeId() != null && !poolPo.getNodeId().equals("")&&!appContext.getTaskDispatcherManager().containNode(poolPo.getNodeId())) {
+					Node node = new Node();
+					node.setIdentity(poolPo.getNodeId());
+					appContext.getTaskDispatcherManager().addRemoveTaskDispatcher(node);
+				}
+			}
+		}
+		appContext.getTaskDispatcherManager().removeTaskDispatcher();
 		List<PoolPo> poolPos = appContext.getPoolQueue().getUndistributedPool();
 		if (poolPos == null || poolPos.isEmpty()) {
 			return;

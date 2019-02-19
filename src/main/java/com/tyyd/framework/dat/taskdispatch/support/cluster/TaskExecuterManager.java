@@ -24,7 +24,6 @@ public class TaskExecuterManager {
 	// 单例
 	private TaskDispatcherAppContext appContext;
 
-
 	public TaskExecuterManager(TaskDispatcherAppContext appContext) {
 		this.appContext = appContext;
 	}
@@ -39,8 +38,8 @@ public class TaskExecuterManager {
 		request.setLimit(Integer.MAX_VALUE);
 		PaginationRsp<TaskPo> paginationRsp = appContext.getExecutingTaskQueue().pageSelect(request);
 		if (paginationRsp == null || paginationRsp.getRows()== null || paginationRsp.getRows().isEmpty()) {
-			LOGGER.info("没有空闲任务执行节点");
-			return null;
+			LoadBalance loadBalance = ServiceLoader.load(LoadBalance.class, appContext.getConfig());
+			return loadBalance.select(taskExecuters, "");			
 		}
 		List<TaskPo> executingTasks = paginationRsp.getRows();
 		Map<String, AtomicInteger> taskExcuterMap = new HashMap<String, AtomicInteger>();

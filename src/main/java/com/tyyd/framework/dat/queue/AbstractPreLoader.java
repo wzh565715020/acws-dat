@@ -19,6 +19,8 @@ public abstract class AbstractPreLoader implements PreLoader {
 	private int loadSize;
 	// 预取阀值
 	private double factor;
+	
+	private String poolId;
 
 	private TaskPriorityBlockingQueue queue = null;
 	
@@ -34,6 +36,7 @@ public abstract class AbstractPreLoader implements PreLoader {
 			loadSize = appContext.getConfig().getParameter("task.preloader.size", 300);
 			factor = appContext.getConfig().getParameter("task.preloader.factor", 0.2);
 			queue = new TaskPriorityBlockingQueue(loadSize);
+			this.poolId = poolId;
 			scheduledFuture = LOAD_EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
 				@Override
 				public void run() {
@@ -73,6 +76,11 @@ public abstract class AbstractPreLoader implements PreLoader {
 
 	public TaskPo take() {
 		return queue.poll();
+	}
+	
+    @Override
+	public String getPoolId() {
+		return poolId;
 	}
 
 	/**

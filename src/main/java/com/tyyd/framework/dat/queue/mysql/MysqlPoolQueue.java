@@ -75,7 +75,7 @@ public  class MysqlPoolQueue extends AbstractMysqlPoolQueue implements PoolQueue
 			throw new JdbcException("Only allow update by poolId");
 		}
 		return new UpdateSql(getSqlTemplate()).update().table(getTableName())
-				.setOnNotNull("available_count", "available_count + (" + request.getChangeAvailableCount() + ")")
+				.setOnColumnValue("available_count", "available_count + (" + request.getChangeAvailableCount() + ")")
 				.setOnNotNull("update_date", request.getUpdateDate())
 				.setOnNotNull("update_userid", request.getUpdateUserId()).where("pool_id = ?", request.getPoolId())
 				.doUpdate() >= 1;
@@ -87,9 +87,9 @@ public  class MysqlPoolQueue extends AbstractMysqlPoolQueue implements PoolQueue
 			throw new JdbcException("Only allow update by poolId");
 		}
 		return new UpdateSql(getSqlTemplate()).update().table(getTableName())
-				.setOnNotNull("available_count", "available_count + (" + request.getChangeAvailableCount() + ")")
+				.setOnColumnValue("available_count", "available_count + (" + request.getChangeAvailableCount() + ")")
 				.setOnNotNull("update_date", request.getUpdateDate())
-				.setOnNotNull("update_userid", request.getUpdateUserId()).where("pool_id = ?", request.getPoolId()).where("and available_count > 0")
+				.setOnNotNull("update_userid", request.getUpdateUserId()).where("pool_id = ?", request.getPoolId()).and("available_count > 0")
 				.doUpdate() == 1;
 	}
     @Override
@@ -99,7 +99,7 @@ public  class MysqlPoolQueue extends AbstractMysqlPoolQueue implements PoolQueue
                 .all()
                 .from()
                 .table(getTableName())
-                .where("node_id in (select node_id from " + getTableName() +  " group by node_id" + " having count(*) > " + average)
+                .where("node_id in (select node_id from " + getTableName() +  " group by node_id" + " having count(*) >= " + average + ")")
                 .list(RshHolder.POOL_PO_LIST_RSH);
     }
     @Override

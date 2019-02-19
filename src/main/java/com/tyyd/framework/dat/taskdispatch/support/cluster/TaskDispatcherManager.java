@@ -17,11 +17,15 @@ import com.tyyd.framework.dat.core.commons.concurrent.ConcurrentHashSet;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
+
 public class TaskDispatcherManager {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaskDispatcherManager.class);
 	// 单例
 	private final ConcurrentHashSet<Node> taskDispatcherSet = new ConcurrentHashSet<Node>();
+	
+	private final ConcurrentHashSet<Node> taskDispatcherRemovedSet = new ConcurrentHashSet<Node>();
+	
 	private TaskDispatcherAppContext appContext;
 
 	private final ReentrantLock globalLock = new ReentrantLock();
@@ -29,7 +33,14 @@ public class TaskDispatcherManager {
 	public TaskDispatcherManager(TaskDispatcherAppContext appContext) {
 		this.appContext = appContext;
 	}
-
+	public boolean containNode(String nodeId) {
+		for (Node node : taskDispatcherSet) {
+			if (node.getIdentity().equals(nodeId)) {
+				return true;
+			}
+		}
+		return false;
+	}
 	/**
 	 * 添加节点
 	 */
@@ -39,7 +50,7 @@ public class TaskDispatcherManager {
 			return;
 		}
 		taskDispatcherSet.add(node);
-		if (appContext.getMasterNode().getIdentity().equals(appContext.getConfig().getIdentity())) {
+		if (appContext.getMasterNode() != null && appContext.getMasterNode().getIdentity().equals(appContext.getConfig().getIdentity())) {
 			addNodeRedistribution(node);
 		}
 	}
@@ -50,8 +61,9 @@ public class TaskDispatcherManager {
 	 * @param node
 	 */
 	public void removeNode(Node node) {
+		taskDispatcherRemovedSet.add(node);
 		taskDispatcherSet.remove(node);
-		if (appContext.getMasterNode().getIdentity().equals(appContext.getConfig().getIdentity())) {
+		if (appContext.getMasterNode() != null && appContext.getMasterNode().getIdentity().equals(appContext.getConfig().getIdentity())) {
 			removeNodeRedistribution(node);
 		}
 	}
@@ -147,13 +159,30 @@ public class TaskDispatcherManager {
 			PoolQueueReq request = new PoolQueueReq();
 			request.setNodeId(node.getIdentity());
 			appContext.getPoolQueue().clearNodeByNodeId(request);
+			taskDispatcherRemovedSet.remove(node);
 		} finally {
 			LOGGER.info("删除任务调度中心节点" + node.getIdentity() +"结束");
 			globalLock.unlock();
 		}
 	}
 
+	public void removeTaskDispatcher() {
+		if (taskDispatcherRemovedSet.isEmpty()) {
+			return;
+		}
+		taskDispatcherRemovedSet.removeAll(taskDispatcherSet);
+		if (!taskDispatcherRemovedSet.isEmpty()) {
+			for (Node node : taskDispatcherRemovedSet) {
+				removeNodeRedistribution(node);
+			}
+		}
+	}
+	public void addRemoveTaskDispatcher(Node node) {
+		taskDispatcherRemovedSet.add(node);
+	}
 	public void poolChangeRedistribution() {
+		
+		
 		globalLock.lock();
 		LOGGER.info("删除任务调度中心节点，重新分配任务线程池开始");
 		try {
@@ -166,14 +195,32 @@ public class TaskDispatcherManager {
 			PaginationRsp<PoolPo> paginationRsp = appContext.getPoolQueue().pageSelect(request);
 			List<PoolPo> distributedPoolPos = paginationRsp.getRows();
 			Map<String, List<PoolPo>> nodeMap = new HashMap<String, List<PoolPo>>();
+			boolean hasWfp = false;
+			String defaultId = "default";
 			for (PoolPo poolPo : distributedPoolPos) {
 				String nodeId = poolPo.getNodeId();
+				if (nodeId == null || "".equals(nodeId)) {
+					nodeId = defaultId;
+					hasWfp = true;
+				}
 				if (nodeMap.containsKey(nodeId)) {
 					nodeMap.get(nodeId).add(poolPo);
 				}else {
 					nodeMap.put(nodeId, new ArrayList<PoolPo>());
 					nodeMap.get(nodeId).add(poolPo);
 				}
+			}
+			
+			if (hasWfp && !taskDispatcherSet.isEmpty()) {
+				for(PoolPo poolPo : nodeMap.get(defaultId)) {
+					PoolQueueReq  updateReq = new PoolQueueReq();
+					updateReq.setPoolId(poolPo.getPoolId());
+					updateReq.setNodeId(taskDispatcherSet.iterator().next().getIdentity());
+					appContext.getPoolQueue().updateByPoolId(updateReq);
+				}
+				return;
+			}else if(taskDispatcherSet.isEmpty()) {
+				return;
 			}
 			List<PoolNum> list = new ArrayList<PoolNum>();
 			

@@ -18,6 +18,7 @@ public class TaskDomainConverter {
         taskPo.setTaskName(task.getTaskName());
         taskPo.setTaskType(task.getTaskType());
         taskPo.setParams(task.getParams());
+        taskPo.setPoolId(task.getPoolId());
         taskPo.setCreateDate(SystemClock.now());
         taskPo.setUpdateDate(taskPo.getCreateDate());
         taskPo.setSubmitNode(task.getSubmitNode());

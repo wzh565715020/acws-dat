@@ -1,6 +1,7 @@
 package com.tyyd.framework.dat.queue.mysql;
 
 import com.tyyd.framework.dat.core.support.TaskQueueUtils;
+import com.tyyd.framework.dat.core.constant.RunningEnum;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
@@ -39,7 +40,7 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskExecuteQueue impl
         new UpdateSql(getSqlTemplate())
                 .update()
                 .table(getTableName())
-                .set("is_running", false)
+                .set("is_running", RunningEnum.NOT_RUNNING.getCode())
                 .set("task_execute_node", null)
                 .set("update_date", SystemClock.now())
                 .where("id = ?", taskPo.getId())
@@ -54,7 +55,7 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskExecuteQueue impl
                 .all()
                 .from()
                 .table(getTableName())
-                .where("is_running = ?", true)
+                .where("is_running = ?", RunningEnum.RUNNING.getCode())
                 .and("update_date < ?", deadline)
                 .list(RshHolder.TASK_PO_LIST_RSH);
     }
@@ -81,4 +82,35 @@ public class MysqlExecutableTaskQueue extends AbstractMysqlTaskExecuteQueue impl
                 .list(RshHolder.TASK_PO_LIST_RSH);
 	}
 
+    @Override
+    public int incRepeatedCount(String id) {
+        while (true) {
+            TaskPo taskPo = getTask(id);
+            if (taskPo == null) {
+                return -1;
+            }
+            if (new UpdateSql(getSqlTemplate())
+                    .update()
+                    .table(getTableName())
+                    .set("repeated_count", taskPo.getRepeatedCount() + 1)
+                    .where("id = ?", id)
+                    .and("repeated_count = ?", taskPo.getRepeatedCount())
+                    .doUpdate() == 1) {
+                return taskPo.getRepeatedCount() + 1;
+            }
+        }
+    }
+
+	@Override
+	public boolean update(TaskPo taskPo) {
+		return new UpdateSql(getSqlTemplate())
+        .update()
+        .table(getTableName())
+        .set("is_running", RunningEnum.NOT_RUNNING.getCode())
+        .set("task_execute_node", taskPo.getTaskExecuteNode())
+        .set("trigger_time", taskPo.getTriggerTime())
+        .set("update_date", SystemClock.now())
+        .where("id = ?", taskPo.getId())
+        .doUpdate() == 1;
+	}
 }

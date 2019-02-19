@@ -50,6 +50,21 @@ public class UpdateSql {
         }
         return set(column, value);
     }
+    public UpdateSql setOnColumnValue(String column, String value) {
+        if (value == null) {
+            return this;
+        }
+        return setColumnValue(column, value);
+    }
+    public UpdateSql setColumnValue(String column, String value) {
+        if (params.size() > 0) {
+            sql.append(",");
+        } else {
+            sql.append(" SET ");
+        }
+        sql.append("`").append(column).append("`").append(" = ").append(value);
+        return this;
+    }
     public UpdateSql setByColumn(String column, String value) {
         if (params.size() > 0) {
             sql.append(",");

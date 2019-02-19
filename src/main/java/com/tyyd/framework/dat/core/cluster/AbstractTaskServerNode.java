@@ -200,6 +200,31 @@ public abstract class AbstractTaskServerNode<T extends Node, Context extends App
 		if (registry instanceof AbstractRegistry) {
 			((AbstractRegistry) registry).setNode(node);
 		}
+		registry.addDataListener(MASTER, new DataListener() {
+
+			@Override
+			public void dataDeleted(String dataPath) throws Exception {
+				Node node = appContext.getMasterNode();
+				if (node != null && node.getIdentity().equals(appContext.getNode().getIdentity())) {// 若之前master为本机,则立即抢主,否则延迟5秒抢主(防止小故障引起的抢主可能导致的网络数据风暴)
+					takeMaster();
+				} else {
+					delayExector.schedule(new Runnable() {
+						@Override
+						public void run() {
+							takeMaster();
+						}
+					}, 10, TimeUnit.SECONDS);
+				}
+			}
+
+			@Override
+			public void dataChange(String dataPath, Object data) throws Exception {
+				if (data instanceof Node) {
+					appContext.setMasterNode((Node) data);
+					notifyListener((Node) data);
+				}
+			}
+		});
 		registry.subscribe(node, new NotifyListener() {
 			private final Logger NOTIFY_LOGGER = LoggerFactory.getLogger(NotifyListener.class);
 
@@ -234,31 +259,7 @@ public abstract class AbstractTaskServerNode<T extends Node, Context extends App
 				}
 			}
 		});
-		registry.addDataListener(MASTER, new DataListener() {
 
-			@Override
-			public void dataDeleted(String dataPath) throws Exception {
-				Node node = appContext.getMasterNode();
-				if (node != null && node.getIdentity().equals(appContext.getNode().getIdentity())) {// 若之前master为本机,则立即抢主,否则延迟5秒抢主(防止小故障引起的抢主可能导致的网络数据风暴)
-					takeMaster();
-				} else {
-					delayExector.schedule(new Runnable() {
-						@Override
-						public void run() {
-							takeMaster();
-						}
-					}, 10, TimeUnit.SECONDS);
-				}
-			}
-
-			@Override
-			public void dataChange(String dataPath, Object data) throws Exception {
-				if (data instanceof Node) {
-					appContext.setMasterNode((Node) data);
-					notifyListener((Node) data);
-				}
-			}
-		});
 		Node newNode = NodeFactory.deepCopy(node);
 		Node registerNode = registry.getData(MASTER);
 		if (!registry.exists(MASTER) ||  registerNode == null) {

@@ -89,6 +89,7 @@ public class RshHolder {
         taskPo.setRepeatInterval(rs.getLong("repeat_interval"));
         taskPo.setId(rs.getString("id"));
         taskPo.setIsRunning(rs.getInt("is_running"));
+        taskPo.setPoolId(rs.getString("pool_id"));
         return taskPo;
     }
 
