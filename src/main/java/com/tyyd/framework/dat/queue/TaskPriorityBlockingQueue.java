@@ -157,5 +157,15 @@ public class TaskPriorityBlockingQueue {
             lock.unlock();
         }
     }
-
+    public void removeAll() {
+        final ReentrantLock lock = this.lock;
+        lock.lock();
+        try {
+        	 this.size = 0;
+        	 this.queue = new TaskPo[this.capacity];
+        	 this.ID_SET.clear();
+        } finally {
+            lock.unlock();
+        }
+    }
 }

@@ -5,5 +5,6 @@ public enum TaskPushResult {
     SUCCESS, //推送成功
     FAILED,      //推送失败
     SENT_ERROR,
-    NO_POOL
+    NO_POOL,//线程池枯竭
+    LOCK_FAIL //锁定失败
 }

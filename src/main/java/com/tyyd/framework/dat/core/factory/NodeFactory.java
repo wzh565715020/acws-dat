@@ -21,12 +21,6 @@ public class NodeFactory {
 			node.setThreads(config.getWorkThreads());
 			node.setAvailableThreads(config.getWorkThreads());
 			int listenPort = config.getListenPort();
-			try {
-				String port = IpPortUtil.getLocalPort();
-				listenPort = Integer.valueOf(port);
-			} catch (Exception e) {
-
-			}
 			node.setPort(listenPort);
 			node.setIdentity(config.getIdentity());
 			node.setClusterName(config.getClusterName());

@@ -18,56 +18,30 @@ import java.util.List;
 
 public class MysqlPreLoader extends AbstractPreLoader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MysqlPreLoader.class);
-    private SqlTemplate sqlTemplate;
+	private static final Logger LOGGER = LoggerFactory.getLogger(MysqlPreLoader.class);
+	
+	private SqlTemplate sqlTemplate;
 
-    public MysqlPreLoader(AppContext appContext,String poolId) {
-        super(appContext,poolId);
-        this.sqlTemplate = SqlTemplateFactory.create();
-    }
+	public MysqlPreLoader(AppContext appContext, String poolId) {
+		super(appContext, poolId);
+		this.sqlTemplate = SqlTemplateFactory.create();
+	}
 
-    @Override
-    public boolean lockTask(String id,
-                              String taskTrackerIdentity) {
-        try {
-            return new UpdateSql(sqlTemplate)
-                    .update()
-                    .table(getTableName())
-                    .set("is_running", 1)
-                    .set("task_execute_node", taskTrackerIdentity)
-                    .set("update_date", SystemClock.now())
-                    .where("id = ?", id)
-                    .and("is_running = ?", 0)
-                    .doUpdate() == 1;
-        } catch (Exception e) {
-            LOGGER.error("Error when lock task:" + e.getMessage(), e);
-            return false;
-        }
-    }
+	@Override
+	public boolean lockTask(String id, String taskTrackerIdentity) {
+		return new UpdateSql(sqlTemplate).update().table(getTableName()).set("is_running", 1)
+				.set("task_execute_node", taskTrackerIdentity).set("update_date", SystemClock.now()).where("id = ?", id)
+				.and("is_running = ?", 0).doUpdate() == 1;
+	}
 
+	@Override
+	protected List<TaskPo> load(String poolId, int loadSize) {
+		return new SelectSql(sqlTemplate).select().all().from().table(getTableName()).where("is_running = ?", 0)
+				.and("pool_id = ?", poolId).and("trigger_time< ?", SystemClock.now()).orderBy()
+				.column("trigger_time", OrderByType.ASC).limit(0, loadSize).list(RshHolder.TASK_PO_LIST_RSH);
+	}
 
-    @Override
-    protected List<TaskPo> load(String poolId,int loadSize) {
-        try {
-            return new SelectSql(sqlTemplate)
-                    .select()
-                    .all()
-                    .from()
-                    .table(getTableName())
-                    .where("is_running = ?", 0)
-                    .and("pool_id = ?", poolId)
-                    .and("trigger_time< ?", SystemClock.now())
-                    .orderBy()
-                    .column("trigger_time", OrderByType.ASC)
-                    .limit(0, loadSize)
-                    .list(RshHolder.TASK_PO_LIST_RSH);
-        } catch (Exception e) {
-            LOGGER.error("Error when load task:" + e.getMessage(), e);
-            return null;
-        }
-    }
-
-    private String getTableName() {
-        return TaskQueueUtils.getExecutableQueueName();
-    }
+	private String getTableName() {
+		return TaskQueueUtils.getExecutableQueueName();
+	}
 }

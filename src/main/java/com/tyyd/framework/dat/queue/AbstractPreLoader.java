@@ -14,8 +14,13 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class AbstractPreLoader implements PreLoader {
 
+	private final Logger LOGGER = LoggerFactory.getLogger(AbstractPreLoader.class);
+	
 	private int loadSize;
 	// 预取阀值
 	private double factor;
@@ -40,6 +45,7 @@ public abstract class AbstractPreLoader implements PreLoader {
 			scheduledFuture = LOAD_EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
 				@Override
 				public void run() {
+					LOGGER.info("线程池" + poolId + "获取任务开始");
 					if (queue.size() / loadSize < factor) {
 						// load
 						List<TaskPo> loads = load(poolId, loadSize - queue.size());
@@ -53,8 +59,9 @@ public abstract class AbstractPreLoader implements PreLoader {
 							}
 						}
 					}
+					LOGGER.info("线程池" + poolId + "获取任务结束");
 				}
-			}, 500, 500, TimeUnit.MILLISECONDS);
+			}, 5000, 5000, TimeUnit.MILLISECONDS);
 
 			NodeShutdownHook.registerHook(appContext, this.getClass().getName(), new Callable() {
 				@Override
@@ -69,6 +76,7 @@ public abstract class AbstractPreLoader implements PreLoader {
 
 	public void stop() {
 		if(start.compareAndSet(true, false)) {
+			queue.removeAll();
 			scheduledFuture.cancel(false);
 			LOAD_EXECUTOR_SERVICE.shutdown();
 		}

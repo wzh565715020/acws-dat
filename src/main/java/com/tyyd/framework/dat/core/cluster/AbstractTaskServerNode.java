@@ -154,9 +154,6 @@ public abstract class AbstractTaskServerNode<T extends Node, Context extends App
 		appContext.setCommandBodyWrapper(new CommandBodyWrapper(config));
 		appContext.setRegistryStatMonitor(new RegistryStatMonitor(appContext));
 
-		if (StringUtils.isEmpty(config.getIp())) {
-			config.setIp(NetUtils.getLocalHost());
-		}
 		node = NodeFactory.create(getNodeClass(), config);
 		config.setNodeType(node.getNodeType());
 		appContext.setNode(node);

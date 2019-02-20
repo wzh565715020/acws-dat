@@ -4,7 +4,7 @@ import com.tyyd.framework.dat.core.cluster.AbstractClientNode;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.ec.injvm.InjvmEventCenter;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
-import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
+import com.tyyd.framework.dat.taskexecuter.channel.TaskExecuterChannelManager;
 import com.tyyd.framework.dat.taskexecuter.cmd.TaskTerminateCmd;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterNode;
@@ -27,7 +27,7 @@ public class TaskExecuter extends AbstractClientNode<TaskExecuterNode, TaskExecu
         appContext.setRemotingServer(remotingServer);
         appContext.setRemotingClient(remotingClient);
         // channel 管理者
-        appContext.setChannelManager(new ChannelManager());
+        appContext.setChannelManager(new TaskExecuterChannelManager());
         appContext.setEventCenter(new InjvmEventCenter());
         // 设置 线程池
         appContext.setRunnerPool(new RunnerPool(appContext));

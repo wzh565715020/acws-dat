@@ -31,11 +31,11 @@ import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
 import com.tyyd.framework.dat.remoting.Channel;
+import com.tyyd.framework.dat.remoting.ChannelWrapper;
 import com.tyyd.framework.dat.remoting.ResponseFuture;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.remoting.protocol.RemotingProtos;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
-import com.tyyd.framework.dat.taskdispatch.channel.ChannelWrapper;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 import com.tyyd.framework.dat.taskdispatch.monitor.TaskDispatcherMStatReporter;
 
@@ -147,7 +147,7 @@ public class ExecutingDeadTaskChecker {
 	 */
 	private void askTimeoutTask(Channel channel, final List<TaskPo> taskPos) {
 		try {
-			RemotingClientDelegate remotingServer = appContext.getRemotingClient();
+			RemotingClientDelegate remotingclient = appContext.getRemotingClient();
 			List<String> ids = new ArrayList<String>(taskPos.size());
 			for (TaskPo taskPo : taskPos) {
 				ids.add(taskPo.getId());
@@ -156,7 +156,7 @@ public class ExecutingDeadTaskChecker {
 			requestBody.setIds(ids);
 			RemotingCommand request = RemotingCommand.createRequestCommand(TaskProtos.RequestCode.TASK_ASK.code(),
 					requestBody);
-			remotingServer.invokeAsync(channel, request, new AsyncCallback() {
+			remotingclient.invokeAsync(channel, request, new AsyncCallback() {
 				@Override
 				public void operationComplete(ResponseFuture responseFuture) {
 					RemotingCommand response = responseFuture.getResponseCommand();

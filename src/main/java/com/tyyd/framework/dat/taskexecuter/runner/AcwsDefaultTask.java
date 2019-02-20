@@ -28,7 +28,7 @@ public class AcwsDefaultTask implements AcwsTask {
 
 	@Override
 	public void doTask(Task taskInfo) {
-		LOGGER.info("默认执行" + taskInfo.getParams());
+		LOGGER.info("默认执行" + taskInfo);
 	}
 
 }

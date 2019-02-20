@@ -75,9 +75,10 @@ public  class MysqlPoolQueue extends AbstractMysqlPoolQueue implements PoolQueue
 			throw new JdbcException("Only allow update by poolId");
 		}
 		return new UpdateSql(getSqlTemplate()).update().table(getTableName())
-				.setOnColumnValue("available_count", "available_count + (" + request.getChangeAvailableCount() + ")")
 				.setOnNotNull("update_date", request.getUpdateDate())
-				.setOnNotNull("update_userid", request.getUpdateUserId()).where("pool_id = ?", request.getPoolId())
+				.setOnNotNull("update_userid", request.getUpdateUserId())
+				.setOnColumnValue("available_count", "available_count + (" + request.getChangeAvailableCount() + ")")
+				.where("pool_id = ?", request.getPoolId())
 				.doUpdate() >= 1;
 	}
 	

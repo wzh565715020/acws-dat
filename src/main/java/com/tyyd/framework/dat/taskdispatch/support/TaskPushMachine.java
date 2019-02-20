@@ -91,7 +91,9 @@ public class TaskPushMachine {
 			if (!poolIdSet.contains(runningPoolId)) {
 				TaskPusher taskPusher = getTaskPusher(runningPoolId);
 				if (taskPusher != null && taskPusher.getStart().get()) {
+					runningPoolIdSet.remove(runningPoolId);
 					taskPusher.stop();
+					taskPushers.remove(taskPusher);
 				}
 			}
 		}
@@ -99,12 +101,16 @@ public class TaskPushMachine {
 	}
 
 	public void stop() {
+		if (!start.compareAndSet(true, false)) {
+			return;
+		}
 		if (taskPushers == null || taskPushers.isEmpty()) {
 			return;
 		}
 		for (TaskPusher taskPusher : taskPushers) {
 			taskPusher.stop();
 		}
+		SCHEDULED_CHECKER.shutdown();
 	}
 
 	private TaskPusher getTaskPusher(String poolId) {

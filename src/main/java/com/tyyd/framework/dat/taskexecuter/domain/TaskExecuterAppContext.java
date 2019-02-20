@@ -4,7 +4,8 @@ import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
-import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
+import com.tyyd.framework.dat.taskdispatch.channel.TaskDispatchChannelManager;
+import com.tyyd.framework.dat.taskexecuter.channel.TaskExecuterChannelManager;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerFactory;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerPool;
 
@@ -15,7 +16,7 @@ public class TaskExecuterAppContext extends AppContext {
     private RemotingClientDelegate remotingClient;
     
     // channel manager
-    private ChannelManager channelManager;
+    private TaskExecuterChannelManager channelManager;
     
     // runner 线程池
     private RunnerPool runnerPool;
@@ -60,11 +61,11 @@ public class TaskExecuterAppContext extends AppContext {
 		this.remotingServer = remotingServer;
 	}
 
-	public ChannelManager getChannelManager() {
+	public TaskExecuterChannelManager getChannelManager() {
 		return channelManager;
 	}
 
-	public void setChannelManager(ChannelManager channelManager) {
+	public void setChannelManager(TaskExecuterChannelManager channelManager) {
 		this.channelManager = channelManager;
 	}
 

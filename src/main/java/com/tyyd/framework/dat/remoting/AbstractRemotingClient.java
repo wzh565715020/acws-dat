@@ -12,9 +12,8 @@ import com.tyyd.framework.dat.remoting.exception.RemotingSendRequestException;
 import com.tyyd.framework.dat.remoting.exception.RemotingTimeoutException;
 import com.tyyd.framework.dat.remoting.exception.RemotingTooMuchRequestException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
-import com.tyyd.framework.dat.taskdispatch.channel.ChannelWrapper;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
-
+import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 
 import java.net.SocketAddress;
 import java.util.Timer;
@@ -346,6 +345,27 @@ public abstract class AbstractRemotingClient extends AbstractRemoting implements
 	}
 	@Override
 	public void invokeAsync(TaskDispatcherAppContext appcontext,Node node, RemotingCommand request, long timeoutMillis, AsyncCallback asyncCallback)
+			throws InterruptedException, RemotingConnectException, RemotingTooMuchRequestException,
+			RemotingTimeoutException, RemotingSendRequestException {
+		String addr = node.getAddress();
+		final Channel channel = this.getAndCreateChannel(addr);
+		if (channel != null && channel.isConnected()) {
+			ChannelWrapper channelWrapper = new ChannelWrapper(channel, node.getNodeType(), node.getIdentity());
+			appcontext.getChannelManager().offerChannel(channelWrapper);
+			try {
+				this.invokeAsyncImpl(channel, request, timeoutMillis, asyncCallback);
+			} catch (RemotingSendRequestException e) {
+				LOGGER.warn("invokeAsync: send request exception, so close the channel[{}]", addr);
+				this.closeChannel(addr, channel);
+				throw e;
+			}
+		} else {
+			this.closeChannel(addr, channel);
+			throw new RemotingConnectException(addr);
+		}
+	}
+	@Override
+	public void invokeAsync(TaskExecuterAppContext appcontext,Node node, RemotingCommand request, long timeoutMillis, AsyncCallback asyncCallback)
 			throws InterruptedException, RemotingConnectException, RemotingTooMuchRequestException,
 			RemotingTimeoutException, RemotingSendRequestException {
 		String addr = node.getAddress();

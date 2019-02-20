@@ -38,7 +38,8 @@ public abstract class AbstractMysqlTaskExecuteQueue extends JdbcAbstractAccess i
                         "repeat_count",
                         "repeated_count",
                         "repeat_interval",
-                        "is_running")
+                        "is_running",
+                        "task_execute_node")
                 .values(taskPo.getId(),
                 		taskPo.getTaskId(),
                 		taskPo.getTaskName(),
@@ -56,7 +57,8 @@ public abstract class AbstractMysqlTaskExecuteQueue extends JdbcAbstractAccess i
                         taskPo.getRepeatCount(),
                         taskPo.getRepeatedCount(),
                         taskPo.getRepeatInterval(),
-                        taskPo.getIsRunning())
+                        taskPo.getIsRunning(),
+                        taskPo.getTaskExecuteNode())
                 .doInsert() == 1;
     }
 

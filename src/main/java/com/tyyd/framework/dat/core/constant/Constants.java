@@ -83,7 +83,7 @@ public interface Constants {
     String TASK_PUSH_NODE_GROUP = "task.push.node.group";
     
     
-    int DEFAULT_TASK_PUSH_FREQUENCY = 1;
+    int DEFAULT_TASK_PUSH_FREQUENCY = 10;
 
     // TaskTracker 离线(网络隔离)时间 10s，超过10s，自动停止当前执行任务
     long DEFAULT_TASK_EXECUTER_OFFLINE_LIMIT_MILLIS = 60 * 60 * 1000;

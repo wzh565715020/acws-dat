@@ -3,7 +3,6 @@ package com.tyyd.framework.dat.core.cluster;
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
-import com.tyyd.framework.dat.core.remoting.HeartBeatMonitor;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
 import com.tyyd.framework.dat.core.spi.ServiceLoader;
@@ -23,7 +22,7 @@ public abstract class AbstractServerNode<T extends Node, App extends AppContext>
 
     protected RemotingServerDelegate remotingServer;
     protected RemotingClientDelegate remotingClient;
-    private HeartBeatMonitor heartBeatMonitor;
+    //private HeartBeatMonitor heartBeatMonitor;
     
     protected void remotingStart() {
     	//heartBeatMonitor.start();
@@ -58,11 +57,14 @@ public abstract class AbstractServerNode<T extends Node, App extends AppContext>
             config.setListenPort(Constants.TASK_DISPATCH_DEFAULT_LISTEN_PORT);
             node.setPort(config.getListenPort());
         }
+        
+        node.setIdentity(node.getClusterName() + "_" + node.getIp() + "_" + node.getPort());
+        appContext.getConfig().setIdentity(node.getIdentity());
         remotingServerConfig.setListenPort(config.getListenPort());
 
         this.remotingServer = new RemotingServerDelegate(getRemotingServer(remotingServerConfig), appContext);
         this.remotingClient = new RemotingClientDelegate(getRemotingClient(new RemotingClientConfig()), appContext);
-        this.heartBeatMonitor = new HeartBeatMonitor(remotingClient, appContext);
+        //this.heartBeatMonitor = new HeartBeatMonitor(remotingClient, appContext);
         beforeStart();
     }
     private RemotingClient getRemotingClient(RemotingClientConfig remotingClientConfig) {

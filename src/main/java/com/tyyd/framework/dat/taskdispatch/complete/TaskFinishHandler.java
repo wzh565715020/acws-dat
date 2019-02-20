@@ -3,9 +3,6 @@ package com.tyyd.framework.dat.taskdispatch.complete;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.admin.request.PoolQueueReq;
@@ -37,7 +34,6 @@ public class TaskFinishHandler {
 		this.appContext = appContext;
 	}
 
-	@Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void onComplete(List<TaskRunResult> results) {
 		if (CollectionUtils.isEmpty(results)) {
 			return;
@@ -63,6 +59,7 @@ public class TaskFinishHandler {
 			PoolQueueReq poolQueueReq = new PoolQueueReq();
 			poolQueueReq.setPoolId(taskMeta.getTask().getPoolId());
 			poolQueueReq.setChangeAvailableCount(1);
+			poolQueueReq.setUpdateDate(SystemClock.now());
 			appContext.getPoolQueue().changeAvailableCount(poolQueueReq);
 			// 加入到历史队列
 			TaskPo taskPo = TaskDomainConverter.convert(taskMeta.getTask());
@@ -91,10 +88,9 @@ public class TaskFinishHandler {
 		}
 		// 表示下次还要执行
 		try {
-			taskPo.setTaskExecuteNode(null);
+			taskPo.setTaskExecuteNode("");
 			taskPo.setTriggerTime(nextTriggerTime.getTime());
-			taskPo.setUpdateDate(SystemClock.now());
-			appContext.getExecutableTaskQueue().add(taskPo);
+			appContext.getExecutableTaskQueue().update(taskPo);
 		} catch (DupEntryException e) {
 			LOGGER.warn("ExecutableTaskQueue already exist:" + JSON.toJSONString(taskPo));
 		}
@@ -126,9 +122,8 @@ public class TaskFinishHandler {
 		}
 		long nexTriggerTime = TaskUtils.getRepeatNextTriggerTime(taskPo);
 		try {
-			taskPo.setTaskExecuteNode(null);
+			taskPo.setTaskExecuteNode("");
 			taskPo.setTriggerTime(nexTriggerTime);
-			taskPo.setUpdateDate(SystemClock.now());
 			appContext.getExecutableTaskQueue().update(taskPo);
 		} catch (DupEntryException e) {
 			LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(taskPo));

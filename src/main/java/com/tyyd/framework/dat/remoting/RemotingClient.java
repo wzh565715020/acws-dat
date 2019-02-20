@@ -8,6 +8,7 @@ import com.tyyd.framework.dat.remoting.exception.RemotingTimeoutException;
 import com.tyyd.framework.dat.remoting.exception.RemotingTooMuchRequestException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
+import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 
 import java.util.concurrent.ExecutorService;
 
@@ -61,4 +62,8 @@ public interface RemotingClient {
 	void invokeAsync(TaskDispatcherAppContext appcontext,Node node, RemotingCommand request, long timeoutMillis, AsyncCallback asyncCallback)
 			throws InterruptedException, RemotingConnectException, RemotingTooMuchRequestException,
 			RemotingTimeoutException, RemotingSendRequestException;
+
+	void invokeAsync(TaskExecuterAppContext appcontext, Node node, RemotingCommand request, long timeoutMillis,
+			AsyncCallback asyncCallback) throws InterruptedException, RemotingConnectException,
+			RemotingTooMuchRequestException, RemotingTimeoutException, RemotingSendRequestException;
 }

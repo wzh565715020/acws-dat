@@ -33,7 +33,6 @@ public class TaskRetryHandler {
         this.retryInterval = appContext.getConfig().getParameter("jobtracker.task.retry.interval.millis", 30 * 1000);
     }
     
-	@Transactional(isolation=Isolation.READ_COMMITTED,propagation=Propagation.REQUIRED,rollbackFor = Exception.class)
     public void onComplete(List<TaskRunResult> results) {
 
         if (CollectionUtils.isEmpty(results)) {

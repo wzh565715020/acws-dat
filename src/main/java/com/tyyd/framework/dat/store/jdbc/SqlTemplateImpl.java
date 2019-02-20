@@ -5,6 +5,9 @@ import com.tyyd.framework.dat.store.jdbc.dbutils.ResultSetHandler;
 import com.tyyd.framework.dat.store.jdbc.dbutils.ScalarHandler;
 
 import javax.sql.DataSource;
+
+import org.springframework.jdbc.datasource.DataSourceUtils;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -20,22 +23,15 @@ class SqlTemplateImpl implements SqlTemplate {
     public <T> T execute(boolean isReadOnly, SqlExecutor<T> executor) throws SQLException {
         Connection conn = null;
         try {
-            conn = dataSource.getConnection();
+            conn = DataSourceUtils.doGetConnection(dataSource); //dataSource.getConnection();
             if (isReadOnly) {
                 conn.setReadOnly(true);
+            }else {
+            	conn.setReadOnly(false);
             }
             return executor.run(conn);
         } finally {
-            close(conn);
-        }
-    }
-
-    private void close(Connection conn) throws SQLException {
-        if (conn != null) {
-            if (conn.isReadOnly()) {
-                conn.setReadOnly(false);  // restore NOT readOnly before return to pool
-            }
-            conn.close();
+        	DataSourceUtils.releaseConnection(conn, dataSource);
         }
     }
 

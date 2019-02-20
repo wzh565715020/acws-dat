@@ -12,7 +12,7 @@ import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
 import com.tyyd.framework.dat.queue.PoolQueue;
 import com.tyyd.framework.dat.queue.TaskQueue;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
-import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
+import com.tyyd.framework.dat.taskdispatch.channel.TaskDispatchChannelManager;
 import com.tyyd.framework.dat.taskdispatch.id.IdGenerator;
 import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
 import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
@@ -30,7 +30,7 @@ public class TaskDispatcherAppContext extends AppContext {
     
     private RemotingServerDelegate remotingServer;
     // channel manager
-    private ChannelManager channelManager;
+    private TaskDispatchChannelManager channelManager;
     // dead task checker
     private ExecutingDeadTaskChecker executingDeadJobChecker;
     // biz logger
@@ -116,11 +116,11 @@ public class TaskDispatcherAppContext extends AppContext {
         this.remotingClient = remotingClientDelegate;
     }
 
-    public ChannelManager getChannelManager() {
+    public TaskDispatchChannelManager getChannelManager() {
         return channelManager;
     }
 
-    public void setChannelManager(ChannelManager channelManager) {
+    public void setChannelManager(TaskDispatchChannelManager channelManager) {
         this.channelManager = channelManager;
     }
 

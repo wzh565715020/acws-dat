@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
 import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.core.commons.utils.Holder;
 import com.tyyd.framework.dat.core.commons.utils.ResourceUtils;
@@ -21,7 +20,6 @@ import com.tyyd.framework.dat.core.protocol.TaskProtos;
 import com.tyyd.framework.dat.core.protocol.command.TaskPushRequest;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
-import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.PreLoader;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.MysqlPreLoader;
@@ -194,7 +192,6 @@ public class TaskPusher {
 
 						} catch (Exception e) {
 							LOGGER.error("Remoting send error, taskPo={}", taskPo, e);
-							rollBackData(taskPo);
 							return new TaskSender.SendResult(false, TaskPushResult.SENT_ERROR);
 						}
 
@@ -205,7 +202,6 @@ public class TaskPusher {
 						}
 
 						if (!pushSuccess.get()) {
-							rollBackData(taskPo);
 							return new TaskSender.SendResult(false, TaskPushResult.SENT_ERROR);
 						}
 
@@ -216,7 +212,7 @@ public class TaskPusher {
 		return (TaskPushResult) sendResult.getReturnValue();
 	}
 
-	private void rollBackData(TaskPo taskPo) {
+/*	private void rollBackData(TaskPo taskPo) {
 		LOGGER.info("task push failed!" + ", identity=" + taskPo.getTaskExecuteNode() + ", task=" + taskPo);
 		// 队列切回来
 		try {
@@ -226,7 +222,7 @@ public class TaskPusher {
 			LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(taskPo));
 		}
 		appContext.getExecutingTaskQueue().remove(taskPo.getId());
-	}
+	}*/
 
 	public String getPoolId() {
 		return poolId;

@@ -15,6 +15,7 @@ import com.tyyd.framework.dat.remoting.exception.RemotingSendRequestException;
 import com.tyyd.framework.dat.remoting.exception.RemotingTimeoutException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
+import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 
 import java.util.concurrent.ExecutorService;
 
@@ -82,7 +83,11 @@ public class RemotingClientDelegate {
 		remotingClient.invokeAsync(appcontext, node, request, appContext.getConfig().getInvokeTimeoutMillis(),
 				asyncCallback);
 	}
-
+	public void invokeAsync(TaskExecuterAppContext appcontext, Node node, RemotingCommand request,
+			AsyncCallback asyncCallback) throws Exception {
+		remotingClient.invokeAsync(appcontext, node, request, appContext.getConfig().getInvokeTimeoutMillis(),
+				asyncCallback);
+	}
 	/**
 	 * 同步调用
 	 * 

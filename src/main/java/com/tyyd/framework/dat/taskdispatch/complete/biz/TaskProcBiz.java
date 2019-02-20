@@ -3,13 +3,23 @@ package com.tyyd.framework.dat.taskdispatch.complete.biz;
 
 import java.util.List;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.domain.Action;
 import com.tyyd.framework.dat.core.domain.Task;
 import com.tyyd.framework.dat.core.domain.TaskRunResult;
+import com.tyyd.framework.dat.core.logger.Logger;
+import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.protocol.command.TaskCompletedRequest;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
+import com.tyyd.framework.dat.remoting.protocol.RemotingProtos;
+import com.tyyd.framework.dat.store.transaction.SpringContextHolder;
 import com.tyyd.framework.dat.taskdispatch.complete.TaskFinishHandler;
 import com.tyyd.framework.dat.taskdispatch.complete.TaskRetryHandler;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
@@ -19,7 +29,8 @@ import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
  *
  */
 public class TaskProcBiz implements TaskCompletedBiz {
-
+	
+	private final Logger LOGGER = LoggerFactory.getLogger(TaskProcBiz.class);
     private final TaskRetryHandler retryHandler;
     private final TaskFinishHandler taskFinishHandler;
     // 任务的最大重试次数
@@ -35,9 +46,25 @@ public class TaskProcBiz implements TaskCompletedBiz {
 
     @Override
     public RemotingCommand doBiz(TaskCompletedRequest request) {
-
         List<TaskRunResult> results = request.getTaskRunResults();
-        multiResultsProcess(results);
+        if (CollectionUtils.isEmpty(results)) {
+            return RemotingCommand.createResponseCommand(RemotingProtos
+                            .ResponseCode.REQUEST_PARAM_ERROR.code(),
+                    "TaskResults can not be empty!");
+        }
+        ApplicationContext applicationContext= SpringContextHolder.getApplicationContext();
+        DataSourceTransactionManager dataSourceTransactionManager = applicationContext.getBean(DataSourceTransactionManager.class);
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED); // 事物隔离级别，开启新事务，这样会比较安全些。
+        TransactionStatus status = dataSourceTransactionManager.getTransaction(def); // 获得事务状态
+        try {
+        	 multiResultsProcess(results);
+        	 dataSourceTransactionManager.commit(status);
+		} catch (Exception e) {
+			dataSourceTransactionManager.rollback(status);
+			LOGGER.error("处理执行结果失败",e);
+			return  RemotingCommand.createResponseCommand(RemotingProtos.ResponseCode.SYSTEM_ERROR.code());
+		}
         return null;
     }
     /**

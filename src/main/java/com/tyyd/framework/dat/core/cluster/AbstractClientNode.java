@@ -68,7 +68,8 @@ public abstract class AbstractClientNode<T extends Node, Context extends AppCont
             node.setPort(config.getListenPort());
         }
         remotingServerConfig.setListenPort(config.getListenPort());
-
+        node.setIdentity(node.getClusterName() + "_" + node.getIp() + "_" + node.getPort());
+        appContext.getConfig().setIdentity(node.getIdentity());
         this.remotingServer = new RemotingServerDelegate(getRemotingServer(remotingServerConfig), appContext);
         this.remotingClient = new RemotingClientDelegate(getRemotingClient(new RemotingClientConfig()), appContext);
 

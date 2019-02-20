@@ -7,7 +7,7 @@ import com.tyyd.framework.dat.core.spi.ServiceLoader;
 import com.tyyd.framework.dat.ec.injvm.InjvmEventCenter;
 import com.tyyd.framework.dat.queue.TaskQueueFactory;
 import com.tyyd.framework.dat.remoting.RemotingProcessor;
-import com.tyyd.framework.dat.taskdispatch.channel.ChannelManager;
+import com.tyyd.framework.dat.taskdispatch.channel.TaskDispatchChannelManager;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherNode;
 import com.tyyd.framework.dat.taskdispatch.monitor.TaskDispatcherMStatReporter;
@@ -26,7 +26,7 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
 		// 监控中心
 		appContext.setMStatReporter(new TaskDispatcherMStatReporter(appContext));
 		// channel 管理者
-		appContext.setChannelManager(new ChannelManager());
+		appContext.setChannelManager(new TaskDispatchChannelManager());
 		appContext.setEventCenter(new InjvmEventCenter());
 		appContext.setTaskPushMachine(new TaskPushMachine(appContext));
 		appContext.setTaskReceiver(new TaskReceiver(appContext));

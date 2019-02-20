@@ -25,7 +25,6 @@ import com.tyyd.framework.dat.remoting.ResponseFuture;
 import com.tyyd.framework.dat.remoting.exception.RemotingCommandException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.remoting.protocol.RemotingProtos;
-import com.tyyd.framework.dat.taskdispatch.channel.ChannelWrapper;
 import com.tyyd.framework.dat.taskexecuter.domain.Response;
 import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 import com.tyyd.framework.dat.taskexecuter.expcetion.NoAvailableTaskRunnerException;
@@ -102,7 +101,7 @@ public class TaskProcessor extends AbstractProcessor {
 				if (node == null) {
 					throw new Exception("调度中心节点不存在，不能发送");
 				}
-				appContext.getRemotingClient().invokeAsync(node.getAddress(),
+				appContext.getRemotingClient().invokeAsync(appContext,node,
 						request, new AsyncCallback() {
 							@Override
 							public void operationComplete(ResponseFuture responseFuture) {
