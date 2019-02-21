@@ -19,7 +19,9 @@ public class TaskPriorityBlockingQueue {
     private int capacity;
 
     private volatile int size;
+    
     private TaskPo[] queue;
+    
     private ConcurrentHashSet<String> ID_SET = new ConcurrentHashSet<String>();
 
     public TaskPriorityBlockingQueue(int capacity) {

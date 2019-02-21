@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tyyd.framework.dat.admin.request.TaskQueueReq;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.commons.utils.StringUtils;
 import com.tyyd.framework.dat.core.domain.Task;
@@ -98,9 +97,9 @@ public class TaskReceiver {
      * 添加任务
      */
     public void addJob(TaskPo taskPo) throws DupEntryException {
-        if (taskPo.isCron()) {
+        if (taskPo.isCronExpression()) {
             addCronJob(taskPo);
-        } else if (taskPo.isRepeatable()) {
+        } else if (taskPo.isRepeatableExpression()) {
             addRepeatTask(taskPo);
         }else {
         	 appContext.getExecutableTaskQueue().add(taskPo);
@@ -112,7 +111,6 @@ public class TaskReceiver {
     private void addCronJob(TaskPo taskPo) throws DupEntryException {
         Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(taskPo.getCron());
         if (nextTriggerTime != null) {
-        	 appContext.getTaskQueue().add(taskPo);
             // 没有正在执行, 则添加
             if (appContext.getExecutableTaskQueue().getTask(taskPo.getTaskId()) == null) {
                 // 2. add to executable queue
@@ -125,25 +123,11 @@ public class TaskReceiver {
      * 添加Repeat 任务
      */
     private void addRepeatTask(TaskPo taskPo) throws DupEntryException {
-    	appContext.getTaskQueue().add(taskPo);
         // 没有正在执行, 则添加
         if (appContext.getExecutableTaskQueue().getTask(taskPo.getTaskId()) == null) {
             // 2. add to executable queue
             appContext.getExecutableTaskQueue().add(taskPo);
         }
     }
-	public void start() {
-		if (started.compareAndSet(false, true)) {
-			TaskQueueReq taskQueueReq = new TaskQueueReq();
-			taskQueueReq.setLimit(Integer.MAX_VALUE);
-			List<TaskPo> taskPos = appContext.getTaskQueue().pageSelect(taskQueueReq).getRows();
-			for (TaskPo taskPo : taskPos) {
-				if (taskPo.getId() == null) {
-					 taskPo.setId(idGenerator.generate());
-				}
-				addJob(taskPo);
-			}
-		}
-	}
 
 }

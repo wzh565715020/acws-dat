@@ -18,12 +18,13 @@ import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
 import com.tyyd.framework.dat.core.support.SystemClock;
+import com.tyyd.framework.dat.remoting.ChannelManager;
 import com.tyyd.framework.dat.remoting.ChannelWrapper;
 
 /**
  * 管理channel
  */
-public class TaskExecuterChannelManager {
+public class TaskExecuterChannelManager implements ChannelManager {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(TaskExecuterChannelManager.class);
 

@@ -49,9 +49,23 @@ public class TaskProcessor extends AbstractProcessor {
 			protected boolean retry(List<TaskRunResult> results) {
 				return retrySendJobResults(results);
 			}
+
+			@Override
+			protected boolean checkValueExist(TaskRunResult value, String... id) {
+				if (id == null || id.length <=0) {
+					return false;
+				}
+				if (value.getTaskMeta() != null && value.getTaskMeta().getId().equals(id[0])) {
+					return true;
+				}
+				return false;
+			}
+
 		};
+		appContext.setRetryScheduler(retryScheduler);
 		retryScheduler.setName("TaskPushMassage");
 		retryScheduler.start();
+		
 	}
 
 	@Override
@@ -89,7 +103,7 @@ public class TaskProcessor extends AbstractProcessor {
 			taskRunResult.setAction(response.getAction());
 			taskRunResult.setMsg(response.getMsg());
 			TaskCompletedRequest requestBody = appContext.getCommandBodyWrapper().wrapper(new TaskCompletedRequest());
-			requestBody.addJobResult(taskRunResult);
+			requestBody.addTaskResult(taskRunResult);
 
 			int requestCode = TaskProtos.RequestCode.TASK_COMPLETED.code();
 

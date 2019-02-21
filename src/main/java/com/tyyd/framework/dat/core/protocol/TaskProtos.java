@@ -12,7 +12,7 @@ public class TaskProtos {
         // 心跳
         HEART_BEAT(10),
         // 提交任务
-        SUBMIT_JOB(11),
+        SUBMIT_TASK(11),
         // 询问 任务执行的情况
         ASK_TASK_PROGRESS(12),
         // 分发任务

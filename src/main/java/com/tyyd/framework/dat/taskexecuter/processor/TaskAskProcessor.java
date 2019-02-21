@@ -1,6 +1,6 @@
 package com.tyyd.framework.dat.taskexecuter.processor;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 import com.tyyd.framework.dat.core.protocol.command.CommandBodyWrapper;
@@ -14,26 +14,33 @@ import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 
 public class TaskAskProcessor extends AbstractProcessor {
 
-    protected TaskAskProcessor(TaskExecuterAppContext appContext) {
-        super(appContext);
-    }
+	protected TaskAskProcessor(TaskExecuterAppContext appContext) {
+		super(appContext);
+	}
 
-    @Override
-    public RemotingCommand processRequest(Channel channel,
-                                          RemotingCommand request) throws RemotingCommandException {
+	@Override
+	public RemotingCommand processRequest(Channel channel, RemotingCommand request) throws RemotingCommandException {
 
-        TaskAskRequest requestBody = request.getBody();
+		TaskAskRequest requestBody = request.getBody();
 
-        List<String> ids = requestBody.getIds();
+		List<String> ids = requestBody.getIds();
+		
+		List<String> newIds = new ArrayList<String>();
+		
+		List<String> notExistIds = appContext.getRunnerPool().getRunningTaskManager().getNotExists(ids);
+		
+		if (!notExistIds.isEmpty()) {
+			for (String id : notExistIds) {
+				if (!appContext.getRetryScheduler().checkValue(id)) {
+					newIds.add(id);
+				}
+			}
+		}
 
-        List<String> notExistJobIds = appContext.getRunnerPool()
-                .getRunningTaskManager().getNotExists(ids);
+		TaskAskResponse responseBody = CommandBodyWrapper.wrapper(appContext, new TaskAskResponse());
 
-        TaskAskResponse responseBody = CommandBodyWrapper.wrapper(appContext, new TaskAskResponse());
+		responseBody.setIds(newIds);
 
-        responseBody.setIds(notExistJobIds);
-
-        return RemotingCommand.createResponseCommand(
-                RemotingProtos.ResponseCode.SUCCESS.code(), "查询成功", responseBody);
-    }
+		return RemotingCommand.createResponseCommand(RemotingProtos.ResponseCode.SUCCESS.code(), "查询成功", responseBody);
+	}
 }

@@ -28,7 +28,7 @@ public class RemotingDispatcher extends AbstractRemotingProcessor {
 
     public RemotingDispatcher(TaskDispatcherAppContext appContext) {
         super(appContext);
-        processors.put(RequestCode.SUBMIT_JOB, new TaskSubmitProcessor(appContext));
+        processors.put(RequestCode.SUBMIT_TASK, new TaskSubmitProcessor(appContext));
         processors.put(RequestCode.TASK_COMPLETED, new TaskCompletedProcessor(appContext));
         processors.put(RequestCode.BIZ_LOG_SEND, new TaskBizLogProcessor(appContext));
         processors.put(RequestCode.CANCEL_TASK, new TaskCancelProcessor(appContext));

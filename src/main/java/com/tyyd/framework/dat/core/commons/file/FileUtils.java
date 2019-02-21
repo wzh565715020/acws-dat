@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.RandomAccessFile;
 import java.io.Writer;
-import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 
 public class FileUtils {
@@ -28,10 +26,6 @@ public class FileUtils {
             }
         }
         return file;
-    }
-
-    public static FileChannel newFileChannel(File file, String mode) throws FileNotFoundException {
-        return new RandomAccessFile(file, mode).getChannel();
     }
 
     public static File createFileIfNotExist(String path) {

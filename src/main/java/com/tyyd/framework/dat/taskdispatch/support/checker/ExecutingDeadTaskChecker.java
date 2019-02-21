@@ -12,13 +12,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.alibaba.fastjson.JSON;
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
+import com.tyyd.framework.dat.core.cluster.Node;
 import com.tyyd.framework.dat.core.cluster.NodeType;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
-import com.tyyd.framework.dat.core.constant.Constants;
 import com.tyyd.framework.dat.core.constant.Level;
 import com.tyyd.framework.dat.core.exception.RemotingSendException;
 import com.tyyd.framework.dat.core.factory.NamedThreadFactory;
@@ -35,12 +40,12 @@ import com.tyyd.framework.dat.remoting.ChannelWrapper;
 import com.tyyd.framework.dat.remoting.ResponseFuture;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
 import com.tyyd.framework.dat.remoting.protocol.RemotingProtos;
-import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
+import com.tyyd.framework.dat.store.transaction.SpringContextHolder;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 import com.tyyd.framework.dat.taskdispatch.monitor.TaskDispatcherMStatReporter;
 
 /**
- * 死掉的任务 1. 分发出去的，并且执行节点不存在的任务  2. 分发出去，执行节点还在, 但是没有在执行的任务
+ * 死掉的任务 1. 分发出去的，并且执行节点不存在的任务 2. 分发出去，执行节点还在, 但是没有在执行的任务
  */
 public class ExecutingDeadTaskChecker {
 
@@ -50,15 +55,17 @@ public class ExecutingDeadTaskChecker {
 			new NamedThreadFactory("DAT-ExecutingTaskQueue-Fix-Executor", true));
 
 	private TaskDispatcherAppContext appContext;
+
 	private TaskDispatcherMStatReporter stat;
+
+	private AtomicBoolean start = new AtomicBoolean(false);
+
+	private ScheduledFuture<?> scheduledFuture;
 
 	public ExecutingDeadTaskChecker(TaskDispatcherAppContext appContext) {
 		this.appContext = appContext;
 		this.stat = (TaskDispatcherMStatReporter) appContext.getMStatReporter();
 	}
-
-	private AtomicBoolean start = new AtomicBoolean(false);
-	private ScheduledFuture<?> scheduledFuture;
 
 	public void start() {
 		try {
@@ -121,42 +128,55 @@ public class ExecutingDeadTaskChecker {
 
 		for (Map.Entry<String, List<TaskPo>> entry : taskMap.entrySet()) {
 			String taskExecuterIdentity = entry.getKey();
-			// 去查看这个TaskTrackerIdentity是否存活
-			ChannelWrapper channelWrapper = appContext.getChannelManager().getChannel(NodeType.TASK_EXECUTER,
-					taskExecuterIdentity);
-			if (channelWrapper == null && taskExecuterIdentity != null) {
-				Long offlineTimestamp = appContext.getChannelManager().getOfflineTimestamp(taskExecuterIdentity);
-				// 已经离线太久，直接修复
-				if (offlineTimestamp == null || SystemClock.now()
-						- offlineTimestamp > Constants.DEFAULT_TASK_EXECUTER_OFFLINE_LIMIT_MILLIS) {
-					// fixDeadJob
-					fixDeadTask(entry.getValue());
-				}
-			} else {
-				// 去询问是否在执行该任务
-				if (channelWrapper != null && channelWrapper.getChannel() != null && channelWrapper.isOpen()) {
-					askTimeoutTask(channelWrapper.getChannel(), entry.getValue());
-				}
-			}
+			// 去询问是否在执行该任务
+			askTimeoutTask(taskExecuterIdentity, entry.getValue());
 		}
-
 	}
 
 	/**
 	 * 向taskExecuter询问执行中的任务
 	 */
-	private void askTimeoutTask(Channel channel, final List<TaskPo> taskPos) {
+	private void askTimeoutTask(String taskExecuterIdentity, final List<TaskPo> taskPos) {
 		try {
-			RemotingClientDelegate remotingclient = appContext.getRemotingClient();
+
+			ChannelWrapper channelWrapper = appContext.getChannelManager().getChannel(NodeType.TASK_EXECUTER,
+					taskExecuterIdentity);
+			Node node = appContext.getSubscribedNodeManager().getNode(NodeType.TASK_EXECUTER, taskExecuterIdentity);
+			Channel channel = null;
+			String address = null;
+			if (channelWrapper != null) {
+				channel = channelWrapper.getChannel();
+			}
+			if (channel == null && address == null) {
+				Long maxUpdateDate = null;
+				for (TaskPo taskPo : taskPos) {
+					if (maxUpdateDate == null) {
+						maxUpdateDate = taskPo.getUpdateDate();
+						continue;
+					}
+					if (taskPo.getUpdateDate() > maxUpdateDate) {
+						maxUpdateDate = taskPo.getUpdateDate();
+					}
+				}
+				if (SystemClock.now() - maxUpdateDate > 3 * 60 * 60 * 1000) {
+					fixDeadTask(taskPos);
+				}
+				return;
+			}
 			List<String> ids = new ArrayList<String>(taskPos.size());
 			for (TaskPo taskPo : taskPos) {
 				ids.add(taskPo.getId());
 			}
+			RemotingClientDelegate remotingclient = appContext.getRemotingClient();
+
 			TaskAskRequest requestBody = appContext.getCommandBodyWrapper().wrapper(new TaskAskRequest());
+
 			requestBody.setIds(ids);
+
 			RemotingCommand request = RemotingCommand.createRequestCommand(TaskProtos.RequestCode.TASK_ASK.code(),
 					requestBody);
-			remotingclient.invokeAsync(channel, request, new AsyncCallback() {
+
+			remotingclient.invokeAsync(appContext, node, channel, request, new AsyncCallback() {
 				@Override
 				public void operationComplete(ResponseFuture responseFuture) {
 					RemotingCommand response = responseFuture.getResponseCommand();
@@ -191,15 +211,20 @@ public class ExecutingDeadTaskChecker {
 	}
 
 	private void fixDeadTask(TaskPo taskPo) {
+		ApplicationContext applicationContext = SpringContextHolder.getApplicationContext();
+		DataSourceTransactionManager dataSourceTransactionManager = applicationContext
+				.getBean(DataSourceTransactionManager.class);
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED); // 事物隔离级别，开启新事务，这样会比较安全些。
+		TransactionStatus status = dataSourceTransactionManager.getTransaction(def); // 获得事务状态
 		try {
 			taskPo.setIsRunning(0);
 			taskPo.setUpdateDate(SystemClock.now());
 			taskPo.setTaskExecuteNode(null);
 			// 1. add to executable queue
-			try {
+			if (!taskPo.isCronExpression() && !taskPo.isRepeatableExpression()) {
 				appContext.getExecutableTaskQueue().add(taskPo);
-			} catch (DupEntryException e) {
-				LOGGER.warn("ExecutableJobQueue already exist:" + JSON.toJSONString(taskPo));
+			} else {
 				appContext.getExecutableTaskQueue().resume(taskPo);
 			}
 
@@ -213,8 +238,9 @@ public class ExecutingDeadTaskChecker {
 			appContext.getTaskLogger().log(jobLogPo);
 
 			stat.incFixExecutingJobNum();
-
+			dataSourceTransactionManager.commit(status);
 		} catch (Throwable t) {
+			dataSourceTransactionManager.rollback(status);
 			LOGGER.error(t.getMessage(), t);
 		}
 		LOGGER.info("checkAndFix dead task ! {}", JSON.toJSONString(taskPo));

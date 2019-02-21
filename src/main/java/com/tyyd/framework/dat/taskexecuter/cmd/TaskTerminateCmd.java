@@ -40,7 +40,7 @@ public class TaskTerminateCmd implements HttpCmdProc {
             return HttpCmdResponse.newResponse(false, "id dose not running in this TaskTracker now");
         }
 
-        appContext.getRunnerPool().getRunningTaskManager().terminateJob(id);
+        appContext.getRunnerPool().getRunningTaskManager().terminateTask(id);
 
         return HttpCmdResponse.newResponse(true, "Execute terminate Command success");
     }

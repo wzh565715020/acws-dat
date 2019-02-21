@@ -55,8 +55,7 @@ public class RunnerPool {
 				new ThreadPoolExecutor.AbortPolicy());
 	}
 
-	public void execute(TaskMeta taskMeta, RunnerCallback callback)
-			throws NoAvailableTaskRunnerException {
+	public void execute(TaskMeta taskMeta, RunnerCallback callback) throws NoAvailableTaskRunnerException {
 		try {
 			threadPoolExecutor.execute(new TaskRunnerDelegate(appContext, taskMeta, callback));
 			if (LOGGER.isDebugEnabled()) {
@@ -140,7 +139,8 @@ public class RunnerPool {
 		}
 
 		public boolean running(String id) {
-			return TASKS.containsKey(id);
+			return TASKS.containsKey(id) && TASKS.get(id) != null && TASKS.get(id).currentThread() != null
+					&& TASKS.get(id).currentThread().isAlive();
 		}
 
 		/**
@@ -160,7 +160,7 @@ public class RunnerPool {
 			return notExistList;
 		}
 
-		public void terminateJob(String id) {
+		public void terminateTask(String id) {
 			TaskRunnerDelegate taskRunnerDelegate = TASKS.get(id);
 			if (taskRunnerDelegate != null) {
 				try {

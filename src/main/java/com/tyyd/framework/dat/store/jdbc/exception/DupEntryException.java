@@ -2,7 +2,12 @@ package com.tyyd.framework.dat.store.jdbc.exception;
 
 public class DupEntryException extends JdbcException {
 
-    public DupEntryException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2235911126704344291L;
+
+	public DupEntryException() {
         super();
     }
 

@@ -34,7 +34,7 @@ public class TaskCompletedRequest extends AbstractRemotingCommandBody {
         this.taskRunResults = taskRunResults;
     }
 
-    public void addJobResult(TaskRunResult taskRunResult) {
+    public void addTaskResult(TaskRunResult taskRunResult) {
         if (taskRunResults == null) {
             taskRunResults = new ArrayList<TaskRunResult>();
         }

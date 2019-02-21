@@ -26,9 +26,7 @@ public class TaskDomainConverter {
         taskPo.setRepeatCount(task.getRepeatCount());
         taskPo.setCreateDate(SystemClock.now());
         taskPo.setUpdateDate(SystemClock.now());
-        taskPo.setCreateUserid("");
-        taskPo.setUpdateUserid("");
-        if (!taskPo.isCron()) {
+        if (!taskPo.isCronExpression()) {
             if (task.getTriggerTime() == null) {
                 taskPo.setTriggerTime(SystemClock.now());
             } else {
@@ -59,6 +57,7 @@ public class TaskDomainConverter {
         task.setRepeatCount(taskPo.getRepeatCount());
         task.setRepeatedCount(taskPo.getRepeatedCount());
         task.setRepeatInterval(taskPo.getRepeatInterval());
+        task.setParams(taskPo.getParams());
         TaskMeta taskMeta = new TaskMeta();
         taskMeta.setId(taskPo.getId());
         taskMeta.setTaskExecuteNode(taskPo.getTaskExecuteNode());

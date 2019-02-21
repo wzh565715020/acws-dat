@@ -60,6 +60,7 @@ public class TaskDispatchFactoryBean implements FactoryBean<TaskDispatcher>,
     public void checkProperties() {
         Assert.hasText(clusterName, "clusterName must have value.");
         Assert.hasText(registryAddress, "registryAddress must have value.");
+        Assert.notNull(listenPort,"listenPort must have value.");
     }
 
     @Override

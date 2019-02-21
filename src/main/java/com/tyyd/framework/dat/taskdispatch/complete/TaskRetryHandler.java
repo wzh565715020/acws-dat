@@ -4,10 +4,6 @@ package com.tyyd.framework.dat.taskdispatch.complete;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSON;
 import com.tyyd.framework.dat.core.commons.utils.CollectionUtils;
 import com.tyyd.framework.dat.core.domain.TaskMeta;
@@ -52,9 +48,9 @@ public class TaskRetryHandler {
             // 1 分钟重试一次吧
             Long nextRetryTriggerTime = SystemClock.now() + retryInterval;
 
-            if (taskPo.isCron()) {
+            if (taskPo.isCronExpression()) {
                 // 如果是 cron task, 判断任务下一次执行时间和重试时间的比较
-                TaskPo cronJobPo = appContext.getTaskQueue().getTask(taskMeta.getTask().getTaskId());
+                TaskPo cronJobPo = appContext.getExecutableTaskQueue().getTask(taskMeta.getTask().getTaskId());
                 if (cronJobPo != null) {
                     Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(cronJobPo.getCron());
                     if (nextTriggerTime != null && nextTriggerTime.getTime() < nextRetryTriggerTime) {
@@ -63,8 +59,8 @@ public class TaskRetryHandler {
                         taskPo = cronJobPo;
                     } 
                 }
-            } else if (taskPo.isRepeatable()) {
-                TaskPo repeatJobPo = appContext.getTaskQueue().getTask(taskMeta.getTask().getTaskId());
+            } else if (taskPo.isRepeatableExpression()) {
+                TaskPo repeatJobPo = appContext.getExecutableTaskQueue().getTask(taskMeta.getTask().getTaskId());
                 if (repeatJobPo != null) {
                     // 比较下一次重复时间和重试时间
                     if (repeatJobPo.getRepeatCount() == -1 || (repeatJobPo.getRepeatedCount() < repeatJobPo.getRepeatCount())) {

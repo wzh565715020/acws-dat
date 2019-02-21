@@ -2,7 +2,12 @@ package com.tyyd.framework.dat.core.json;
 
 public class JSONException extends RuntimeException {
 
-    public JSONException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 560085675086688144L;
+
+	public JSONException() {
         super();
     }
 

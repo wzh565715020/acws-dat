@@ -8,6 +8,8 @@ import com.tyyd.framework.dat.core.monitor.MStatReporter;
 import com.tyyd.framework.dat.core.protocol.command.CommandBodyWrapper;
 import com.tyyd.framework.dat.core.registry.RegistryStatMonitor;
 import com.tyyd.framework.dat.ec.EventCenter;
+import com.tyyd.framework.dat.remoting.ChannelManager;
+import com.tyyd.framework.dat.taskdispatch.channel.TaskDispatchChannelManager;
 
 /**
  *         用来存储 程序的数据
@@ -30,7 +32,10 @@ public abstract class AppContext {
     private HttpCmdServer httpCmdServer;
     
     private Node node;
+    
     private Node masterNode;
+    
+    private ChannelManager channelManager;
     
     public MStatReporter getMStatReporter() {
         return mStatReporter;
@@ -103,5 +108,15 @@ public abstract class AppContext {
 	public void setMasterNode(Node masterNode) {
 		this.masterNode = masterNode;
 	}
+
+	public ChannelManager getChannelManager() {
+		return channelManager;
+	}
+
+	public void setChannelManager(ChannelManager channelManager) {
+		this.channelManager = channelManager;
+	}
+	
+	
 	
 }

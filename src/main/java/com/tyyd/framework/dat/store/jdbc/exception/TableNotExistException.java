@@ -2,7 +2,12 @@ package com.tyyd.framework.dat.store.jdbc.exception;
 
 public class TableNotExistException extends JdbcException {
 
-    public TableNotExistException() {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -925083771352680964L;
+
+	public TableNotExistException() {
         super();
     }
 

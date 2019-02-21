@@ -1,8 +1,6 @@
 package com.tyyd.framework.dat.queue.mysql;
 
 import com.tyyd.framework.dat.core.AppContext;
-import com.tyyd.framework.dat.core.logger.Logger;
-import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.core.support.TaskQueueUtils;
 import com.tyyd.framework.dat.core.support.SystemClock;
 import com.tyyd.framework.dat.queue.AbstractPreLoader;
@@ -18,8 +16,6 @@ import java.util.List;
 
 public class MysqlPreLoader extends AbstractPreLoader {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(MysqlPreLoader.class);
-	
 	private SqlTemplate sqlTemplate;
 
 	public MysqlPreLoader(AppContext appContext, String poolId) {

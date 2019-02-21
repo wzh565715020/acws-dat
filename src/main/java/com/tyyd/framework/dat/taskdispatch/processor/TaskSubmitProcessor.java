@@ -25,18 +25,18 @@ public class TaskSubmitProcessor extends AbstractRemotingProcessor {
     @Override
     public RemotingCommand processRequest(Channel channel, RemotingCommand request) throws RemotingCommandException {
 
-        TaskSubmitRequest jobSubmitRequest = request.getBody();
+        TaskSubmitRequest taskSubmitRequest = request.getBody();
 
         TaskSubmitResponse jobSubmitResponse = appContext.getCommandBodyWrapper().wrapper(new TaskSubmitResponse());
         RemotingCommand response;
         try {
-            appContext.getTaskReceiver().receive(jobSubmitRequest);
+            appContext.getTaskReceiver().receive(taskSubmitRequest);
 
             response = RemotingCommand.createResponseCommand(
                     TaskProtos.ResponseCode.TASK_RECEIVE_SUCCESS.code(), "task submit success!", jobSubmitResponse);
 
         } catch (TaskReceiveException e) {
-            LOGGER.error("Receive task failed , jobs = " + jobSubmitRequest.getTasks(), e);
+            LOGGER.error("Receive task failed , jobs = " + taskSubmitRequest.getTasks(), e);
             jobSubmitResponse.setSuccess(false);
             jobSubmitResponse.setMsg(e.getMessage());
             jobSubmitResponse.setFailedJobs(e.getJobs());

@@ -2,10 +2,10 @@ package com.tyyd.framework.dat.taskexecuter.domain;
 
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.constant.Level;
+import com.tyyd.framework.dat.core.domain.TaskRunResult;
 import com.tyyd.framework.dat.core.remoting.RemotingClientDelegate;
 import com.tyyd.framework.dat.core.remoting.RemotingServerDelegate;
-import com.tyyd.framework.dat.taskdispatch.channel.TaskDispatchChannelManager;
-import com.tyyd.framework.dat.taskexecuter.channel.TaskExecuterChannelManager;
+import com.tyyd.framework.dat.core.support.RetryScheduler;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerFactory;
 import com.tyyd.framework.dat.taskexecuter.runner.RunnerPool;
 
@@ -15,14 +15,12 @@ public class TaskExecuterAppContext extends AppContext {
     
     private RemotingClientDelegate remotingClient;
     
-    // channel manager
-    private TaskExecuterChannelManager channelManager;
-    
     // runner 线程池
     private RunnerPool runnerPool;
     //
     private RunnerFactory runnerFactory;
 
+    private RetryScheduler<TaskRunResult> retryScheduler;
     /**
      * 业务日志记录级别
      */
@@ -61,14 +59,6 @@ public class TaskExecuterAppContext extends AppContext {
 		this.remotingServer = remotingServer;
 	}
 
-	public TaskExecuterChannelManager getChannelManager() {
-		return channelManager;
-	}
-
-	public void setChannelManager(TaskExecuterChannelManager channelManager) {
-		this.channelManager = channelManager;
-	}
-
 	public RemotingClientDelegate getRemotingClient() {
 		return remotingClient;
 	}
@@ -76,4 +66,13 @@ public class TaskExecuterAppContext extends AppContext {
 	public void setRemotingClient(RemotingClientDelegate remotingClient) {
 		this.remotingClient = remotingClient;
 	}
+
+	public RetryScheduler<TaskRunResult> getRetryScheduler() {
+		return retryScheduler;
+	}
+
+	public void setRetryScheduler(RetryScheduler<TaskRunResult> retryScheduler) {
+		this.retryScheduler = retryScheduler;
+	}
+	
 }

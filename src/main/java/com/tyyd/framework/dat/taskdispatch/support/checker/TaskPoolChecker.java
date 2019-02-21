@@ -31,22 +31,18 @@ public class TaskPoolChecker {
 	}
 
 	private AtomicBoolean start = new AtomicBoolean(false);
+	
 	private ScheduledFuture<?> scheduledFuture;
 
 	public void start() {
 		try {
 			if (start.compareAndSet(false, true)) {
 				int checkPeriodSeconds = appContext.getConfig()
-						.getParameter("TaskDispatcher.task.pool.check.interval.seconds", 30);
-				if (checkPeriodSeconds < 5) {
-					checkPeriodSeconds = 5;
-				} else if (checkPeriodSeconds > 5 * 60) {
-					checkPeriodSeconds = 5 * 60;
-				}
+						.getParameter("TaskDispatcher.task.pool.check.interval.seconds", 5);
 				scheduledFuture = FIXED_EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
 					@Override
 					public void run() {
-							checkAndDistribute();
+						checkAndDistribute();
 					}
 				}, checkPeriodSeconds, checkPeriodSeconds, TimeUnit.SECONDS);
 			}
@@ -60,10 +56,11 @@ public class TaskPoolChecker {
 		PoolQueueReq request = new PoolQueueReq();
 		request.setLimit(Integer.MAX_VALUE);
 		PaginationRsp<PoolPo> paginationRsp = appContext.getPoolQueue().pageSelect(request);
-		if (paginationRsp !=null && paginationRsp.getRows() != null && ! paginationRsp.getRows().isEmpty()) {
+		if (paginationRsp != null && paginationRsp.getRows() != null && !paginationRsp.getRows().isEmpty()) {
 			List<PoolPo> list = paginationRsp.getRows();
 			for (PoolPo poolPo : list) {
-				if(poolPo.getNodeId() != null && !poolPo.getNodeId().equals("")&&!appContext.getTaskDispatcherManager().containNode(poolPo.getNodeId())) {
+				if (poolPo.getNodeId() != null && !poolPo.getNodeId().equals("")
+						&& !appContext.getTaskDispatcherManager().containNode(poolPo.getNodeId())) {
 					Node node = new Node();
 					node.setIdentity(poolPo.getNodeId());
 					appContext.getTaskDispatcherManager().addRemoveTaskDispatcher(node);

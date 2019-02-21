@@ -34,9 +34,11 @@ public abstract class RetryScheduler<T> {
 	// 定时检查是否有 师表的反馈任务信息(给客户端的)
 	private ScheduledExecutorService RETRY_EXECUTOR_SERVICE = Executors
 			.newSingleThreadScheduledExecutor(new NamedThreadFactory("DAT-RetryScheduler-retry", true));
-	
+
 	private ScheduledFuture<?> scheduledFuture;
+
 	private AtomicBoolean selfCheckStart = new AtomicBoolean(false);
+
 	private FailStore failStore;
 	// 名称主要是用来记录日志
 	private String name;
@@ -116,6 +118,30 @@ public abstract class RetryScheduler<T> {
 					e);
 		}
 	}
+
+	public boolean checkValue(String... id) {
+		try {
+			List<Pair<String, T>> pairs = null;
+			do {
+				pairs = failStore.fetchTop(batchSize, type);
+
+				if (CollectionUtils.isEmpty(pairs)) {
+					break;
+				}
+
+				for (Pair<String, T> pair : pairs) {
+					if (checkValueExist(pair.getValue(), id)) {
+						return true;
+					}
+				}
+			} while (CollectionUtils.isNotEmpty(pairs));
+		} catch (Throwable e) {
+			LOGGER.error("Run {} RetryScheduler error , identity=[{}]", name, appContext.getConfig().getIdentity(), e);
+		}
+		return false;
+	}
+
+	protected abstract boolean checkValueExist(T value, String... id);
 
 	/**
 	 * 定时检查 提交失败任务的Runnable

@@ -91,7 +91,7 @@ public abstract class Recycler<T> {
             this.size = size + 1;
         }
 
-        @SuppressWarnings({"unchecked", "SuspiciousArrayCast"})
+        @SuppressWarnings({"unchecked"})
         private static <T> T[] newArray(int length) {
             return (T[]) new Object[length];
         }

@@ -224,14 +224,17 @@ public class TaskPo {
 		this.triggerTime = triggerTime;
 	}
 
-	public boolean isRepeatable() {
+	public boolean isRepeatableExpression() {
 		return TaskType.LOOP.getCode().equals(taskType);
 	}
-
-	public boolean isCron() {
-		return TaskType.SINGLE.getCode().equals(taskType) && TaskExecType.SCHEDULETIME.getCode().equals(taskExecType);
+	public boolean isLimitExpression() {
+		return TaskType.LIMIT.getCode().equals(taskType);
+	}
+	public boolean isCronExpression() {
+		return TaskType.CRON.getCode().equals(taskType)&& TaskExecType.SCHEDULETIME.getCode().equals(taskExecType);
 	}
 
+	
 	public Long getRepeatInterval() {
 		return repeatInterval;
 	}

@@ -99,7 +99,7 @@ public class TaskProcBiz implements TaskCompletedBiz {
                 retryResults = CollectionUtils.newArrayListOnNull(retryResults);
                 retryResults.add(result);
             } else {
-                // 不用反馈客户端，也不用重试，直接完成处理
+                // 不用重试，直接完成处理
                 finishResults = CollectionUtils.newArrayListOnNull(finishResults);
                 finishResults.add(result);
             }

@@ -90,10 +90,10 @@ public class TaskPusher {
 					scheduledFuture = SCHEDULED_CHECKER.scheduleWithFixedDelay(worker, 1, taskPushFrequency,
 							TimeUnit.SECONDS);
 				}
-				LOGGER.info("Start task push machine success!");
+				LOGGER.info("Start taskpusher " + poolId + "success!");
 			}
 		} catch (Throwable t) {
-			LOGGER.error("Start stask push machine failed!", t);
+			LOGGER.error("Start taskpusher failed!", t);
 		}
 	}
 
@@ -104,10 +104,10 @@ public class TaskPusher {
 				scheduledFuture.cancel(false);
 				SCHEDULED_CHECKER.shutdown();
 				scheduledFuture = null;
-				LOGGER.info("Start task push machine success!");
+				LOGGER.info("Stop taskpusher success!");
 			}
 		} catch (Throwable t) {
-			LOGGER.error("Start stask push machine failed!", t);
+			LOGGER.error("Stop taskpusher  failed!", t);
 		}
 	}
 
@@ -235,5 +235,8 @@ public class TaskPusher {
 	public AtomicBoolean getStart() {
 		return start;
 	}
-
+	protected void finalize() throws Throwable { 
+		LOGGER.info(poolId + "已被回收");
+		
+	}
 }

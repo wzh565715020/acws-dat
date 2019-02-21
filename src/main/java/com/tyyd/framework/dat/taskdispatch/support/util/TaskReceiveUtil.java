@@ -11,9 +11,11 @@ import com.tyyd.framework.dat.core.support.CronExpressionUtils;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
 import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
+import com.tyyd.framework.dat.queue.PoolQueue;
 import com.tyyd.framework.dat.queue.domain.TaskPo;
 import com.tyyd.framework.dat.queue.mysql.MysqlExecutableTaskQueue;
 import com.tyyd.framework.dat.queue.mysql.MysqlExecutingTaskQueue;
+import com.tyyd.framework.dat.queue.mysql.MysqlPoolQueue;
 import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.taskdispatch.id.IdGenerator;
 import com.tyyd.framework.dat.taskdispatch.id.UUIDGenerator;
@@ -30,8 +32,10 @@ public class TaskReceiveUtil {
 	private static ExecutableTaskQueue executableTaskQueue = new MysqlExecutableTaskQueue();
 
 	private static ExecutingTaskQueue executingTaskQueue = new MysqlExecutingTaskQueue();
+	
+	private static PoolQueue poolQueue = new MysqlPoolQueue();
 
-	public static void addToQueue(Task task) {
+	public static void addToQueue(Task task) throws Exception{
 
 		TaskPo taskPo = null;
 		try {
@@ -40,11 +44,17 @@ public class TaskReceiveUtil {
 				LOGGER.warn("task can not be null。{}", task);
 				return;
 			}
+			if (task.getPoolId() == null) {
+				throw new Exception("任务必须包含线程池id");
+			}
+			if (poolQueue.getPool(task.getPoolId()) == null) {
+				throw new Exception("任务线程池在线程池配置中不存在，请使用存在的线程池id");
+			}
 			// 设置 id
 			taskPo.setId(idGenerator.generate());
 
 			// 添加任务
-			addJob(taskPo);
+			addTask(taskPo);
 
 		} catch (DupEntryException e) {
 			// 已经存在
@@ -55,18 +65,20 @@ public class TaskReceiveUtil {
 	/**
 	 * 添加任务
 	 */
-	public static void addJob(TaskPo taskPo) throws DupEntryException {
-		if (taskPo.isCron()) {
+	public static void addTask(TaskPo taskPo) throws DupEntryException {
+		if (taskPo.isCronExpression()) {
 			addCronJob(taskPo);
-		} else if (taskPo.isRepeatable()) {
+		} else if (taskPo.isRepeatableExpression()) {
 			addRepeatTask(taskPo);
-		} else {
+		} else if(taskPo.isLimitExpression()) {
 			List<TaskPo> executingTaskPos = executingTaskQueue.getTaskByTaskId(taskPo.getTaskId());
 			List<TaskPo> executableTaskPos = executableTaskQueue.getDeadJob(0);
 			if (executingTaskPos != null && !executingTaskPos.isEmpty() && executableTaskPos != null
 					&& !executableTaskPos.isEmpty()) {
 				return;
 			}
+			executableTaskQueue.add(taskPo);
+		}else {
 			executableTaskQueue.add(taskPo);
 		}
 	}

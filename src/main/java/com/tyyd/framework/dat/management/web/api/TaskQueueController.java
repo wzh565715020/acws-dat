@@ -39,7 +39,7 @@ public class TaskQueueController extends AbstractMVC {
 
     @RequestMapping("/taskQueue/getRepeatTask")
     public RestfulResponse getRepeatTask(TaskQueueReq request) {
-        PaginationRsp<TaskPo> paginationRsp = appContext.getTaskQueue().pageSelect(request);
+        PaginationRsp<TaskPo> paginationRsp = appContext.getExecutableTaskQueue().pageSelect(request);
         RestfulResponse response = new RestfulResponse();
         response.setSuccess(true);
         response.setResults(paginationRsp.getResults());
@@ -59,8 +59,8 @@ public class TaskQueueController extends AbstractMVC {
             return Builder.build(false, e.getMessage());
         }
         request.setCron(null);
-        TaskPo jobPo = appContext.getTaskQueue().getTask(request.getTaskId());
-        boolean success = appContext.getTaskQueue().selectiveUpdate(request);
+        TaskPo jobPo = appContext.getExecutableTaskQueue().getTask(request.getTaskId());
+        boolean success = appContext.getExecutableTaskQueue().selectiveUpdate(request);
         if (success) {
             try {
                 // 如果repeatInterval有修改,需要把triggerTime也要修改下
@@ -84,14 +84,7 @@ public class TaskQueueController extends AbstractMVC {
         if (StringUtils.isEmpty(request.getTaskId())) {
             return Builder.build(false, "taskId 必须传!");
         }
-        boolean success = appContext.getTaskQueue().remove(request.getTaskId());
-        if (success) {
-            try {
-                appContext.getExecutableTaskQueue().remove(request.getTaskId());
-            } catch (Exception e) {
-                return Builder.build(false, "删除等待执行的任务失败，请手动删除! error:{}" + e.getMessage());
-            }
-        }
+        appContext.getExecutableTaskQueue().remove(request.getTaskId());
         return Builder.build(true);
     }
 
@@ -180,14 +173,6 @@ public class TaskQueueController extends AbstractMVC {
 
         boolean success = appContext.getExecutableTaskQueue().remove(request.getTaskId());
         if (success) {
-            if (StringUtils.isNotEmpty(request.getCron())) {
-                // 是Cron任务, Cron任务队列的也要被删除
-                try {
-                    appContext.getTaskQueue().remove(request.getTaskId());
-                } catch (Exception e) {
-                    return Builder.build(false, "在Cron任务队列中删除该任务失败，请手动更新! error:" + e.getMessage());
-                }
-            }
             return Builder.build(true);
         } else {
             return Builder.build(false, "更新失败，该条任务可能已经删除.");

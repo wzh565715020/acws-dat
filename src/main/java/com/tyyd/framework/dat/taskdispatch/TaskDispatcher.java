@@ -50,7 +50,6 @@ public class TaskDispatcher extends AbstractServerNode<TaskDispatcherNode, TaskD
 		appContext.setPoolQueue(factory.getPoolQueue(config));
 		appContext.setExecutableTaskQueue(factory.getExecutableJobQueue(config));
 		appContext.setExecutingTaskQueue(factory.getExecutingJobQueue(config));
-		appContext.setTaskQueue(factory.getTaskQueue(config));
 		appContext.setTaskSender(new TaskSender(appContext));
 		appContext.setExecutedTaskQueue(factory.getExecutedJobQueue(config));
 		

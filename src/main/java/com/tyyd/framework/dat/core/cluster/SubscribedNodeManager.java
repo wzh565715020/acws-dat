@@ -62,7 +62,18 @@ public class SubscribedNodeManager implements NodeChangeListener {
 			}
 		});
 	}
-
+	public Node getNode(NodeType nodeType,String nodeId) {
+		Set<Node> nodeSet = NODES.get(nodeType);
+		if (CollectionUtils.isEmpty(nodeSet)) {
+			return null;
+		}
+		for (Node node : nodeSet) {
+			if (node.getIdentity().equals(nodeId)) {
+				return node;
+			}
+		}
+		return null;
+	}
 	public List<Node> getNodeList(NodeType nodeType) {
 		return CollectionUtils.setToList(NODES.get(nodeType));
 	}

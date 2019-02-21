@@ -17,15 +17,14 @@ import com.tyyd.framework.dat.core.commons.concurrent.ConcurrentHashSet;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 
-
 public class TaskDispatcherManager {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TaskDispatcherManager.class);
 	// 单例
 	private final ConcurrentHashSet<Node> taskDispatcherSet = new ConcurrentHashSet<Node>();
-	
+
 	private final ConcurrentHashSet<Node> taskDispatcherRemovedSet = new ConcurrentHashSet<Node>();
-	
+
 	private TaskDispatcherAppContext appContext;
 
 	private final ReentrantLock globalLock = new ReentrantLock();
@@ -33,6 +32,7 @@ public class TaskDispatcherManager {
 	public TaskDispatcherManager(TaskDispatcherAppContext appContext) {
 		this.appContext = appContext;
 	}
+
 	public boolean containNode(String nodeId) {
 		for (Node node : taskDispatcherSet) {
 			if (node.getIdentity().equals(nodeId)) {
@@ -41,6 +41,7 @@ public class TaskDispatcherManager {
 		}
 		return false;
 	}
+
 	/**
 	 * 添加节点
 	 */
@@ -50,7 +51,8 @@ public class TaskDispatcherManager {
 			return;
 		}
 		taskDispatcherSet.add(node);
-		if (appContext.getMasterNode() != null && appContext.getMasterNode().getIdentity().equals(appContext.getConfig().getIdentity())) {
+		if (appContext.getMasterNode() != null
+				&& appContext.getMasterNode().getIdentity().equals(appContext.getConfig().getIdentity())) {
 			addNodeRedistribution(node);
 		}
 	}
@@ -63,7 +65,8 @@ public class TaskDispatcherManager {
 	public void removeNode(Node node) {
 		taskDispatcherRemovedSet.add(node);
 		taskDispatcherSet.remove(node);
-		if (appContext.getMasterNode() != null && appContext.getMasterNode().getIdentity().equals(appContext.getConfig().getIdentity())) {
+		if (appContext.getMasterNode() != null
+				&& appContext.getMasterNode().getIdentity().equals(appContext.getConfig().getIdentity())) {
 			removeNodeRedistribution(node);
 		}
 	}
@@ -86,9 +89,9 @@ public class TaskDispatcherManager {
 			}
 			int average = 0;
 			if (dispatcherSize > 0) {
-				average = poolSize/dispatcherSize;
+				average = poolSize / dispatcherSize;
 			}
-			
+
 			List<PoolPo> pools = appContext.getPoolQueue().getPoolGreaterAverage(average);
 			Map<String, List<PoolPo>> nodeMap = new HashMap<String, List<PoolPo>>();
 			boolean hasWfp = false;
@@ -101,41 +104,53 @@ public class TaskDispatcherManager {
 				}
 				if (nodeMap.containsKey(nodeId)) {
 					nodeMap.get(nodeId).add(poolPo);
-				}else {
+				} else {
 					nodeMap.put(nodeId, new ArrayList<PoolPo>());
 					nodeMap.get(nodeId).add(poolPo);
 				}
 			}
 			if (hasWfp) {
-				for(PoolPo poolPo : nodeMap.get(defaultId)) {
-					PoolQueueReq  updateReq = new PoolQueueReq();
+				for (PoolPo poolPo : nodeMap.get(defaultId)) {
+					PoolQueueReq updateReq = new PoolQueueReq();
 					updateReq.setPoolId(poolPo.getPoolId());
 					updateReq.setNodeId(node.getIdentity());
 					appContext.getPoolQueue().updateByPoolId(updateReq);
 				}
 				return;
 			}
+			if (dispatcherSize <=0) {
+				return;
+			}
 			List<PoolNum> list = new ArrayList<PoolNum>();
-			
+			for (Node taskDispatch : taskDispatcherSet) {
+				if (nodeMap.containsKey(taskDispatch.getIdentity())) {
+					continue;
+				}
+				PoolNum poolNum = new PoolNum();
+				poolNum.setId(taskDispatch.getIdentity());
+				poolNum.setNum(0);
+				list.add(poolNum);
+			}
+
 			for (String id : nodeMap.keySet()) {
 				PoolNum poolNum = new PoolNum();
 				poolNum.setId(id);
 				poolNum.setNum(nodeMap.get(id).size());
 				list.add(poolNum);
 			}
-			
+
 			Collections.sort(list);
-			
+
 			int fpNum = 0;
-			if (average%list.size() == 0) {
-				fpNum = average/list.size();
-			}else {
-				fpNum = average/list.size() + 1;
+			if (average % list.size() == 0) {
+				fpNum = average / list.size();
+			} else {
+				fpNum = average / list.size() + 1;
 			}
-			for (int i = 0 ; i < list.size(); i++) {
-				for(int j = 0 ; j< fpNum ;j++) {
+			for (int i = 0; i < list.size() && i < average; i++) {
+				for (int j = 0; j < fpNum; j++) {
 					PoolPo poolPo = nodeMap.get(list.get(i).getId()).get(j);
-					PoolQueueReq  updateReq = new PoolQueueReq();
+					PoolQueueReq updateReq = new PoolQueueReq();
 					updateReq.setPoolId(poolPo.getPoolId());
 					updateReq.setNodeId(node.getIdentity());
 					appContext.getPoolQueue().updateByPoolId(updateReq);
@@ -150,10 +165,11 @@ public class TaskDispatcherManager {
 
 	public void removeNodeRedistribution(Node node) {
 		globalLock.lock();
-		LOGGER.info("删除任务调度中心节点" + node.getIdentity() +"开始");
+		LOGGER.info("删除任务调度中心节点" + node.getIdentity() + "开始");
 		try {
 			List<PoolPo> poolPos = appContext.getPoolQueue().getPoolByNodeId(node.getIdentity());
 			if (poolPos == null || poolPos.isEmpty()) {
+				taskDispatcherRemovedSet.remove(node);
 				return;
 			}
 			PoolQueueReq request = new PoolQueueReq();
@@ -161,7 +177,7 @@ public class TaskDispatcherManager {
 			appContext.getPoolQueue().clearNodeByNodeId(request);
 			taskDispatcherRemovedSet.remove(node);
 		} finally {
-			LOGGER.info("删除任务调度中心节点" + node.getIdentity() +"结束");
+			LOGGER.info("删除任务调度中心节点" + node.getIdentity() + "结束");
 			globalLock.unlock();
 		}
 	}
@@ -177,14 +193,15 @@ public class TaskDispatcherManager {
 			}
 		}
 	}
+
 	public void addRemoveTaskDispatcher(Node node) {
 		taskDispatcherRemovedSet.add(node);
 	}
+
 	public void poolChangeRedistribution() {
-		
-		
+
 		globalLock.lock();
-		LOGGER.info("删除任务调度中心节点，重新分配任务线程池开始");
+		LOGGER.info("任务调度中心节点，重新分配任务线程池开始");
 		try {
 			List<PoolPo> poolPos = appContext.getPoolQueue().getUndistributedPool();
 			if (poolPos == null || poolPos.isEmpty()) {
@@ -195,84 +212,88 @@ public class TaskDispatcherManager {
 			PaginationRsp<PoolPo> paginationRsp = appContext.getPoolQueue().pageSelect(request);
 			List<PoolPo> distributedPoolPos = paginationRsp.getRows();
 			Map<String, List<PoolPo>> nodeMap = new HashMap<String, List<PoolPo>>();
-			boolean hasWfp = false;
-			String defaultId = "default";
 			for (PoolPo poolPo : distributedPoolPos) {
 				String nodeId = poolPo.getNodeId();
 				if (nodeId == null || "".equals(nodeId)) {
-					nodeId = defaultId;
-					hasWfp = true;
+					continue;
 				}
 				if (nodeMap.containsKey(nodeId)) {
 					nodeMap.get(nodeId).add(poolPo);
-				}else {
+				} else {
 					nodeMap.put(nodeId, new ArrayList<PoolPo>());
 					nodeMap.get(nodeId).add(poolPo);
 				}
 			}
+
 			
-			if (hasWfp && !taskDispatcherSet.isEmpty()) {
-				for(PoolPo poolPo : nodeMap.get(defaultId)) {
-					PoolQueueReq  updateReq = new PoolQueueReq();
-					updateReq.setPoolId(poolPo.getPoolId());
-					updateReq.setNodeId(taskDispatcherSet.iterator().next().getIdentity());
-					appContext.getPoolQueue().updateByPoolId(updateReq);
-				}
-				return;
-			}else if(taskDispatcherSet.isEmpty()) {
-				return;
-			}
 			List<PoolNum> list = new ArrayList<PoolNum>();
-			
-			for (String id : nodeMap.keySet()) {
+			for (Node node : taskDispatcherSet) {
+				if (nodeMap.containsKey(node.getIdentity())) {
+					continue;
+				}
 				PoolNum poolNum = new PoolNum();
-				poolNum.setId(id);
-				poolNum.setNum(nodeMap.get(id).size());
+				poolNum.setId(node.getIdentity());
+				poolNum.setNum(0);
 				list.add(poolNum);
+			}
+			if (!nodeMap.isEmpty()) {
+				for (String id : nodeMap.keySet()) {
+					PoolNum poolNum = new PoolNum();
+					poolNum.setId(id);
+					poolNum.setNum(nodeMap.get(id).size());
+					list.add(poolNum);
+				}
 			}
 			
 			Collections.sort(list);
-			
-			int cicleNum = (poolPos.size()%list.size()==0)?poolPos.size()/list.size():poolPos.size()/list.size()+1;
+
+			int cicleNum = (poolPos.size() % list.size() == 0) ? poolPos.size() / list.size()
+					: poolPos.size() / list.size() + 1;
 			int undistributedNum = 0;
-			for(int i =0 ; i < cicleNum ; i++) {
-				for (int j = list.size()-1; j >= 0 && undistributedNum < poolPos.size() ; j--) {
-					PoolQueueReq  updateReq = new PoolQueueReq();
+			for (int i = 0; i < cicleNum; i++) {
+				for (int j = list.size() - 1; j >= 0 && undistributedNum < poolPos.size(); j--) {
+					PoolQueueReq updateReq = new PoolQueueReq();
 					updateReq.setPoolId(poolPos.get(undistributedNum).getPoolId());
 					updateReq.setNodeId(list.get(j).getId());
 					appContext.getPoolQueue().updateByPoolId(updateReq);
+					undistributedNum++;
 				}
 			}
 		} finally {
-			LOGGER.info("删除任务调度中心节点，重新分配任务线程池结束");
+			LOGGER.info("任务调度中心节点重新分配任务线程池结束");
 			globalLock.unlock();
 		}
 	}
+
 	public static class PoolNum implements Comparable<PoolNum> {
 		private String id;
 		private Integer num;
+
 		public String getId() {
 			return id;
 		}
+
 		public void setId(String id) {
 			this.id = id;
 		}
+
 		public int getNum() {
 			return num;
 		}
+
 		public void setNum(int num) {
 			this.num = num;
 		}
+
 		@Override
 		public int compareTo(PoolNum o) {
 			return -this.num.compareTo(o.num);
 		}
+
 		@Override
 		public String toString() {
 			return id + "--" + num;
-			
+
 		}
 	}
 }
-
-

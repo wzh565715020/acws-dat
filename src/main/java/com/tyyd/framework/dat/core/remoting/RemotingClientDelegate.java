@@ -2,9 +2,6 @@ package com.tyyd.framework.dat.core.remoting;
 
 import com.tyyd.framework.dat.core.AppContext;
 import com.tyyd.framework.dat.core.cluster.Node;
-import com.tyyd.framework.dat.core.exception.TaskDispatcherNotFoundException;
-import com.tyyd.framework.dat.core.logger.Logger;
-import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.remoting.AsyncCallback;
 import com.tyyd.framework.dat.remoting.Channel;
 import com.tyyd.framework.dat.remoting.RemotingClient;
@@ -14,14 +11,10 @@ import com.tyyd.framework.dat.remoting.exception.RemotingException;
 import com.tyyd.framework.dat.remoting.exception.RemotingSendRequestException;
 import com.tyyd.framework.dat.remoting.exception.RemotingTimeoutException;
 import com.tyyd.framework.dat.remoting.protocol.RemotingCommand;
-import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
-import com.tyyd.framework.dat.taskexecuter.domain.TaskExecuterAppContext;
 
 import java.util.concurrent.ExecutorService;
 
 public class RemotingClientDelegate {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(RemotingClientDelegate.class);
 
 	private RemotingClient remotingClient;
 
@@ -44,17 +37,14 @@ public class RemotingClientDelegate {
 	 * 异步调用
 	 */
 	public void invokeAsync(Channel channel, RemotingCommand request, AsyncCallback asyncCallback,
-			String... addressParam) throws TaskDispatcherNotFoundException {
-		try {
-			if (channel != null) {
-				remotingClient.invokeAsync(channel, request, appContext.getConfig().getInvokeTimeoutMillis(),
-						asyncCallback);
-			} else {
-				String address = addressParam[0];
-				remotingClient.invokeAsync(address, request, appContext.getConfig().getInvokeTimeoutMillis(),
-						asyncCallback);
-			}
-		} catch (Throwable e) {
+			String... addressParam) throws Exception {
+		if (channel != null) {
+			remotingClient.invokeAsync(channel, request, appContext.getConfig().getInvokeTimeoutMillis(),
+					asyncCallback);
+		} else {
+			String address = addressParam[0];
+			remotingClient.invokeAsync(address, request, appContext.getConfig().getInvokeTimeoutMillis(),
+					asyncCallback);
 		}
 	}
 
@@ -78,16 +68,12 @@ public class RemotingClientDelegate {
 		remotingClient.invokeAsync(address, request, appContext.getConfig().getInvokeTimeoutMillis(), asyncCallback);
 	}
 
-	public void invokeAsync(TaskDispatcherAppContext appcontext, Node node, RemotingCommand request,
-			AsyncCallback asyncCallback) throws Exception {
+	public void invokeAsync(AppContext appcontext, Node node, RemotingCommand request, AsyncCallback asyncCallback)
+			throws Exception {
 		remotingClient.invokeAsync(appcontext, node, request, appContext.getConfig().getInvokeTimeoutMillis(),
 				asyncCallback);
 	}
-	public void invokeAsync(TaskExecuterAppContext appcontext, Node node, RemotingCommand request,
-			AsyncCallback asyncCallback) throws Exception {
-		remotingClient.invokeAsync(appcontext, node, request, appContext.getConfig().getInvokeTimeoutMillis(),
-				asyncCallback);
-	}
+
 	/**
 	 * 同步调用
 	 * 
@@ -101,5 +87,17 @@ public class RemotingClientDelegate {
 		RemotingCommand response = remotingClient.invokeSync(address, request,
 				appContext.getConfig().getInvokeTimeoutMillis());
 		return response;
+	}
+
+	public void invokeAsync(AppContext appContext, Node node, Channel channel, RemotingCommand request,
+			AsyncCallback asyncCallback) throws Exception {
+		if (channel != null) {
+			remotingClient.invokeAsync(channel, request, appContext.getConfig().getInvokeTimeoutMillis(),
+					asyncCallback);
+		} else {
+			remotingClient.invokeAsync(appContext, node, request, appContext.getConfig().getInvokeTimeoutMillis(),
+					asyncCallback);
+		}
+
 	}
 }

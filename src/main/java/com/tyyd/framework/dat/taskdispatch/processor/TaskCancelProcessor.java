@@ -31,16 +31,10 @@ public class TaskCancelProcessor extends AbstractRemotingProcessor {
 
         String taskId = taskCancelRequest.getTaskId();
         String taskTrackerNodeGroup = taskCancelRequest.getTaskTrackerNodeGroup();
-        TaskPo task = appContext.getTaskQueue().getTask(taskId);
-        if (task == null) {
-            task = appContext.getExecutableTaskQueue().getTask(taskId);
-        }
+        TaskPo task = appContext.getExecutableTaskQueue().getTask(taskId);
 
         if (task != null) {
             appContext.getExecutableTaskQueue().remove(task.getTaskId());
-            if (task.isCron()) {
-                appContext.getTaskQueue().remove(task.getTaskId());
-            }
             // 记录日志
             TaskLogPo jobLogPo = TaskDomainConverter.convertTaskLog(task);
             jobLogPo.setSuccess(true);

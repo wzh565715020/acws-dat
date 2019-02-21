@@ -46,10 +46,10 @@ public class TaskFinishHandler {
 			// 当前完成的task是否是重试的
 			boolean isRetryForThisTime = "true".equals(taskMeta.getInternalExtParam("isRetry"));
 
-			if (taskMeta.getTask().isCron()) {
+			if (taskMeta.getTask().isCronExpression()) {
 				// 是 Cron任务
 				finishCronTask(taskMeta.getId());
-			} else if (taskMeta.getTask().isRepeatable()) {
+			} else if (taskMeta.getTask().isRepeatableExpression()) {
 				finishRepeatTask(taskMeta.getId(), isRetryForThisTime);
 			}
 

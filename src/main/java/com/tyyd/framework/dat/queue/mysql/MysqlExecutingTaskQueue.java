@@ -44,7 +44,7 @@ public class MysqlExecutingTaskQueue extends AbstractMysqlTaskExecuteQueue imple
                 .all()
                 .from()
                 .table(getTableName())
-                .where("create_date < ?", deadline)
+                .where("update_date < ?", deadline)
                 .list(RshHolder.TASK_PO_LIST_RSH);
     }
 

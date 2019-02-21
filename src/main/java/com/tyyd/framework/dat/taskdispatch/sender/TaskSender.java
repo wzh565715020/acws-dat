@@ -60,7 +60,7 @@ public class TaskSender {
 			taskPo.setTaskExecuteNode(taskExecuterIdentity);
 			taskPo.setIsRunning(1);
 			appContext.getExecutingTaskQueue().add(taskPo);
-			if (!taskPo.isCron() && !taskPo.isRepeatable()) {
+			if (!taskPo.isCronExpression() && !taskPo.isRepeatableExpression()) {
 				appContext.getExecutableTaskQueue().remove(taskPo.getId());
 			}
 			sendResult = invoker.invoke(taskPo);

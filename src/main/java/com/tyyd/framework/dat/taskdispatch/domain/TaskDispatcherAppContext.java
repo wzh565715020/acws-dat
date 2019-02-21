@@ -10,9 +10,7 @@ import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
 import com.tyyd.framework.dat.queue.ExecutedTaskQueue;
 import com.tyyd.framework.dat.queue.ExecutingTaskQueue;
 import com.tyyd.framework.dat.queue.PoolQueue;
-import com.tyyd.framework.dat.queue.TaskQueue;
 import com.tyyd.framework.dat.queue.domain.PoolPo;
-import com.tyyd.framework.dat.taskdispatch.channel.TaskDispatchChannelManager;
 import com.tyyd.framework.dat.taskdispatch.id.IdGenerator;
 import com.tyyd.framework.dat.taskdispatch.sender.TaskSender;
 import com.tyyd.framework.dat.taskdispatch.support.TaskReceiver;
@@ -30,7 +28,7 @@ public class TaskDispatcherAppContext extends AppContext {
     
     private RemotingServerDelegate remotingServer;
     // channel manager
-    private TaskDispatchChannelManager channelManager;
+   
     // dead task checker
     private ExecutingDeadTaskChecker executingDeadJobChecker;
     // biz logger
@@ -43,7 +41,6 @@ public class TaskDispatcherAppContext extends AppContext {
     // executing task queue
     private ExecutedTaskQueue executedTaskQueue;
     // task queue
-    private TaskQueue taskQueue;
     private PoolQueue poolQueue;
     // task id generator
     private IdGenerator idGenerator;
@@ -116,13 +113,6 @@ public class TaskDispatcherAppContext extends AppContext {
         this.remotingClient = remotingClientDelegate;
     }
 
-    public TaskDispatchChannelManager getChannelManager() {
-        return channelManager;
-    }
-
-    public void setChannelManager(TaskDispatchChannelManager channelManager) {
-        this.channelManager = channelManager;
-    }
 
     public ExecutingDeadTaskChecker getExecutingDeadJobChecker() {
         return executingDeadJobChecker;
@@ -155,14 +145,6 @@ public class TaskDispatcherAppContext extends AppContext {
     public void setExecutingTaskQueue(ExecutingTaskQueue executingTaskQueue) {
         this.executingTaskQueue = executingTaskQueue;
     }
-
-	public TaskQueue getTaskQueue() {
-		return taskQueue;
-	}
-
-	public void setTaskQueue(TaskQueue taskQueue) {
-		this.taskQueue = taskQueue;
-	}
 
 	public void setTaskPushMachine(TaskPushMachine taskPushMachine) {
 		this.taskPushMachine = taskPushMachine;
