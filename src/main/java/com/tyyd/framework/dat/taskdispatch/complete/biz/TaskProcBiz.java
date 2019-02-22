@@ -56,6 +56,8 @@ public class TaskProcBiz implements TaskCompletedBiz {
         DataSourceTransactionManager dataSourceTransactionManager = applicationContext.getBean(DataSourceTransactionManager.class);
         DefaultTransactionDefinition def = new DefaultTransactionDefinition();
         def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED); // 事物隔离级别，开启新事务，这样会比较安全些。
+        def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
+        def.setReadOnly(false);
         TransactionStatus status = dataSourceTransactionManager.getTransaction(def); // 获得事务状态
         try {
         	 multiResultsProcess(results);

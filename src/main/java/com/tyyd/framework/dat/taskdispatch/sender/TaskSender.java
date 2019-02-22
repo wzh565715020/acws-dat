@@ -37,7 +37,7 @@ public class TaskSender {
 					+ preLoader.getPoolId());
 			return new SendResult(false, TaskPushResult.NO_TASK);
 		}
-		if (!preLoader.lockTask(taskPo.getId(), taskExecuterIdentity)) {
+		if (!preLoader.lockTask(taskPo.getId(), taskExecuterIdentity,taskPo.getTriggerTime())) {
 			return new SendResult(false, TaskPushResult.LOCK_FAIL);
 		}
 		ApplicationContext applicationContext = SpringContextHolder.getApplicationContext();
@@ -45,6 +45,7 @@ public class TaskSender {
 				.getBean(DataSourceTransactionManager.class);
 		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED); // 事物隔离级别，开启新事务
+		def.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
 		TransactionStatus status = dataSourceTransactionManager.getTransaction(def); // 获得事务状态
 		SendResult sendResult = null;
 		try {

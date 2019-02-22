@@ -58,7 +58,7 @@ public abstract class AbstractServerNode<T extends Node, App extends AppContext>
             node.setPort(config.getListenPort());
         }
         
-        node.setIdentity(node.getClusterName() + "_" + node.getIp() + "_" + node.getPort());
+        node.setIdentity(node.getClusterName()+ "_" + node.getNodeType() + "_" + node.getIp() + "_" + node.getPort());
         appContext.getConfig().setIdentity(node.getIdentity());
         remotingServerConfig.setListenPort(config.getListenPort());
 

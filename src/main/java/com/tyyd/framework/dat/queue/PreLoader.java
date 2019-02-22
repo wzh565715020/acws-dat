@@ -6,7 +6,7 @@ public interface PreLoader {
 
 	public TaskPo take();
 
-	public boolean lockTask(String id, String taskExecuterIdentity);
+	public boolean lockTask(String id, String taskExecuterIdentity,Long triggerTime);
 
 	public void stop();
 	

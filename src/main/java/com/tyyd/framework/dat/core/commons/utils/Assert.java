@@ -47,6 +47,14 @@ public class Assert {
                 "[Assertion failed] - this String argument must have length; it must not be null or empty");
     }
 
+    public static void LessThanMaxLength(String text,int maxLenth, String message) {
+        hasLength(text,
+                "[Assertion failed] - this String argument must have length; it must not be null or empty");
+        if (text.length()> maxLenth) {
+        	 throw new IllegalArgumentException(StringUtils.isEmpty(message) ? "this String argument length is lager than Max Length" : message);
+		}
+    }
+    
     public static void hasText(String text, String message) {
         if (!StringUtils.hasText(text)) {
             throw new IllegalArgumentException(message);

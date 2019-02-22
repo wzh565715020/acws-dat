@@ -1,5 +1,7 @@
 package com.tyyd.framework.dat.store.jdbc;
 
+import com.tyyd.framework.dat.core.logger.Logger;
+import com.tyyd.framework.dat.core.logger.LoggerFactory;
 import com.tyyd.framework.dat.store.jdbc.dbutils.DbRunner;
 import com.tyyd.framework.dat.store.jdbc.dbutils.ResultSetHandler;
 import com.tyyd.framework.dat.store.jdbc.dbutils.ScalarHandler;
@@ -13,6 +15,7 @@ import java.sql.SQLException;
 
 class SqlTemplateImpl implements SqlTemplate {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(SqlTemplateImpl.class);
     private final DataSource dataSource;
     private final static DbRunner dbRunner = new DbRunner();
 
@@ -20,15 +23,10 @@ class SqlTemplateImpl implements SqlTemplate {
         this.dataSource = dataSource;
     }
 
-    public <T> T execute(boolean isReadOnly, SqlExecutor<T> executor) throws SQLException {
+    public <T> T execute(SqlExecutor<T> executor) throws SQLException {
         Connection conn = null;
         try {
             conn = DataSourceUtils.doGetConnection(dataSource); //dataSource.getConnection();
-            if (isReadOnly) {
-                conn.setReadOnly(true);
-            }else {
-            	conn.setReadOnly(false);
-            }
             return executor.run(conn);
         } finally {
         	DataSourceUtils.releaseConnection(conn, dataSource);
@@ -49,7 +47,7 @@ class SqlTemplateImpl implements SqlTemplate {
     }
 
     public int[] batchUpdate(final String sql, final Object[][] params) throws SQLException {
-        return execute(false, new SqlExecutor<int[]>() {
+        return execute(new SqlExecutor<int[]>() {
             @Override
             public int[] run(Connection conn) throws SQLException {
                 return batchUpdate(conn, sql, params);
@@ -63,7 +61,7 @@ class SqlTemplateImpl implements SqlTemplate {
     }
 
     public int update(final String sql, final Object... params) throws SQLException {
-        return execute(false, new SqlExecutor<Integer>() {
+        return execute(new SqlExecutor<Integer>() {
             @Override
             public Integer run(Connection conn) throws SQLException {
                 return update(conn, sql, params);
@@ -81,7 +79,7 @@ class SqlTemplateImpl implements SqlTemplate {
     }
 
     public <T> T query(final String sql, final ResultSetHandler<T> rsh, final Object... params) throws SQLException {
-        return execute(true, new SqlExecutor<T>() {
+        return execute(new SqlExecutor<T>() {
             @Override
             public T run(Connection conn) throws SQLException {
                 return query(conn, sql, rsh, params);

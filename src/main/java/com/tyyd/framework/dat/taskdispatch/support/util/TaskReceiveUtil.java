@@ -5,8 +5,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.ThrowsAdvice;
 
+import com.tyyd.framework.dat.core.constant.RunningEnum;
 import com.tyyd.framework.dat.core.domain.Task;
+import com.tyyd.framework.dat.core.domain.TaskExecType;
 import com.tyyd.framework.dat.core.support.CronExpressionUtils;
 import com.tyyd.framework.dat.core.support.TaskDomainConverter;
 import com.tyyd.framework.dat.queue.ExecutableTaskQueue;
@@ -32,45 +35,31 @@ public class TaskReceiveUtil {
 	private static ExecutableTaskQueue executableTaskQueue = new MysqlExecutableTaskQueue();
 
 	private static ExecutingTaskQueue executingTaskQueue = new MysqlExecutingTaskQueue();
-	
+
 	private static PoolQueue poolQueue = new MysqlPoolQueue();
 
-	public static void addToQueue(Task task) throws Exception{
-
-		TaskPo taskPo = null;
-		try {
-			taskPo = TaskDomainConverter.convert(task);
-			if (taskPo == null) {
-				LOGGER.warn("task can not be null。{}", task);
-				return;
-			}
-			if (task.getPoolId() == null) {
-				throw new Exception("任务必须包含线程池id");
-			}
-			if (poolQueue.getPool(task.getPoolId()) == null) {
-				throw new Exception("任务线程池在线程池配置中不存在，请使用存在的线程池id");
-			}
-			// 设置 id
-			taskPo.setId(idGenerator.generate());
-
-			// 添加任务
-			addTask(taskPo);
-
-		} catch (DupEntryException e) {
-			// 已经存在
-		} finally {
+	public static void addToQueue(Task task) throws Exception {
+		if (task == null) {
+			LOGGER.warn("task can not be null。");
+			return;
 		}
+		TaskPo taskPo = TaskDomainConverter.convert(task);
+		// 设置 id
+		taskPo.setId(idGenerator.generate());
+		// 添加任务
+		addTask(taskPo);
 	}
 
 	/**
 	 * 添加任务
 	 */
-	public static void addTask(TaskPo taskPo) throws DupEntryException {
+	public static void addTask(TaskPo taskPo) throws Exception {
+		checkTask(taskPo);
 		if (taskPo.isCronExpression()) {
 			addCronJob(taskPo);
 		} else if (taskPo.isRepeatableExpression()) {
 			addRepeatTask(taskPo);
-		} else if(taskPo.isLimitExpression()) {
+		} else if (taskPo.isLimitExpression()) {
 			List<TaskPo> executingTaskPos = executingTaskQueue.getTaskByTaskId(taskPo.getTaskId());
 			List<TaskPo> executableTaskPos = executableTaskQueue.getDeadJob(0);
 			if (executingTaskPos != null && !executingTaskPos.isEmpty() && executableTaskPos != null
@@ -78,7 +67,7 @@ public class TaskReceiveUtil {
 				return;
 			}
 			executableTaskQueue.add(taskPo);
-		}else {
+		} else {
 			executableTaskQueue.add(taskPo);
 		}
 	}
@@ -108,6 +97,35 @@ public class TaskReceiveUtil {
 		if (taskPos == null || taskPos.isEmpty()) {
 			// 2. add to executable queue
 			executableTaskQueue.add(taskPo);
+		}
+	}
+
+	public static void checkTask(TaskPo taskPo) throws Exception {
+		if (RunningEnum.NOT_RUNNING.getCode() != taskPo.getIsRunning()) {
+			throw new Exception("任务不能是运行中状态");
+		}
+		if (taskPo.getPoolId() == null) {
+			throw new Exception("任务必须包含线程池id");
+		}
+		if (poolQueue.getPool(taskPo.getPoolId()) == null) {
+			throw new Exception("任务线程池在线程池配置中不存在，请使用存在的线程池id");
+		}
+
+		if (taskPo.isCronExpression()) {
+			if (CronExpressionUtils.isValidExpression(taskPo.getCron())) {
+				throw new Exception("计划任务的cron配置有有误");
+			}
+			if (TaskExecType.SCHEDULETIME.getCode().equals(taskPo.getTaskExecType())) {
+				throw new Exception("计划任务的执行方式配置有误");
+			}
+		}
+		if (taskPo.isRepeatableExpression()) {
+			if (taskPo.getRepeatCount() == null) {
+				throw new Exception("重复执行任务的重复次数不能为空");
+			}
+			if (taskPo.getRepeatInterval() == null) {
+				throw new Exception("重复执行任务的重复间隔不能为空");
+			}
 		}
 	}
 

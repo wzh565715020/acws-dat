@@ -26,17 +26,8 @@ public class TaskDomainConverter {
         taskPo.setRepeatCount(task.getRepeatCount());
         taskPo.setCreateDate(SystemClock.now());
         taskPo.setUpdateDate(SystemClock.now());
-        if (!taskPo.isCronExpression()) {
-            if (task.getTriggerTime() == null) {
-                taskPo.setTriggerTime(SystemClock.now());
-            } else {
-                taskPo.setTriggerTime(task.getTriggerTime());
-            }
-        }
-        if (task.getRepeatCount() != 0) {
-            taskPo.setCron(null);
-            taskPo.setRepeatInterval(task.getRepeatInterval());
-        }
+        taskPo.setTriggerTime(task.getTriggerTime());
+        taskPo.setRepeatInterval(task.getRepeatInterval());
         return taskPo;
     }
 

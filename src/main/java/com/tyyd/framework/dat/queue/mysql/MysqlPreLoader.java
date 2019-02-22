@@ -24,10 +24,10 @@ public class MysqlPreLoader extends AbstractPreLoader {
 	}
 
 	@Override
-	public boolean lockTask(String id, String taskTrackerIdentity) {
+	public boolean lockTask(String id, String taskTrackerIdentity,Long triggerTime) {
 		return new UpdateSql(sqlTemplate).update().table(getTableName()).set("is_running", 1)
 				.set("task_execute_node", taskTrackerIdentity).set("update_date", SystemClock.now()).where("id = ?", id)
-				.and("is_running = ?", 0).doUpdate() == 1;
+				.and("is_running = ?", 0).and("trigger_time = ?", triggerTime).doUpdate() == 1;
 	}
 
 	@Override

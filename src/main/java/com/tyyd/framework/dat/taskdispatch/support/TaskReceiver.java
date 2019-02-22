@@ -20,6 +20,7 @@ import com.tyyd.framework.dat.store.jdbc.exception.DupEntryException;
 import com.tyyd.framework.dat.taskdispatch.domain.TaskDispatcherAppContext;
 import com.tyyd.framework.dat.taskdispatch.id.IdGenerator;
 import com.tyyd.framework.dat.taskdispatch.monitor.TaskDispatcherMStatReporter;
+import com.tyyd.framework.dat.taskdispatch.support.util.TaskReceiveUtil;
 
 /**
  *         任务处理器
@@ -61,7 +62,7 @@ public class TaskReceiver {
         }
     }
 
-    private TaskPo addToQueue(Task task, TaskSubmitRequest request) {
+    private TaskPo addToQueue(Task task, TaskSubmitRequest request) throws Exception {
 
         TaskPo taskPo = null;
         boolean success = false;
@@ -76,16 +77,11 @@ public class TaskReceiver {
             }
             // 设置 jobId
             taskPo.setId(idGenerator.generate());
-
             // 添加任务
             addJob(taskPo);
-
             success = true;
 
-        } catch (DupEntryException e) {
-            // 已经存在
-                LOGGER.info("task already exist {}", task);
-        } finally {
+       } finally {
             if (success) {
                 stat.incReceiveJobNum();
             }
@@ -96,9 +92,10 @@ public class TaskReceiver {
     /**
      * 添加任务
      */
-    public void addJob(TaskPo taskPo) throws DupEntryException {
+    public void addJob(TaskPo taskPo) throws Exception {
+    	TaskReceiveUtil.checkTask(taskPo);
         if (taskPo.isCronExpression()) {
-            addCronJob(taskPo);
+            addCronTask(taskPo);
         } else if (taskPo.isRepeatableExpression()) {
             addRepeatTask(taskPo);
         }else {
@@ -108,7 +105,7 @@ public class TaskReceiver {
     /**
      * 添加Cron 任务
      */
-    private void addCronJob(TaskPo taskPo) throws DupEntryException {
+    private void addCronTask(TaskPo taskPo) throws DupEntryException {
         Date nextTriggerTime = CronExpressionUtils.getNextTriggerTime(taskPo.getCron());
         if (nextTriggerTime != null) {
             // 没有正在执行, 则添加

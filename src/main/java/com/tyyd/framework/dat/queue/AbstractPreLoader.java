@@ -94,7 +94,7 @@ public abstract class AbstractPreLoader implements PreLoader {
 	/**
 	 * 锁定任务
 	 */
-	public abstract boolean lockTask(String id, String taskTrackerIdentity);
+	public abstract boolean lockTask(String id, String taskTrackerIdentity,Long triggerTime);
 
 	/**
 	 * 加载任务

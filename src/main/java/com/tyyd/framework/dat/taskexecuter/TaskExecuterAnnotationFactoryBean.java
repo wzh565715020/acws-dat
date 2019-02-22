@@ -82,6 +82,7 @@ public class TaskExecuterAnnotationFactoryBean implements FactoryBean<TaskExecut
 
     public void checkProperties() {
         Assert.hasText(clusterName, "clusterName must have value.");
+        Assert.LessThanMaxLength(clusterName,28,"");
         Assert.hasText(registryAddress, "registryAddress must have value.");
         Assert.notNull(listenPort,"listenPort must have value.");
         Assert.isTrue(workThreads > 0, "workThreads must > 0.");

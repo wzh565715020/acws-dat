@@ -3,7 +3,6 @@ package com.tyyd.framework.dat.taskdispatch.complete;
 import java.util.Date;
 import java.util.List;
 
-
 import com.tyyd.framework.dat.biz.logger.domain.TaskLogPo;
 import com.tyyd.framework.dat.admin.request.PoolQueueReq;
 import com.tyyd.framework.dat.biz.logger.domain.LogType;
@@ -87,13 +86,9 @@ public class TaskFinishHandler {
 			return;
 		}
 		// 表示下次还要执行
-		try {
-			taskPo.setTaskExecuteNode("");
-			taskPo.setTriggerTime(nextTriggerTime.getTime());
-			appContext.getExecutableTaskQueue().update(taskPo);
-		} catch (DupEntryException e) {
-			LOGGER.warn("ExecutableTaskQueue already exist:" + JSON.toJSONString(taskPo));
-		}
+		taskPo.setTaskExecuteNode("");
+		taskPo.setTriggerTime(nextTriggerTime.getTime());
+		appContext.getExecutableTaskQueue().update(taskPo);
 	}
 
 	private void finishRepeatTask(String id, boolean isRetryForThisTime) {
@@ -113,7 +108,7 @@ public class TaskFinishHandler {
 		// 如果当前完成的job是重试的,那么不要增加repeatedCount
 		if (!isRetryForThisTime) {
 			// 更新repeatJob的重复次数
-			//TODO 修改
+			// TODO 修改
 			repeatedCount = appContext.getExecutableTaskQueue().incRepeatedCount(taskPo.getId());
 		}
 		if (repeatedCount == -1) {
