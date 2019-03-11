@@ -75,8 +75,10 @@ public class TaskDispatcherManager {
 		globalLock.lock();
 		LOGGER.info("新增任务调度中心节点，重新分配任务线程池开始");
 		try {
+			String clusterName = appContext.getConfig().getClusterName();
 			PoolQueueReq request = new PoolQueueReq();
 			request.setLimit(Integer.MAX_VALUE);
+			request.setClusterName(clusterName);
 			PaginationRsp<PoolPo> paginationRsp = appContext.getPoolQueue().pageSelect(request);
 			List<PoolPo> poolPos = paginationRsp.getRows();
 			if (poolPos == null || poolPos.isEmpty()) {
@@ -92,7 +94,7 @@ public class TaskDispatcherManager {
 				average = poolSize / dispatcherSize;
 			}
 
-			List<PoolPo> pools = appContext.getPoolQueue().getPoolGreaterAverage(average);
+			List<PoolPo> pools = appContext.getPoolQueue().getPoolGreaterAverage(average,clusterName);
 			Map<String, List<PoolPo>> nodeMap = new HashMap<String, List<PoolPo>>();
 			boolean hasWfp = false;
 			String defaultId = "default";
@@ -122,7 +124,7 @@ public class TaskDispatcherManager {
 				return;
 			}
 			List<PoolNum> list = new ArrayList<PoolNum>();
-			for (Node taskDispatch : taskDispatcherSet) {
+			/*for (Node taskDispatch : taskDispatcherSet) {
 				if (nodeMap.containsKey(taskDispatch.getIdentity())) {
 					continue;
 				}
@@ -130,7 +132,7 @@ public class TaskDispatcherManager {
 				poolNum.setId(taskDispatch.getIdentity());
 				poolNum.setNum(0);
 				list.add(poolNum);
-			}
+			}*/
 
 			for (String id : nodeMap.keySet()) {
 				PoolNum poolNum = new PoolNum();
@@ -141,6 +143,9 @@ public class TaskDispatcherManager {
 
 			Collections.sort(list);
 
+			if (list == null || list.isEmpty()) {
+				return;
+			}
 			int fpNum = 0;
 			if (average % list.size() == 0) {
 				fpNum = average / list.size();
@@ -203,12 +208,14 @@ public class TaskDispatcherManager {
 		globalLock.lock();
 		LOGGER.info("任务调度中心节点，重新分配任务线程池开始");
 		try {
-			List<PoolPo> poolPos = appContext.getPoolQueue().getUndistributedPool();
+			String clusterName = appContext.getConfig().getClusterName();
+			List<PoolPo> poolPos = appContext.getPoolQueue().getUndistributedPool(clusterName);
 			if (poolPos == null || poolPos.isEmpty()) {
 				return;
 			}
 			PoolQueueReq request = new PoolQueueReq();
 			request.setLimit(Integer.MAX_VALUE);
+			request.setClusterName(clusterName);
 			PaginationRsp<PoolPo> paginationRsp = appContext.getPoolQueue().pageSelect(request);
 			List<PoolPo> distributedPoolPos = paginationRsp.getRows();
 			Map<String, List<PoolPo>> nodeMap = new HashMap<String, List<PoolPo>>();

@@ -50,6 +50,7 @@ public class TaskFinishHandler {
 				finishCronTask(taskMeta.getId());
 			} else if (taskMeta.getTask().isRepeatableExpression()) {
 				finishRepeatTask(taskMeta.getId(), isRetryForThisTime);
+				taskMeta.getTask().setRepeatedCount(taskMeta.getTask().getRepeatedCount()+1);
 			}
 
 			// 从正在执行的队列中移除

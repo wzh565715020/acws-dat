@@ -31,7 +31,7 @@ public interface PoolQueue extends PoolQueueInterface{
     
     public boolean decreaseAvailableCount(PoolQueueReq request);
     
-    public List<PoolPo> getPoolGreaterAverage(int average);
+    public List<PoolPo> getPoolGreaterAverage(int average, String clusterName);
     
-    public List<PoolPo> getUndistributedPool();
+    public List<PoolPo> getUndistributedPool(String clusterName);
 }

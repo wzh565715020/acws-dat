@@ -8,6 +8,7 @@ public class PoolQueueReq extends PaginationReq {
 	private Integer maxCount;
 	private Integer availableCount;
 	private String nodeId;
+	private String clusterName;
 	private String memo;
 	private Long createDate;
 	private Long updateDate;
@@ -53,6 +54,14 @@ public class PoolQueueReq extends PaginationReq {
 
 	public void setNodeId(String nodeId) {
 		this.nodeId = nodeId;
+	}
+
+	public String getClusterName() {
+		return clusterName;
+	}
+
+	public void setClusterName(String clusterName) {
+		this.clusterName = clusterName;
 	}
 
 	public String getMemo() {

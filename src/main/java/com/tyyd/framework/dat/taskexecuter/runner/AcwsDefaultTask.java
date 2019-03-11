@@ -28,7 +28,14 @@ public class AcwsDefaultTask implements AcwsTask {
 
 	@Override
 	public void doTask(Task taskInfo) {
-		LOGGER.info("默认执行" + taskInfo);
+		try {
+			LOGGER.info("默认执行" + taskInfo);
+			Thread.currentThread().sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }

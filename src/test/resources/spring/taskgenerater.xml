@@ -49,17 +49,5 @@
         class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
     </bean>
-    
-    <bean id="taskExecuter" class="com.tyyd.framework.dat.taskexecuter.TaskExecuterAnnotationFactoryBean" init-method="start">
-        <property name="clusterName" value="TEST_CLUSTER"/>
-        <property name="registryAddress" value="zookeeper://172.23.2.101:2181"/>
-        <property name="workThreads" value="20"/>
-        <property name="listenPort" value="30201"/>
-        <property name="configs">
-            <props>
-                <prop key="task.fail.store">leveldb</prop>
-            </props>
-        </property>
-    </bean>
 
 </beans>

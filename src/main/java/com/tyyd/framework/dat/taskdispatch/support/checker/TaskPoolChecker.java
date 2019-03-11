@@ -48,13 +48,15 @@ public class TaskPoolChecker {
 			}
 			LOGGER.info("Executing task pool checker started!");
 		} catch (Throwable e) {
-			LOGGER.error("Executing dead task checker start failed!", e);
+			LOGGER.error("Executing task pool checker start failed!", e);
 		}
 	}
 
 	private void checkAndDistribute() {
+		String clusterName = appContext.getConfig().getClusterName();
 		PoolQueueReq request = new PoolQueueReq();
 		request.setLimit(Integer.MAX_VALUE);
+		request.setClusterName(clusterName);
 		PaginationRsp<PoolPo> paginationRsp = appContext.getPoolQueue().pageSelect(request);
 		if (paginationRsp != null && paginationRsp.getRows() != null && !paginationRsp.getRows().isEmpty()) {
 			List<PoolPo> list = paginationRsp.getRows();
@@ -68,7 +70,7 @@ public class TaskPoolChecker {
 			}
 		}
 		appContext.getTaskDispatcherManager().removeTaskDispatcher();
-		List<PoolPo> poolPos = appContext.getPoolQueue().getUndistributedPool();
+		List<PoolPo> poolPos = appContext.getPoolQueue().getUndistributedPool(clusterName);
 		if (poolPos == null || poolPos.isEmpty()) {
 			return;
 		}

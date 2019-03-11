@@ -94,23 +94,23 @@ public  class MysqlPoolQueue extends AbstractMysqlPoolQueue implements PoolQueue
 				.doUpdate() == 1;
 	}
     @Override
-    public List<PoolPo> getPoolGreaterAverage(int average) {
+    public List<PoolPo> getPoolGreaterAverage(int average, String clusterName) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
-                .where("node_id in (select node_id from " + getTableName() +  " group by node_id" + " having count(*) >= " + average + ")")
+                .where("node_id in (select node_id from " + getTableName()+ " where cluster_name = '"+ clusterName +  "' group by node_id" + " having count(*) >= " + average + ")")
                 .list(RshHolder.POOL_PO_LIST_RSH);
     }
     @Override
-    public List<PoolPo> getUndistributedPool() {
+    public List<PoolPo> getUndistributedPool(String clusterName) {
         return new SelectSql(getSqlTemplate())
                 .select()
                 .all()
                 .from()
                 .table(getTableName())
-                .where("node_id is null or node_id = ''")
+                .where("(node_id is null or node_id = '')").andOnNotNull("cluster_name = ?", clusterName)
                 .list(RshHolder.POOL_PO_LIST_RSH);
     }
 }

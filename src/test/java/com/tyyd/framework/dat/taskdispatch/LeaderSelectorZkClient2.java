@@ -4,6 +4,7 @@ import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.serialize.SerializableSerializer;
 
 import com.tyyd.framework.dat.core.cluster.Node;
+import com.tyyd.framework.dat.core.support.SystemClock;
 
 public class LeaderSelectorZkClient2 {
 
@@ -13,7 +14,7 @@ public class LeaderSelectorZkClient2 {
 
     public static void main(String[] args) throws Exception{
         //保存所有zkClient的列表
-
+System.out.println(SystemClock.now());
         try{
                 //创建zkClient
                 ZkClient client = new ZkClient(ZOOKEEPER_SERVER, 5000, 5000, new SerializableSerializer());

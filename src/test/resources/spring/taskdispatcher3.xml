@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
         http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context-4.0.xsd"
-        >
-    <!-- 开启注解 -->
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+            <!-- 开启注解 -->
     <context:annotation-config />
 
     <!-- 注解扫描包路径 -->
     <context:component-scan base-package="com.tyyd.*" />
-    	<bean id="dataSource"
+    
+	<bean id="dataSource"
 		class="com.alibaba.druid.pool.DruidDataSource" init-method="init"
 		destroy-method="close">
 		<property name="driverClassName"
@@ -44,22 +50,30 @@
 		<!-- 验证连接有效与否的SQL，不同的数据配置不同 -->
 		<property name="validationQuery" value="select 1 " />
 	</bean>
-    <bean id="springBean" class="com.tyyd.framework.dat.taskexecuter.example.SpringBean"/>
 	<bean id="transactionManager"
         class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource" />
     </bean>
     
-    <bean id="taskExecuter" class="com.tyyd.framework.dat.taskexecuter.TaskExecuterAnnotationFactoryBean" init-method="start">
-        <property name="clusterName" value="TEST_CLUSTER"/>
-        <property name="registryAddress" value="zookeeper://172.23.2.101:2181"/>
-        <property name="workThreads" value="20"/>
-        <property name="listenPort" value="30201"/>
-        <property name="configs">
-            <props>
-                <prop key="task.fail.store">leveldb</prop>
-            </props>
-        </property>
-    </bean>
+    <!-- 支持事务注解 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    
+	<bean id="taskDispatcher"
+		class="com.tyyd.framework.dat.taskdispatch.TaskDispatchFactoryBean"
+		init-method="start">
+		<property name="clusterName" value="TEST_CLUSTER" />
+		<property name="registryAddress"
+			value="zookeeper://172.23.2.101:2181" />
+		<property name="listenPort" value="30103"/>
+		<property name="configs">
+			<props>
+				<prop key="zk.client">zkclient</prop>
+				<prop key="mongo.password">Yakexilog_user@123</prop>
+				<prop key="mongo.username">yakexilog_user</prop>
+				<prop key="mongo.database">yakexilog</prop>
+				<prop key="mongo.addresses">172.23.2.102:27017</prop>
+			</props>
+		</property>
+	</bean>
 
 </beans>

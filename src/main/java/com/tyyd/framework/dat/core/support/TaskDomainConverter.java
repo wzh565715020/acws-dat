@@ -28,6 +28,7 @@ public class TaskDomainConverter {
         taskPo.setUpdateDate(SystemClock.now());
         taskPo.setTriggerTime(task.getTriggerTime());
         taskPo.setRepeatInterval(task.getRepeatInterval());
+        taskPo.setIsRunning(0);
         return taskPo;
     }
 
